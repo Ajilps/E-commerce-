@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         window.location.href = '/user/home';
                     }
-                    console.log(`data from server ${data.user}`);
+                    console.log(`data from server ${data.user}`);// debug
                 } else {
                     showError(emailInput, data.message || 'Login failed');
                 }
