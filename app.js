@@ -4,10 +4,13 @@ import { User } from './models/userModel.js';
 import path from 'node:path'
 import cookieParser from 'cookie-parser';
 import {noCache} from './middlewares/authMiddleware.js'
+
+
 const app = express();
 
 // app.use(express.cookieSession())
 app.use(cookieParser());
+
 
 app.use(express.json());
 app.set('view engine', 'ejs')
@@ -28,6 +31,10 @@ import userRoutes from './routes/userRoutes.js';
 
 app.use('/user', userRoutes);
     
+
+// importing admin routes
+import adminRoutes from './routes/adminRoutes.js';
+app.use('/admin', adminRoutes);
 
 
 

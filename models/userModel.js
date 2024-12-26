@@ -1,12 +1,15 @@
 import mongoose, { Schema } from 'mongoose';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { type } from 'node:os';
 
 // Create Address Schema
 const addressSchema = new Schema({
     phone:{
         type: Number,
-        required: true
+        required: false,
+        sparse: true,
+        default: null
     },
     street: {
         type: String,
@@ -20,7 +23,7 @@ const addressSchema = new Schema({
         type: String,
         required: true
     },
-    pincode: {
+    pinCode: {
         type: Number,
         required: true
     },
@@ -45,10 +48,22 @@ const userSchema = new Schema({
         type: String,
         required: true,
         unique: true
+    },phone:{
+        type: Number,
+        required: false,
+        sparse: true,
+        default: null
     },
     password: {
         type: String,
         required: true
+    },googleId:{
+        type: String,
+        default: null,
+        unique: true
+    },isBlocked:{   
+        type: Boolean,
+        default: false
     },
     // Modified to use array of address objects
     addresses: [addressSchema],
@@ -70,6 +85,44 @@ const userSchema = new Schema({
     orders: [{
         type: Schema.Types.ObjectId,
         ref: 'Order'
+    }],
+    cart:{
+        type: Schema.Types.ObjectId,
+        ref: 'Cart'
+    },
+    wallet:{
+        type: Schema.Types.ObjectId,
+        ref: 'Wallet'
+    },
+    orderHistory:{
+        type: Schema.Types.ObjectId,
+        ref: 'Order' 
+    },
+    referralCode:{
+        type: String,
+        default: null,
+        unique: true
+    },
+    redeemedCount:{
+        type: Number,
+        default: 0
+    },
+    redeemedUsers:{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },searchHistory:[{
+        category:{
+        type: Schema.Types.ObjectId,
+        ref: 'category'  
+        },
+        brand:{
+        type: String,
+        },
+        searchedOn:{
+        type: Date,
+        default: Date.now   
+
+        }
     }],
     updatedBy:{
         type: Schema.Types.ObjectId,

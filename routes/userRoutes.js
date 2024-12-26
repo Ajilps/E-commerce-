@@ -7,10 +7,7 @@ const router = express.Router();
 
 router.get('/register', (req, res) => {
     res.render('register.ejs')
-});
-
-
-router.post('/register',registerUser);
+}).post('/register',registerUser);
 
 router.get('/login', (req, res) => {
     res.render('login.ejs')
@@ -25,5 +22,7 @@ router.get('/home',verifyJWT,(req,res)=>{
         
 router.get('/logout',verifyJWT,logoutUser);
 router.get('/me',verifyJWT,getCurrentUser);
+router.post('/changePassword',verifyJWT,changePassword);
+router.post('/refreshAccessToken',refreshAccessToken);
 
 export default router;

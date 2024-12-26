@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Form submission
     form.addEventListener('submit', async function(e) {
+        e.preventDefault();
         let isValid = true;
 
         [nameInput, emailInput, passwordInput, confirmPasswordInput].forEach(input => {
@@ -71,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         if (isValid) {
-            e.preventDefault();
+            
             const formData = {
                 username: document.querySelector('input[name="username"]').value.trim(),
                 email: document.querySelector('input[name="email"]').value.trim(),

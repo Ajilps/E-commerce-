@@ -28,3 +28,11 @@ export const noCache = (req, res, next) => {
     res.header('Pragma', 'no-cache');
     next();
 }
+
+export const isAdmin = (req, res, next) => {
+    if (req.user?.role === 'admin') {
+        next();
+    } else {
+        res.status(403).json({success: false, message: "Unauthorized - Admin only"});
+    }
+}
