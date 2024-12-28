@@ -1,6 +1,7 @@
 import express from "express";
-import {registerUser,loginUser,logoutUser,getCurrentUser,changePassword,refreshAccessToken} from "../controllers/userController.js";
+import {sentOtp,verifyOpt,registerUser,loginUser,logoutUser,getCurrentUser,changePassword,refreshAccessToken} from "../controllers/userController.js";
 import {verifyJWT} from "../middlewares/authMiddleware.js";
+// import {sentOtp,verifyOpt,resentOpt} from '../controllers/verifyEmail.js'
 
 const router = express.Router();
 
@@ -8,6 +9,14 @@ const router = express.Router();
 router.get('/register', (req, res) => {
     res.render('register.ejs')
 }).post('/register',registerUser);
+
+//email verification route
+
+router.get('/verify-email/:email',sentOtp)
+// router.get('/resentOtp/:email',resentOpt)
+router.post('/verify-email/',verifyOpt)
+
+
 
 router.get('/login', (req, res) => {
     res.render('login.ejs')

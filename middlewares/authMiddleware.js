@@ -4,13 +4,17 @@ import jwt from 'jsonwebtoken';
 export const verifyJWT  =( async (req, res, next) => {
     try {
 
-        const token = req.cookies?.accessToken;
-        console.log(`token : ${token}`); 
-        if (!token) {
-            return res.status(401).redirect('/user/login');
+        const token = req.cookies?.accessToken || req.cookies?.token;
+        // const gtoken = req.cookies?.token;
+        console.log(`token from jwt : ${token}`); 
+        if (!token ) {
+                return res.status(401).redirect('/user/login');
         }
-        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decodedToken?._id).select('-password -refreshToken');
+        console.log('befor jwt')
+        const decodedToken =await jwt.verify(token, process.env.JWT_SECRET);
+        console.log(`user from jwt  ${decodedToken?.email}`);
+        const email = decodedToken.email;
+        const user = await User.findOne({email}).select('-password -refreshToken');
         if (!user) {
             return res.status(401).json({success: false, message: " invalid token"});
         }

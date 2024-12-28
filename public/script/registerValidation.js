@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
     
                 if (data.success) {
-                    window.location.href = '/user/login';
+                    window.location.href = `/user/verify-email/${formData.email}`;
                 } else {
                     alert(data.message || 'Registration failed');
                 }

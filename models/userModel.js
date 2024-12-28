@@ -42,7 +42,7 @@ const userSchema = new Schema({
     username: {
         type: String,
         required: true,
-        unique: true
+        unique: false
     },
     email: {
         type: String,
@@ -56,11 +56,12 @@ const userSchema = new Schema({
     },
     password: {
         type: String,
-        required: true
-    },googleId:{
+       
+    },
+    googleId: {
         type: String,
         default: null,
-        unique: true
+       
     },isBlocked:{   
         type: Boolean,
         default: false
@@ -126,12 +127,13 @@ const userSchema = new Schema({
     }],
     updatedBy:{
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        default: null 
     },
     createdBy:{
         type: Schema.Types.ObjectId,
         ref: 'User',
-        default: "self"
+        default: null 
     }
     
 
