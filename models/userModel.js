@@ -60,9 +60,15 @@ const userSchema = new Schema({
     },
     googleId: {
         type: String,
-        default: null,
        
-    },isBlocked:{   
+        
+    },
+    fbId:{
+        type:String,
+        
+
+    },
+    isBlocked:{   
         type: Boolean,
         default: false
     },

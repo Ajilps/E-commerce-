@@ -11,7 +11,7 @@ import cors from 'cors';
 import userRoutes from './routes/userRoutes.js';
 
 // importing google auth route
-import googleAuth from './routes/googleSignin.js'
+import googleAuth from './routes/auth.js'
 
 const app = express();
 
@@ -49,7 +49,7 @@ app.get('/',(req,res)=>{
 
 //using google auth route
 
-app.use('/auth/google',googleAuth)
+app.use('/auth',googleAuth)
 
 app.use('/user', userRoutes);
     
