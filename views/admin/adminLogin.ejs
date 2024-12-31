@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BYTEZ - Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+        }
+        .login-container {
+            max-width: 400px;
+            width: 90%;
+            padding: 2rem;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .form-text {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        .password-field {
+            position: relative;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: none;
+            color: #6c757d;
+        }
+        .btn-login {
+            background-color: #28a745;
+            border-color: #28a745;
+            padding: 0.75rem;
+        }
+        .btn-login:hover {
+            background-color: #218838;
+            border-color: #218838;
+        }
+        .forgot-password {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .forgot-password a {
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            BYTEZ.
+        </div>
+        <div class="welcome-text">
+            <h4>Welcome back!</h4>
+        </div>
+        <form id="loginForm" method="POST">
+            
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <input type="email" name="email" class="form-control" id="email" value="admin@gmail.com">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <div class="password-field">
+                    <input type="password" name="password" class="form-control" id="password" placeholder="" value="a1234567">
+                    <!-- <button type="button" class="password-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M8 3.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9"/>
+                        </svg>
+                    </button> -->
+                </div>
+              
+            </div>
+            <button type="submit" class="btn btn-login btn-primary w-100">LOG IN</button>
+            
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="/script/admin/adminLogin.js"></script>
+</body>
+</html>

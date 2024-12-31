@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .wrapper {
+            display: flex;
+            width: 100%;
+        }
+        .sidebar {
+            min-height: 100vh;
+            background: #f8f9fa;
+            transition: all 0.3s;
+            position: fixed;
+            z-index: 1000;
+            width: 250px;
+            left: 0;
+        }
+        .sidebar.collapsed {
+            margin-left: -250px;
+        }
+        .content {
+            width: calc(100% - 250px);
+            margin-left: 250px;
+            transition: all 0.3s;
+        }
+        .content.expanded {
+            width: 100%;
+            margin-left: 0;
+        }
+        .sidebar-toggle {
+            cursor: pointer;
+            padding: 10px;
+            background: none;
+            border: none;
+            color: #333;
+        }
+        .stats-card {
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .progress {
+            height: 8px;
+        }
+        .profile-dropdown {
+            cursor: pointer;
+        }
+        .profile-dropdown .dropdown-menu {
+            right: 0;
+            left: auto;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                margin-left: -250px;
+            }
+            .sidebar.active {
+                margin-left: 0;
+            }
+            .content {
+                width: 100%;
+                margin-left: 0;
+            }
+            .content.active {
+                margin-left: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="sidebar">
+            <div class="d-flex justify-content-between align-items-center p-3">
+                <h4 class="mb-0">Bytez.</h4>
+                <button class="sidebar-toggle d-md-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="/admin/home" class="list-group-item list-group-item-action active">
+                    <i class="fas fa-home me-2"></i> Dashboard
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="fas fa-shopping-cart me-2"></i> Sales List
+                </a>
+                <a href="/admin/products" class="list-group-item list-group-item-action">
+                    <i class="fas fa-box me-2"></i> Products
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="fas fa-chart-bar me-2"></i> Analytics
+                </a>
+                <a href="/admin/customer" class="list-group-item list-group-item-action">
+                    <i class="fas fa-chart-bar me-2"></i> customer
+                </a>
+                <a href="/admin/category" class="list-group-item list-group-item-action">
+                    <i class="fas fa-chart-bar me-2"></i> category 
+                </a>
+            </div>
+        </nav>
+         <!-- Main Content -->
+         <div id="content" class="content">
+            <div class="p-4">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="d-flex align-items-center">
+                        <button class="sidebar-toggle me-3">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h2 class="mb-0">Dashboard</h2>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="dropdown me-3">
+                            <button class="btn btn-light dropdown-toggle" type="button" id="notificationDropdown" data-bs-toggle="dropdown">
+                                <i class="fas fa-bell"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Notification 1</a></li>
+                                <li><a class="dropdown-item" href="#">Notification 2</a></li>
+                            </ul>
+                        </div>
+                        <!-- Profile Dropdown -->
+                        <div class="dropdown profile-dropdown">
+                            <div class="d-flex align-items-center" data-bs-toggle="dropdown">
+                                <img src="/api/placeholder/40/40" class="rounded-circle me-2" alt="Profile">
+                                <div class="d-none d-md-block">
+                                    <div class="fw-bold">John Doe</div>
+                                    <div class="small text-muted">Admin</div>
+                                </div>
+                                <i class="fas fa-chevron-down ms-2"></i>
+                            </div>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>

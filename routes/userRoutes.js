@@ -1,5 +1,5 @@
 import express from "express";
-import { sentOtp, verifyOpt, registerUser, loginUser, logoutUser, getCurrentUser, changePassword, refreshAccessToken } from "../controllers/userController.js";
+import { isBlocked,isLoggedIn, sentOtp, verifyOpt, registerUser, loginUser, logoutUser, getCurrentUser, changePassword, refreshAccessToken } from "../controllers/userController.js";
 import { verifyJWT } from "../middlewares/authMiddleware.js";
 // import {sentOtp,verifyOpt,resentOpt} from '../controllers/verifyEmail.js'
 
@@ -17,17 +17,41 @@ router.get('/verify-email/:email', sentOtp)
 router.post('/verify-email/', verifyOpt)
 
 
+//reset password
+import { passSendOtp, resetPassword, validateOtpForPassword } from '../controllers/verifyEmail.js'
+router.get('/forgotPassword', (req, res) => {
 
-router.get('/login', (req, res) => {
+    res.render('resetPass/emailValidation.ejs')
+})
+
+router.get('/verifyPassEmail/:email', passSendOtp,);
+// verify otp 
+router.post('/verifyPassEmail', validateOtpForPassword);
+
+router.get('/resetPass/:email', (req, res) => {
+    const email = req.params.email;
+    console.log(email)// testing
+    if (!email) return res.send({ success: false, message: 'email required' })
+
+    res.status(200).render('resetPass/resetPass.ejs', { email: email })
+});
+router.post('/resetPassword', resetPassword)
+
+// password reset route end 
+
+
+
+router.get('/login', isLoggedIn, (req, res) => {
+
     res.render('login.ejs')
 });
 
-router.post('/login', loginUser);
+router.post('/login',isBlocked, loginUser);
 
 //secured routes
 router.get('/home', verifyJWT, (req, res) => {
     console.log(req.user);
-    res.render('user/userView.ejs', { user: req.user.username });
+    res.render('user/userHome.ejs', { user: req.user.username });
 });
 
 router.get('/logout', verifyJWT, logoutUser);

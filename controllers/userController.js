@@ -66,9 +66,10 @@ const registerUser = (async (req,res)=>{
 // after getting the success message the client will call this rout with a parameter email. then this function will generate a otp and save it 
 // then render the otp verification page with the email 
 const sentOtp =(async (req,res)=>{
-    const email = req.params.email;
+    const email = req.params.email ;
+   
+    if (!email ) return res.send({ message: 'Email is required.' });
 
-    if (!email) return({ message: 'Email is required.' });
 
         const otp = generateOtp();
         otpStore[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000 }; // OTP valid for 5 minutes
@@ -91,7 +92,8 @@ const sentOtp =(async (req,res)=>{
 
 });
 
-// Next verify the otp with the res otp and also check the email 
+// Next verify the otp with the res otp and also check the email and create user 
+
 const verifyOpt = (async (req,res)=>{
         const {otp, email }= req.body ;
 
@@ -145,8 +147,19 @@ const verifyOpt = (async (req,res)=>{
     }
 })
 
-
-
+//checking whether the user is blocked or not
+const isBlocked =(async (req,res,next)=>{
+    try {
+        const email = req.body.email;
+        if (!email) return res.status(400).send({ message: 'Email is required.' });
+        const user = await User.findOne({ email });
+        if (!user) return res.status(404).send({ message: 'User not found.' });
+        if (user.isBlocked) return res.status(403).send({ message: 'User is blocked by admin' });
+        next();
+    } catch (error) {
+        res.redirect('/pageerror')
+    }
+})  
 
 
 
@@ -183,10 +196,26 @@ const generateAccessAndRefreshToken = async (userId) => {
 
 
 
+//checking the user is already log in or not 
+const isLoggedIn = (req,res,next)=>{
+    try {
+        const token = req.cookies?.accessToken || req.cookies?.token;
+        if(!token){
 
+        return next()
+        }
+        res.redirect('/user/home')
+        
+    } catch (error) {
+        
+    }
+
+}
 
 
 const loginUser = async (req, res) =>{
+
+
     try {
         const {email, password} = req.body;
         // console.log(`login email : ${email}`);
@@ -218,18 +247,12 @@ const loginUser = async (req, res) =>{
         // console.log(`user tokens  : ${JSON.stringify( accessToken)}, ${refreshToken}`); // testing print statement
 
         const options = {
-            // expires: 24*60*60*1000, // 1 day
+            maxAge: 24 * 60 * 60 * 1000, // 1 day
             httpOnly: true,
             secure: true
         };
         console.log(`user from login : ${user?.role}`);// testing print statement
-        // if(user.role === 'admin'){
-        //     return res
-        //     .status(200)
-        //     .cookie('accessToken', accessToken, options)
-        //     .cookie('refreshToken', refreshToken, options)
-        //     .render('admin/adminView.ejs',{success: true, message: "Login success Full", user: user?.role});
-        // }
+        
         return res
         .status(200)
         .cookie('accessToken', accessToken, options)
@@ -250,7 +273,7 @@ const logoutUser = async (req, res) => {
         await User.findByIdAndUpdate(req.user._id, {refreshToken: ''},{new: true});
 
         const options = {
-            expires: new Date(Date.now() + 10 * 1000),
+            maxAge: 24 * 60 * 60 * 1000, //1d
             httpOnly: true,
             secure: true
         };
@@ -302,10 +325,14 @@ const refreshAccessToken = async (req, res) => {
     }
 }
 
+// verify otp for password change and if the otp is correct call next else send error message
+
+
+
 const changePassword = async (req, res) => {
     try {
-        const {oldPassword, newPassword} = req.body;
-        if(!oldPassword || !newPassword){
+        const {newPassword} = req.body;
+        if(!newPassword){
             return res.status(400).json({success: false, message: "Invalid request"});
         }
         const user = await User.findById(req.user._id);
@@ -336,4 +363,4 @@ const getCurrentUser = async (req, res) => {
 
 
 
-export {verifyOpt, sentOtp ,registerUser, loginUser, logoutUser, refreshAccessToken, changePassword, getCurrentUser,userData};
+export {isBlocked, isLoggedIn, verifyOpt, sentOtp ,registerUser, loginUser, logoutUser, refreshAccessToken, changePassword, getCurrentUser,userData};

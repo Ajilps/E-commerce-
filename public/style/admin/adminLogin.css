@@ -1,0 +1,7 @@
+.error-message {
+    margin-top: 5px;
+    font-size: 0.875rem;
+}
+.is-invalid {
+    border-color: #dc3545;
+}

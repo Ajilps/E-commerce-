@@ -5,12 +5,12 @@ export const verifyJWT  =( async (req, res, next) => {
     try {
 
         const token = req.cookies?.accessToken || req.cookies?.token;
-        // const gtoken = req.cookies?.token;
         console.log(`token from jwt : ${token}`); 
         if (!token ) {
                 return res.status(401).redirect('/user/login');
         }
-        console.log('befor jwt')
+        console.log('before jwt') // test
+
         const decodedToken =await jwt.verify(token, process.env.JWT_SECRET);
         console.log(`user from jwt  ${decodedToken?.email}`);
         const email = decodedToken.email;
@@ -34,9 +34,14 @@ export const noCache = (req, res, next) => {
 }
 
 export const isAdmin = (req, res, next) => {
-    if (req.user?.role === 'admin') {
-        next();
-    } else {
-        res.status(403).json({success: false, message: "Unauthorized - Admin only"});
-    }
+    try{
+        if (req.user?.role === 'admin') {
+            next();
+        } else {
+            res.status(403).json({success: false, message: "Unauthorized - Admin only"});
+        }
+
+    } catch(err){
+        console.log(`server error from is admin check ${err}`);
+}
 }
