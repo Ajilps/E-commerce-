@@ -1,0 +1,116 @@
+<%- include('adminHead') %>
+
+    <style>
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: ">";
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        .page-item.active .page-link {
+            background-color: #00c389;
+            border-color: #00c389;
+        }
+        .page-link {
+            color: #00c389;
+        }
+        .btn-create {
+            background-color: #00c389;
+            color: white;
+        }
+        .btn-create:hover {
+            background-color: #00a371;
+            color: white;
+        }
+    </style>
+
+    <div class="container-fluid py-4">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#" class="text-decoration-none" style="color: #00c389;">Dashboard</a></li>
+                <li class="breadcrumb-item active">Brands</li>
+            </ol>
+        </nav>
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="mb-0">Brands</h4>
+            <div>
+                <!-- <button class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-file-export"></i> Export
+                </button> -->
+                <button class="btn btn-create">
+                    <a href="/admin/brand/addBrand" class="text-white"><i class="fas fa-plus"></i> Create Brand</a>
+                </button>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th width="40">
+                                    <input type="checkbox" class="form-check-input">
+                                </th>
+                                <th>Brand Name</th>
+                                <th>isListed</th>
+                               
+                                <th>Added</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% locals.brands.reverse().forEach(brand => { %>
+                            <tr>
+                                <td><input type="checkbox" class="form-check-input"></td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-secondary rounded" style="width: 40px; height: 40px;"></div>
+                                        <div class="ms-3">
+                                            <div class="fw-bold"><%= brand.name %></div>
+                                            <small class="text-muted"><%= brand.description %></small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><%= brand.isListed %></td>
+                             
+                                <td><%= brand.createdAt %></td>
+                                <td>
+                                    <button class="btn btn-sm btn-link p-0 me-2"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-link p-0 me-2"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-link p-0"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                  
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination mb-0">
+                            <% if (currentPage > 1) { %>
+                                <li class="page-item"><a class="page-link" href="?page=<%= currentPage - 1 %>"><i class="fas fa-chevron-left"></i></a></li>
+                            <% } %>
+                            <% for (let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                </li>
+                            <% } %>
+                            <% if (currentPage < totalPages) { %>
+                                <li class="page-item"><a class="page-link" href="?page=<%= currentPage + 1 %>"><i class="fas fa-chevron-right"></i></a></li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<%- include('adminFoot') %>

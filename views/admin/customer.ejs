@@ -85,18 +85,24 @@
                 </table>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mt-3">
-                
-               <nav aria-label="page navigation">
-                <ul class="pagination justify-content-center mb-20" style="margin: right 200px;">
-                    <% for (let i = 1; i <= totalPages; i++) { %>
-                        <li class="page-item <%= (i=== currentPage)? 'active' : '' %>">
-                            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                        </li>
-                    <%} %>
-                </ul>
-               </nav>
-            </div>
+             <!-- Pagination -->
+    <div class="pagination-container d-flex justify-content-center mt-4">
+        <% if (currentPage > 1) { %>
+            <a class="btn btn-outline-secondary me-2" href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+        <% } %>
+        
+        <% for (let i = 1; i <= totalPages; i++) { %>
+            <% if (i === currentPage) { %>
+                <span class="btn btn-secondary me-2"><%= i %></span>
+            <% } else { %>
+                <a class="btn btn-outline-secondary me-2" href="?page=<%= i %>"><%= i %></a>
+            <% } %>
+        <% } %>
+
+        <% if (currentPage < totalPages) { %>
+            <a class="btn btn-outline-secondary" href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+        <% } %>
+    </div>
         </div>
     </div>
 </div>

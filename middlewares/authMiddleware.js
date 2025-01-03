@@ -5,7 +5,7 @@ export const verifyJWT  =( async (req, res, next) => {
     try {
 
         const token = req.cookies?.accessToken || req.cookies?.token;
-        console.log(`token from jwt : ${token}`); 
+        // console.log(`token from jwt : ${token}`); 
         if (!token ) {
                 return res.status(401).redirect('/user/login');
         }

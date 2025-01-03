@@ -1,0 +1,148 @@
+<%- include('adminHead') %>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: ">";
+        }
+        .upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            background: #fff;
+        }
+        .upload-area:hover {
+            border-color: #00c389;
+        }
+        .thumbnail-preview {
+            width: 100px;
+            height: 100px;
+            background-color: #dee2e6;
+            border-radius: 8px;
+            margin: 0 auto 1rem;
+            position: relative;
+        }
+        .check-icon {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            color: #00c389;
+            background: white;
+            border-radius: 50%;
+            padding: 2px;
+        }
+        .btn-save {
+            background-color: #00c389;
+            color: white;
+        }
+        .btn-save:hover {
+            background-color: #00a371;
+            color: white;
+        }
+        .change-image-btn {
+            color: #00c389;
+            text-decoration: none;
+        }
+        .change-image-btn:hover {
+            color: #00a371;
+        }
+    </style>
+
+    <div class="container-fluid py-4">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#" class="text-decoration-none" style="color: #00c389;">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="#" class="text-decoration-none" style="color: #00c389;">Brands</a></li>
+                <li class="breadcrumb-item active">Brand Details</li>
+            </ol>
+        </nav>
+
+        
+       
+
+        <!-- Main Content -->
+        <div class="row">
+            <!-- Thumbnail Section -->
+            <div class="col-12 col-md-4 col-lg-3 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">Thumbnail</h5>
+                        <div class="upload-area">
+                            <div class="thumbnail-preview">
+                                <i class="fas fa-check check-icon"></i>
+                            </div>
+                            <p class="text-muted mb-2">Drag and drop image here, or<br>click change image</p>
+                            <a href="#" class="change-image-btn">Change Image</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- General Information Section -->
+            <div class="col-12 col-md-8 col-lg-9">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">General Information</h5>
+                        <form id="brandForm">
+                            <div class="mb-4">
+                                <label class="form-label">Brand Name</label>
+                                <input type="text" name="brandName" class="form-control" value="Samsung">
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Description</label>
+                                <textarea name="description" class="form-control" rows="4">Our range of watches are perfect whether you're looking to upgrade.</textarea>
+                            </div>
+                            <!--  Buttons -->
+                            <div class="d-flex justify-content-end mb-4">
+                                <button class="btn btn-light me-2">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                                <button type="submit" class="btn btn-save">
+                                    <i class="fas fa-check"></i> Save Brand
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const brandForm = document.getElementById('brandForm');
+
+        brandForm.addEventListener('submit',async function(event) {
+            event.preventDefault();
+            const formData = new FormData(brandForm);
+            const brandName = formData.get('brandName');
+            const description = formData.get('description');
+        // console.log(brandName, description);
+            
+      
+        const response = await fetch('/admin/brand/addBrand', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: brandName,
+                description: description
+            })
+        });
+        const data = await response.json();
+        if(data.success) {
+            alert('Brand created successfully');
+            window.location.href = '/admin/brand';
+        } else {
+            alert('An error occurred. Please try again.');
+        }
+    });
+    </script>
+
+   <%- include('adminFoot') %>

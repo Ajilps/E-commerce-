@@ -1,0 +1,121 @@
+<%- include('adminHead') %>
+
+<body class="bg-light">
+    <div class="container mt-4">
+        <!-- Header Section -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#" class="text-decoration-none">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="#" class="text-decoration-none">Categories</a></li>
+                <li class="breadcrumb-item active">Add Category</li>
+            </ol>
+        </nav>
+
+        <form id="categoryForm" onsubmit="handleSubmit(event)">
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-end mb-4">
+                <button type="button" class="btn btn-outline-secondary me-2" onclick="handleCancel()">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </button>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-plus me-2"></i>Add Category
+                </button>
+            </div>
+
+            <!-- Main Content -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="mb-4">General Information</h5>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Category Name</label>
+                        <input type="text" class="form-control" id="name" name="name"
+                               placeholder="Type category name here..." required>
+                        <div class="invalid-feedback">Please enter a category name.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="6" 
+                                  placeholder="Type category description here..." required></textarea>
+                        <div class="invalid-feedback">Please enter a description.</div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Handle form submission
+       async function handleSubmit(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            // Basic validation
+            const name = document.getElementById('name');
+            const description = document.getElementById('description');
+            let isValid = true;
+
+            if (!name.value.trim()) {
+                name.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                name.classList.remove('is-invalid');
+            }
+
+            if (!description.value.trim()) {
+                description.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                description.classList.remove('is-invalid');
+            }
+
+            if (isValid) {
+                // Here you would typically send the formData to your server
+                console.log('Form submitted with:');
+                console.log('Category Name:', formData.get('name'));
+                console.log('Description:', formData.get('description'));
+                const formdata = {
+                    name: formData.get('name'),
+                    description: formData.get('description')
+                };
+
+
+                fetch ('/admin/category/addCategory', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }, 
+                    body: JSON.stringify(formdata),
+                }).then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.success) {
+                        alert('Category added successfully!');
+                        form.reset();
+                    } else {
+                        alert('An error occurred. Please try again later.'+data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again later.');
+                });
+                
+                // Simulate successful submission
+            }
+        }
+
+        // Handle cancel button
+        function handleCancel() {
+            if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
+                const form = document.getElementById('categoryForm');
+                form.reset();
+                window.location.href="/admin/category/addCategory"; // Replace with your categories list page URL
+            }
+        }
+    </script>
+
+
+   <%- include('adminFoot') %>

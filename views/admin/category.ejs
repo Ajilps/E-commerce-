@@ -1,0 +1,176 @@
+<%- include('adminHead.ejs') %>
+
+<div class="container mt-4">
+    <!-- Header Section -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#" class="text-decoration-none">Dashboard</a></li>
+            <li class="breadcrumb-item active">Categories</li>
+        </ol>
+    </nav>
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-between mb-4">
+        <a class="btn btn-success text-white" href="/admin/category/addCategory">
+            <i class="fas fa-plus me-2"></i>Create Category
+        </a>
+        <button class="btn btn-outline-success">
+            <i class="fas fa-file-export me-2"></i>Export
+        </button>
+    </div>
+
+    <!-- Table Section -->
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Offer </th>
+                    <th>Add or Remove Offer</th>
+                    <th>Status</th>
+                    <th>List/Unlist</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% categories.forEach(category => { %>
+                    <tr>
+                        <!-- Category Name -->
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <!-- <div class="bg-light rounded me-2" style="width: 40px; height: 40px"></div> -->
+                                <div>
+                                    <div><%= category.name %></div>
+                                    <small class="text-muted"><%= category.description %></small>
+                                </div>
+                            </div>
+                        </td>
+                        
+                        <!-- Offer Price -->
+                        <td><%= category.categoryOffers || 0 %> %</td>
+
+                        <!-- Offer Actions -->
+                        <td>
+                            <button onclick="addOffer('<%=category._id%>')" class="btn btn-sm btn-outline-primary">
+                                <a href="#"  class="text-decoration-none">Add Offer</a>
+                            </button>
+                            <button onclick="removeOffer('<%=category._id%>')"  class="btn btn-sm btn-outline-danger">
+                                <a href="#" class="text-decoration-none">Remove</a>
+                            </button>
+                        </td>
+
+                        <!-- Status -->
+                        <td>
+                            <% if (category.isListed) { %>
+                                <span class="badge rounded-pill alert-success text-black">Listed</span>
+                            <% } else { %>
+                                <span class="badge rounded-pill alert-danger text-black">Unlisted</span>
+                            <% } %>
+                        </td>
+
+                        <!-- List/Unlist Actions -->
+                        <td>
+                            <% if (category.isListed) { %>
+                                <a href="/admin/category/unlistCategory?id=<%= category._id%>" class="btn btn-sm btn-outline-danger text-black">Un list</a>
+                            <% } else { %>
+                                <a href="/admin/category/listCategory?id=<%= category._id%>" class="btn btn-sm btn-outline-success text-black">List</a>
+                            <% } %>
+                        </td>
+
+                        <!-- Edit Actions -->
+                        <td>
+                            <button class="btn btn-sm btn-link text-decoration-none">
+                                <a href="/admin/category/editCategory?id=<%= category._id %>"><i class="fas fa-edit"></i></a>
+                            </button>
+                            <!-- <button class="btn btn-sm btn-link text-decoration-none">
+                                <i class="fas fa-eye"></i>
+                            </button> -->
+                            <button class="btn btn-sm btn-link text-decoration-none text-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container d-flex justify-content-center mt-4">
+        <% if (currentPage > 1) { %>
+            <a class="btn btn-outline-secondary me-2" href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+        <% } %>
+        
+        <% for (let i = 1; i <= totalPages; i++) { %>
+            <% if (i === currentPage) { %>
+                <span class="btn btn-secondary me-2"><%= i %></span>
+            <% } else { %>
+                <a class="btn btn-outline-secondary me-2" href="?page=<%= i %>"><%= i %></a>
+            <% } %>
+        <% } %>
+
+        <% if (currentPage < totalPages) { %>
+            <a class="btn btn-outline-secondary" href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+        <% } %>
+    </div>
+</div>
+
+
+<script>
+    // Function to handle user input from the prompt
+   async function addOffer(categoryId) {
+        // Show a prompt to the user
+        const  amount =await prompt("Please enter the offer percentage ");
+    console.log(amount);
+    if(amount){
+        // Send a POST request to the server
+       await fetch(`/admin/category/addOffer`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ offer:amount,categoryId })
+        }).then((res)=>{
+            return res.json();
+        }).then((data)=>{
+            if(data.success){
+                alert("Offer added successfully");
+            }
+            else{
+                alert(data.message || "An error occurred. Please try again later.");
+            }
+            location.reload();
+        }).catch((err)=>{
+            console.log(err);
+        });
+
+        // Parse the JSON response
+     
+    }
+    }
+
+    async function removeOffer(categoryId) {
+        // Send a POST request to the server
+        await fetch(`/admin/category/removeOffer`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ categoryId })
+        }).then((res)=>{
+            return res.json();
+        }).then((data)=>{
+            if(data.success){
+                alert("Offer removed successfully");
+            }
+            else{
+                alert(data.message || "An error occurred. Please try again later.");
+            }
+            location.reload();
+        }).catch((err)=>{
+            console.log(err);
+        });
+    }
+</script>
+
+<%- include('adminFoot.ejs') %>
