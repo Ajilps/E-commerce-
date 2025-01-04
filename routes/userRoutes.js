@@ -6,7 +6,7 @@ import { verifyJWT } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 
-router.get('/register', (req, res) => {
+router.get('/register',isLoggedIn, (req, res) => {
     res.render('register.ejs')
 }).post('/register', registerUser);
 

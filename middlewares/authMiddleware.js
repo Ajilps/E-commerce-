@@ -26,19 +26,19 @@ export const verifyJWT  =( async (req, res, next) => {
     }
 });
 
-export const noCache = (req, res, next) => {
-    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-    res.header('Expires', '-1');
-    res.header('Pragma', 'no-cache');
-    next();
-}
+// export const noCache = (req, res, next) => {
+//     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+//     res.header('Expires', '-1');
+//     res.header('Pragma', 'no-cache');
+//     next();
+// }
 
 export const isAdmin = (req, res, next) => {
     try{
         if (req.user?.role === 'admin') {
             next();
         } else {
-            res.status(403).json({success: false, message: "Unauthorized - Admin only"});
+            res.status(403).redirect("/admin/login");
         }
 
     } catch(err){

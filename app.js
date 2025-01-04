@@ -20,8 +20,6 @@ import googleAuth from './routes/auth.js'
 
 const app = express();
 
-// Apply nocache middleware globally
-app.use(nocache());
 
 app.use(session({
   secret:process.env.SESSION_SECRET,
@@ -43,13 +41,13 @@ app.use(express.json());
 app.set('view engine', 'ejs')
 app.set('views',path.resolve('views'));
 
-// app.use(noCache());
 
 app.use(express.static(path.resolve('public')));
 app.use(express.urlencoded({extended:true}));
 
-// app.all(noCache())
 
+// Apply nocache middleware globally
+app.use(nocache());
 //landing page
 app.get('/',(req,res)=>{
     res.render('index.ejs');

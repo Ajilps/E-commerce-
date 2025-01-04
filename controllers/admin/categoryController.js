@@ -134,6 +134,8 @@ const listCategory = async (req,res)=>{
 
 const editCategory = async (req,res)=>{
     const categoryId = req.query.id;
+
+    // const catName =await Catego?ry.findOne({name})
     const category = await Category.findById({_id: categoryId});    
     console.log(category); //test
     res.render('admin/editCategory.ejs',{category})
@@ -143,6 +145,11 @@ const updateCategory = async (req,res)=>{
     const categoryId = req.query.id;
     const {name, description} = req.body;
     console.log(req.body); //test
+    const catName = await Category.findOne({name});
+    if(catName){
+        return res.status(400).json({success:false, message: 'Category already exists'});
+    }
+
    try {
      const category = await Category.findByIdAndUpdate({_id: categoryId},{$set:{name:name , description: description}});
         //  console.log(category); //test

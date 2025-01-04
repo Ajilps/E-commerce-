@@ -69,8 +69,9 @@
                                 <td><input type="checkbox" class="form-check-input"></td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="bg-secondary rounded" style="width: 40px; height: 40px;"></div>
+                                        <div class="bg-secondary rounded" style="width: 40px; height: 40px;"> <img width="40px" height="40px" src="<%= brand.imageUrl%>" alt=""></div>
                                         <div class="ms-3">
+                                           
                                             <div class="fw-bold"><%= brand.name %></div>
                                             <small class="text-muted"><%= brand.description %></small>
                                         </div>
@@ -80,8 +81,8 @@
                              
                                 <td><%= brand.createdAt %></td>
                                 <td>
-                                    <button class="btn btn-sm btn-link p-0 me-2"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-link p-0 me-2"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-link p-0 me-2"><a href="/admin/brand/editBrand?id=<%= brand._id%>"><i class="fas fa-edit"></i></a></button>
+                                    <!-- <button class="btn btn-sm btn-link p-0 me-2"><i class="fas fa-eye"></i></button> -->
                                     <button class="btn btn-sm btn-link p-0"><i class="fas fa-trash"></i></button>
                                 </td>
                             </tr>
