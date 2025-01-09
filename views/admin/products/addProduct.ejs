@@ -1,0 +1,927 @@
+
+<%- include('../adminHead.ejs') %>
+
+   
+    <style>
+           * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        .page-header {
+            background-color: #fff;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 2rem;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111827;
+            margin: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Breadcrumb styles */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb li {
+            display: flex;
+            align-items: center;
+        }
+
+        .breadcrumb li:not(:last-child)::after {
+            content: '›';
+            margin: 0 0.5rem;
+            color: #6b7280;
+        }
+
+        .breadcrumb a {
+            color: #6b7280;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #4f46e5;
+        }
+
+        .breadcrumb .active {
+            color: #9ca3af;
+        }
+
+        /* Button styles */
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .btn-cancel {
+            background-color: #fff;
+            color: #6b7280;
+            border-color: #e5e7eb;
+        }
+
+        .btn-cancel:hover {
+            background-color: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+        .btn-save {
+            background-color: #10b981;
+            color: #fff;
+            border-color: #10b981;
+        }
+
+        .btn-save:hover {
+            background-color: #059669;
+            border-color: #059669;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .page-header {
+                padding: 1rem;
+            }
+
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+     
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #1a365d;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.95rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+            color: #2d3748;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+            background-color: #fff;
+        }
+
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .error {
+            color: #e53e3e;
+            font-size: 0.875rem;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .images-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 24px;
+            margin-bottom: 25px;
+        }
+
+        .image-item {
+            border: 2px solid #e2e8f0;
+            padding: 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+
+        .image-item:hover {
+            border-color: #4299e1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .preview-container {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            background-color: #f7fafc;
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.75);
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 24px;
+            border-radius: 16px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn {
+            background-color: #3182ce;
+            color: white;
+            width: 100%;
+            margin-top: 20px;
+            height: 50px;
+        }
+
+        .submit-btn:hover {
+            background-color: #2c5282;
+            transform: translateY(-1px);
+        }
+
+        .remove-btn {
+            background-color: #f56565;
+            color: white;
+        }
+
+        .remove-btn:hover {
+            background-color: #c53030;
+        }
+
+        .crop-btn {
+            background-color: #4299e1;
+            color: white;
+        }
+
+        .crop-btn:hover {
+            background-color: #2b6cb0;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            border: 2px dashed #e2e8f0;
+            border-radius: 8px;
+            width: 100%;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        input[type="file"]:hover {
+            border-color: #4299e1;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 16px;
+            color: #4299e1;
+            font-weight: 600;
+        }
+
+        /* Tag Styling */
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            min-height: 50px;
+            background-color: #f8fafc;
+        }
+
+        .tag {
+            background-color: #4299e1;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .tag:hover {
+            background-color: #2b6cb0;
+        }
+
+        .tag button {
+            background: none;
+            border: none;
+            color: white;
+            padding: 0;
+            font-size: 1.2rem;
+            line-height: 1;
+            cursor: pointer;
+        }
+        .clear-tags-btn {
+            background-color: #718096;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            border: none;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .clear-tags-btn:hover {
+            background-color: #4a5568;
+        }
+
+        .input-container {
+            margin-bottom: 12px;
+        }
+
+        #tagInput {
+            font-size: 1rem;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        #tagInput:focus {
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+        }
+
+        /* Cancel Button */
+        #cancel {
+            background-color: #718096;
+            color: white;
+            margin-top: 12px;
+        }
+
+        #cancel:hover {
+            background-color: #4a5568;
+        }
+
+        /* Form Section Styling */
+        section {
+            background-color: #fff;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Add animation effects */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+    </style>
+
+
+    <div class="container">
+        <header class="page-header">
+            <div class="header-container">
+                <div>
+                    <h1 class="page-title">Create Product</h1>
+                    <nav>
+                        <ul class="breadcrumb">
+                            <li><a href="#">Dashboard</a></li>
+                            <li><a href="#">Product List</a></li>
+                            <li class="active">Create Product</li>
+                        </ul>
+                    </nav>
+                </div>
+                <!-- <div class="header-actions">
+                    <button class="btn btn-cancel">Cancel</button>
+                    <button class="btn btn-save">Save Product</button>
+                </div> -->
+            </div>
+        </header>
+        <form id="productForm">
+            <div class="form-group">
+                <label for="name">Product Name*</label>
+                <input type="text" id="name" name="name" required>
+                <div class="error" id="nameError">Product name is required</div>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Price*(MRP)</label>
+                <input type="number" id="price" name="price" min="0" step="0.01" required>
+                <div class="error" id="priceError">Price must be a positive number</div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description*</label>
+                <textarea id="description" name="description" required></textarea>
+                <div class="error" id="descriptionError">Description is required</div>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category*</label>
+                <select id="category" name="category" required>
+                    <option value="">Select a category</option>
+                    <% if(category){ %>
+
+                        <% category.forEach(c => { %>
+                            <option value="<%= c._id %>"><%= c.name %></option>
+                        <% }) %>
+                    <% }  %>
+                    
+                    
+                </select>
+                <div class="error" id="categoryError">Please select a category</div>
+            </div>
+            <!-- brand  -->
+            <div class="form-group">
+                <label for="Brand">Brand*</label>
+                <select id="Brand" name="Brand" required>
+                    <option value="">Select a Brand</option>
+                    <% if(brand){ %>
+                        <% brand.forEach(b => { %>
+                            <option value="<%= b._id %>"><%= b.name %></option>
+                        <% }) %>
+                    <% } %>
+                    
+                </select>
+                <div class="error" id="brandError">Please select a Brand</div>
+            </div>
+            <!-- size  -->
+            <div class="form-group">
+                <label for="regularPrice">Regular Price*</label>
+                <input type="number" id="regularPrice" name="regularPrice" min="0" step="0.01" required>
+                <div class="error" id="regularPriceError">Regular price must be a positive number</div>
+            </div>
+
+            <div class="form-group">
+                <label for="sellingPrice">Selling Price*</label>
+                <input type="number" id="sellingPrice" name="sellingPrice" min="0" step="0.01" required>
+                <div class="error" id="sellingPriceError">Selling price must be a positive number</div>
+            </div>
+
+            <div class="form-group">
+                <label for="quantity">Quantity*</label>
+                <input type="number" id="quantity" name="quantity" min="0" required>
+                <div class="error" id="quantityError">Quantity must be a positive number</div>
+            </div>
+
+            <div class="form-group">
+                <label for="color">Color</label>
+                <select id="color" name="color" multiple>
+                    <option value="black">Black</option>
+                    <option value="white">White</option>
+                    <option value="red">Red</option>
+                    <option value="blue">Blue</option>
+                    <option value="green">Green</option>
+                    <option value="yellow">Yellow</option>
+                    <option value="gray">Gray</option>
+                    <option value="brown">Brown</option>
+                </select>
+                <div class="error" id="colorError">Please select at least one color</div>
+            </div>
+            <!-- size -->
+            <div class="form-group">
+                <label for="size">Size in inch(separate multiple sizes with commas)*</label>
+                <input type="text" id="size" name="size" placeholder="e.g. 6.5 " required>
+                <div class="error" id="sizeError">Please enter at least one size</div>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status*</label>
+                <select id="status" name="status" required>
+                    <option value="">Select Status</option>
+                    <option value="Available">Available</option>
+                    <option value="Out of stock">Out of stock</option>
+                    <option value="Discontinued">Discontinued</option>
+                </select>
+                <div class="error" id="statusError">Please select a status</div>
+            </div>
+
+            <div class="form-group">
+                <label>Product Images (up to 5 images)*</label>
+                <input type="file" id="imageInput" accept="image/*" multiple>
+                <div class="error" id="imagesError">At least one image is required</div>
+                <div class="images-container" id="imagesContainer"></div>
+            </div>
+            <section> <!-- adding the tag section  -->
+                <div class="tag-container" id="tagContainer"></div>
+                <div class="input-container">
+                    <input type="text" id="tagInput" placeholder="👇 Enter a tag and press Enter or Add button">
+                </div>
+                <div class="button-group">
+                    <button type="button" onclick="addTag()">Add Tag</button>
+                    <button type="button" class="clear-tags-btn" onclick="clearAllTags()">Clear All Tags</button>
+                </div>
+                <!-- <button type="submit">Submit Tags</button> -->
+                
+                <!-- Hidden input to store tags -->
+                <input type="hidden" name="tags" id="hiddenTags">
+            </section>
+
+            <button type="submit" class="submit-btn">Create Product</button>
+            <button type="reset" id="cancel">cancel</button>
+            <div class="loading" id="loading">Submitting product...</div>
+        </form>
+    </div>
+
+    <div class="modal" id="cropperModal">
+        <div class="modal-content">
+            <div class="cropper-container">
+                <img id="cropperImage" src="" alt="Image to crop">
+            </div>
+            <div class="button-group">
+                <button class="crop-btn" id="cropBtn">Crop Image</button>
+                <button class="remove-btn" id="cancelCropBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script>
+          let cropper = null;
+        let currentImageItem = null;
+        const MAX_IMAGES = 5;
+        const cropperModal = document.getElementById('cropperModal');
+        const cropperImage = document.getElementById('cropperImage');
+        const imagesContainer = document.getElementById('imagesContainer');
+        const form = document.getElementById('productForm');
+        const imageInput = document.getElementById('imageInput');
+        const loading = document.getElementById('loading');
+        const processedImages = new Map(); // Store processed images
+
+        // tags
+        const tags = new Set();
+        const tagContainer = document.getElementById('tagContainer');
+        const tagInput = document.getElementById('tagInput');
+        const hiddenTags = document.getElementById('hiddenTags');
+
+        //function for creating tag
+        function createTag(tagText) {
+            const tag = document.createElement('span');
+            tag.className = 'tag';
+            tag.innerHTML = `
+                ${tagText}
+                <button type="button" onclick="removeTag('${tagText}')">&times;</button>
+            `;
+            return tag;
+        }
+        // function for adding that tag
+        function addTag() {
+            const tagText = tagInput.value.trim();
+            if (tagText && !tags.has(tagText)) {
+                tags.add(tagText);
+                tagContainer.appendChild(createTag(tagText));
+                tagInput.value = '';
+                updateHiddenInput();
+            }
+        }
+        //function for removing the tag
+        function removeTag(tagText) {
+            tags.delete(tagText);
+            renderTags();
+            updateHiddenInput();
+        }
+        // function for rendering the tag
+        function renderTags() {
+            tagContainer.innerHTML = '';
+            tags.forEach(tag => {
+                tagContainer.appendChild(createTag(tag));
+            });
+        }
+        // function for updating hidden input
+        function updateHiddenInput() {
+            hiddenTags.value = Array.from(tags).join(',');
+        }
+        // adding tags to the formdata 
+            function appendTagsToFormData(formData) {
+                // As JSON
+                formData.append('tags', JSON.stringify(Array.from(tags)));
+                // Or with a prefix
+                Array.from(tags).forEach((tag, index) => {
+                    formData.append(`tag_${index}`, tag);
+                });
+                return formData;
+        }
+
+        // function for clearing all tags 
+        function clearAllTags() {
+            tags.clear(); // Clear the Set of tags
+            tagContainer.innerHTML = ''; // Clear the visual display
+            hiddenTags.value = ''; // Clear the hidden input
+            tagInput.value = ''; // Clear the input field
+        }
+
+        // adding a event listener to add Tag on enter click
+        tagInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addTag();
+            }})
+
+
+
+        // Cropper functionality
+        // Handle image selection
+        imageInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            if (processedImages.size + files.length > MAX_IMAGES) {
+                alert(`You can only upload up to ${MAX_IMAGES} images`);
+                return;
+            }
+
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    createImagePreview(file);
+                }
+            });
+            
+            imageInput.value = ''; // Reset input
+        });
+
+        function createImagePreview(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const imageItem = document.createElement('div');
+                imageItem.className = 'image-item';
+                const id = 'image-' + Date.now();
+                
+                imageItem.innerHTML = `
+                    <div class="preview-container">
+                        <img src="${e.target.result}" class="preview-image" id="${id}-preview" alt="Preview">
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="crop-btn" onclick="openCropper('${id}')">Edit</button>
+                        <button type="button" class="remove-btn" onclick="removeImage('${id}')">Remove</button>
+                    </div>
+                `;
+                
+                imagesContainer.appendChild(imageItem);
+                processedImages.set(id, {
+                    element: imageItem,
+                    originalFile: file,
+                    cropped: null,
+                    isCropped: false // New flag to track if image was cropped
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function openCropper(id) {
+            const preview = document.getElementById(`${id}-preview`);
+            cropperImage.src = preview.src;
+            cropperModal.style.display = 'block';
+            currentImageItem = id;
+
+            if (cropper) {
+                cropper.destroy();
+            }
+
+            cropper = new Cropper(cropperImage, {
+                aspectRatio: 1,
+                viewMode: 2,
+                background: false
+            });
+        }
+
+        document.getElementById('cropBtn').addEventListener('click', async () => {
+            if (cropper && currentImageItem) {
+                const canvas = cropper.getCroppedCanvas();
+                const preview = document.getElementById(`${currentImageItem}-preview`);
+                preview.src = canvas.toDataURL('image/jpeg');
+                
+                // Convert canvas to blob and store it
+                const blob = await new Promise(resolve => {
+                    canvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.8);
+                });
+
+                // Store cropped image
+                const imageInfo = processedImages.get(currentImageItem);
+                if (imageInfo) {
+                    imageInfo.cropped = blob;
+                    imageInfo.isCropped = true; // Mark as cropped
+                }
+            }
+            closeCropper();
+        });
+
+        document.getElementById('cancelCropBtn').addEventListener('click', closeCropper);
+
+        function closeCropper() {
+            cropperModal.style.display = 'none';
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            currentImageItem = null;
+        }
+
+        function removeImage(id) {
+            processedImages.get(id).element.remove();
+            processedImages.delete(id);
+        }
+
+        // Form validation and submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                return;
+            }
+
+            loading.style.display = 'block';
+
+            try {
+                const formData = new FormData();
+                formData.append('name', document.getElementById('name').value);
+                formData.append('price', document.getElementById('price').value);
+                formData.append('description', document.getElementById('description').value);
+                formData.append('category', document.getElementById('category').value);
+                formData.append('brand', document.getElementById('Brand').value);
+                formData.append('regularPrice', document.getElementById('regularPrice').value);
+                formData.append('sellingPrice', document.getElementById('sellingPrice').value);
+                formData.append('quantity', document.getElementById('quantity').value);
+                
+                
+                // Get selected colors
+                const colorSelect = document.getElementById('color');
+                const selectedColors = Array.from(colorSelect.selectedOptions).map(option => option.value);
+                formData.append('colors', JSON.stringify(selectedColors));
+                
+                // Process size input - split by commas and trim whitespace
+                const sizeInput = document.getElementById('size').value;
+                const sizes = sizeInput.split(',').map(size => size.trim()).filter(size => size !== '');
+                formData.append('sizes', JSON.stringify(sizes));
+
+                formData.append('status', document.getElementById('status').value);
+
+                // Add images
+                let imageIndex = 0;
+                for (const [_, imageInfo] of processedImages) {
+                    // Use cropped image if available, otherwise use original
+                    const imageBlob = imageInfo.isCropped ? imageInfo.cropped : imageInfo.originalFile;
+                    const fileName = `image-${imageIndex + 1}.jpg`;
+                    formData.append(`images`, imageBlob, fileName);
+                    imageIndex++;
+                }
+
+                // Log the FormData contents for debugging
+                for (let pair of formData.entries()) {
+                    console.log(pair[0] + ': ' + pair[1]);
+                }
+
+                // calling the function for adding the tags to the form data 
+                appendTagsToFormData(formData);
+
+                const response = await fetch('/admin/products/addProducts', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert('Product created successfully!');
+                    form.reset();
+                    imagesContainer.innerHTML = '';
+                    processedImages.clear();
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to create product');
+                }
+            } catch (error) {
+                alert('Error creating product: ' + error.message);
+                console.log(error.message)
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+        const cancel = document.querySelector('#cancel');
+        cancel.addEventListener('click', () => {
+            form.reset();
+            imagesContainer.innerHTML = '';
+            processedImages.clear();
+        });
+
+       
+
+        function validateForm() {
+            let isValid = true;
+            
+            // Reset all errors
+            document.querySelectorAll('.error').forEach(error => {
+                error.style.display = 'none';
+            });
+
+            // Validate required fields
+            const name = document.getElementById('name').value;
+            if (!name.trim()) {
+                document.getElementById('nameError').style.display = 'block';
+                isValid = false;
+            }
+
+            const price = document.getElementById('price').value;
+            if (!price || price <= 0) {
+                document.getElementById('priceError').style.display = 'block';
+                isValid = false;
+            }
+
+            const description = document.getElementById('description').value;
+            if (!description.trim()) {
+                document.getElementById('descriptionError').style.display = 'block';
+                isValid = false;
+            }
+
+            const category = document.getElementById('category').value;
+            if (!category) {
+                document.getElementById('categoryError').style.display = 'block';
+                isValid = false;
+            }
+            const Brand = document.getElementById('Brand').value;
+            if (!category) {
+                document.getElementById('brandError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate images
+            if (processedImages.size === 0) {
+                document.getElementById('imagesError').style.display = 'block';
+                isValid = false;
+            }
+                    // New validation rules
+            const regularPrice = document.getElementById('regularPrice').value;
+            if (!regularPrice || regularPrice <= 0) {
+                document.getElementById('regularPriceError').style.display = 'block';
+                isValid = false;
+            }
+
+            const sellingPrice = document.getElementById('sellingPrice').value;
+            if (!sellingPrice || sellingPrice <= 0) {
+                document.getElementById('sellingPriceError').style.display = 'block';
+                isValid = false;
+            }
+
+            const quantity = document.getElementById('quantity').value;
+            if (!quantity || quantity < 0) {
+                document.getElementById('quantityError').style.display = 'block';
+                isValid = false;
+            }
+
+            const status = document.getElementById('status').value;
+            if (!status) {
+                document.getElementById('statusError').style.display = 'block';
+                isValid = false;
+            }
+            const sizeInput = document.getElementById('size').value.trim();
+            if (!sizeInput) {
+                document.getElementById('sizeError').style.display = 'block';
+                isValid = false;
+            }
+       
+            return isValid;
+        }
+    </script>
+
+   
+   
+   
+    <%- include('../adminFoot.ejs') %>

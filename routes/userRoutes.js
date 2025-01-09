@@ -1,6 +1,21 @@
 import express from "express";
-import { isBlocked,isLoggedIn, sentOtp, verifyOpt, registerUser, loginUser, logoutUser, getCurrentUser, changePassword, refreshAccessToken } from "../controllers/userController.js";
+import {
+  isBlocked,
+  isLoggedIn,
+  sentOtp,
+  verifyOpt,
+  registerUser,
+  loginUser,
+  logoutUser,
+  getCurrentUser,
+  changePassword,
+  refreshAccessToken,
+} from "../controllers/userController.js";
+
 import { verifyJWT } from "../middlewares/authMiddleware.js";
+
+//importing user side product controllers 
+import {displayProductUser, displayUserHome} from '../controllers/user/productController.js'
 // import {sentOtp,verifyOpt,resentOpt} from '../controllers/verifyEmail.js'
 
 const router = express.Router();
@@ -48,16 +63,22 @@ router.get('/login', isLoggedIn, (req, res) => {
 
 router.post('/login',isBlocked, loginUser);
 
-//secured routes
-router.get('/home', verifyJWT, (req, res) => {
-    console.log(req.user);
-    res.render('user/userHome.ejs', { user: req.user.username });
-});
+// ==================//secured routes
+
+router.get('/', verifyJWT, displayUserHome )
+// router.get('/', verifyJWT, (req, res) => {
+//     console.log(req.user);
+//     res.render('user/userHome.ejs', { user: req?.user });
+// });
 
 router.get('/logout', verifyJWT, logoutUser);
 router.get('/me', verifyJWT, getCurrentUser);
 router.post('/changePassword', verifyJWT, changePassword);
 router.post('/refreshAccessToken', refreshAccessToken);
+
+//===========non protected product route =============//
+
+router.get('/product/:productId',verifyJWT,displayProductUser)
 
 
 

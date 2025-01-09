@@ -68,22 +68,7 @@
 
         <!-- Main Content -->
         <div class="row">
-            <!-- Thumbnail Section -->
-            <!-- <div class="col-6 col-md-4 col-lg-3 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title mb-4">Thumbnail</h5>
-                        <div class="upload-area">
-                            <div class="thumbnail-preview">
-                                <i class="fas fa-check check-icon"></i>
-                            </div>
-                            <p class="text-muted mb-2">Drag and drop image here, or<br>click change image</p>
-                            <a href="#" class="change-image-btn">Change Image</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-             -->
+          
             <!-- General Information Section -->
             <div class="col-12 col-md-8 col-lg-9">
                 <div class="card">
@@ -104,14 +89,16 @@
                                 <input type="file" id="brandImage" name="brandImage" class="form-control" accept="image/*" onchange="previewImage(event)">
                                 <!-- Preview Container -->
                                 <div class="mt-3">
-                                    <img id="imagePreview" src="/uploads/re-images/<%= locals.brand?.imageUrl%>" alt="Image Preview" class="img-thumbnail" style="display: none; max-width: 200px;">
+                                    <img id="imagePreview" src="<%= locals.brand?.imageUrl%>" alt="Image Preview" class="img-thumbnail" style=" max-width: 200px;">
                                 </div>
                             </div>
                             <!-- Buttons -->
                             <div class="d-flex justify-content-end mb-4">
-                                <button id="Cancel" class="btn btn-light me-2">
-                                    <i class="fas fa-times"></i> Cancel
-                                </button>
+                               <button id="Cancel" class="btn btn-light me-2">
+                                   <i class=" fas fa-times"></i> <span>Cancel</span>
+                               </button> 
+                                 
+                                   
                                 <button type="submit" class="btn btn-save">
                                     <i class="fas fa-check"></i> Save Brand
                                 </button>
@@ -120,21 +107,6 @@
                     </div>
                 </div>
             </div>
-            <script>// Cancel button
-                const cancelButton = document.getElementById('Cancel');
-                cancelButton.addEventListener('click', function() {
-                    event.preventDefault();
-                    if (confirm("cancel the form?")) {
-                        txt = "You pressed OK!";
-                        window.location.href = '/admin/brand';
-                        
-                        } else {
-                        txt = "You pressed Cancel!";
-                        event.preventDefault();
-                        }
-                                            
-                });
-            </script>
             
             <script>
                 function previewImage(event) {
@@ -150,6 +122,22 @@
                         reader.readAsDataURL(imageInput.files[0]);
                     }
                 }
+            </script>
+    // cancel button
+            <script>
+                const cancelButton = document.getElementById('Cancel');
+                cancelButton.addEventListener('click', function() {
+                    event.preventDefault();
+                    if (confirm("cancel the update!")) {
+                        txt = "You pressed OK!";
+                        window.location.href = '/admin/brand';
+                        
+                        } else {
+                        txt = "You pressed Cancel!";
+                        event.preventDefault();
+                        }
+                                            
+                });
             </script>
             
             
@@ -168,13 +156,13 @@
 
 
           try {
-              const response = await fetch('/admin/brand/addBrand', {
+              const response = await fetch('/admin/brand/editBrand', {
                   method: 'POST',
                   body: formData,
               });
               const data = await response.json();
               if (data.success) {
-                  alert('Brand created successfully');
+                  alert(data.message);
                   window.location.href = '/admin/brand';
               } else {
                   alert('An error occurred. Please try again.');

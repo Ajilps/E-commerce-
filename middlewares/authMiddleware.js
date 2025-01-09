@@ -18,6 +18,9 @@ export const verifyJWT  =( async (req, res, next) => {
         if (!user) {
             return res.status(401).json({success: false, message: " invalid token"});
         }
+        if(user.isBlocked){
+            return res.status(403).redirect('/user/login');
+        }
         req.user = user;
         next();
     } catch (error) {

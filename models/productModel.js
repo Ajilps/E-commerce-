@@ -7,6 +7,10 @@ const productSchema = new Schema({
         type: String,
         required: true
     },
+    productId:{
+        type: String,
+        required: true
+    },
     regularPrice: {
         type: Number,
         required: true
@@ -19,40 +23,44 @@ const productSchema = new Schema({
         type: Number,
         default:0
     },
-    countInStock: {
+    quantity: {
         type: Number,
         required: true,
         description: 'Number of items in stock'
     },
-    imageUrl: {
-        type: String,
+    productImageUrls:{
+        type: [String],
         required: true
-    },
+     },
     description: {
         type: String,
         required: true
     },
     brand: {
-        type: String,
-        required: true
+        type: Schema.Types.ObjectId,
+        ref: 'Brand'
     },  
     category: {
-        type: String,
-        required: true
+        type: Schema.Types.ObjectId,
+        ref: 'Category'
     },
     rating: {
         type: Number,
-        required: true,
         default: 0
     },
-    color: {
-        type: String,
+    colors: {
+        type: [String],
         required: true
     },
-    size: {
-        type: String,
+    sizes: {
+        type: [String],
         required: true
-    },  
+    }, 
+     tags:{
+         type: [String],
+         required: true
+ 
+    },
     reviews: [{
         type: Schema.Types.ObjectId,
         ref: 'Review'
@@ -109,10 +117,7 @@ const productSchema = new Schema({
         type: Boolean,
         default: false
     },
-     productImage:{
-        type: [String],
-        required: true
-     },
+     
      isBlocked:{
         type: Boolean,
         default: false

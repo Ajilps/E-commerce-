@@ -6,63 +6,150 @@
     <title>Admin Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <style>
+        :root {
+            --primary-color: #4f46e5;
+            --sidebar-bg: #f8fafc;
+            --sidebar-hover: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: rgba(226, 232, 240, 0.8);
+        }
+
+        /* Previous styles remain the same */
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #f1f5f9;
+            color: var(--text-primary);
+        }
+
         .wrapper {
             display: flex;
             width: 100%;
         }
+
         .sidebar {
             min-height: 100vh;
-            background: #f8f9fa;
-            transition: all 0.3s;
+            background: var(--sidebar-bg);
+            transition: all 0.3s ease;
             position: fixed;
             z-index: 1000;
             width: 250px;
             left: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
         }
+
         .sidebar.collapsed {
             margin-left: -250px;
         }
+
+        .sidebar h4 {
+            color: var(--primary-color);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .list-group-item {
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            padding: 12px 20px;
+            transition: all 0.2s ease;
+            margin: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .list-group-item:hover {
+            background: var(--sidebar-hover);
+            color: var(--primary-color);
+            transform: translateX(4px);
+        }
+
+        .list-group-item i {
+            width: 20px;
+            text-align: center;
+        }
+
         .content {
             width: calc(100% - 250px);
             margin-left: 250px;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            min-height: 100vh;
         }
+
         .content.expanded {
             width: 100%;
             margin-left: 0;
         }
+
+        /* New and modified styles for the top navigation */
+        .top-nav {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            /* margin-bottom: 2rem; */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            backdrop-filter: blur(8px);
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
         .sidebar-toggle {
             cursor: pointer;
             padding: 10px;
             background: none;
             border: none;
-            color: #333;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .stats-card {
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
+
+        .sidebar-toggle:hover {
+            color: var(--primary-color);
+            background: var(--sidebar-hover);
+        }
+
+        .btn-light {
             background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            padding: 8px 16px;
+            transition: all 0.2s ease;
         }
-        .chart-container {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+        .btn-light:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background: var(--sidebar-hover);
         }
-        .progress {
-            height: 8px;
-        }
+
         .profile-dropdown {
             cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 8px;
+            border-radius: 12px;
         }
-        .profile-dropdown .dropdown-menu {
-            right: 0;
-            left: auto;
+
+        .profile-dropdown:hover {
+            background: var(--sidebar-hover);
         }
+
+        .dropdown-menu {
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 8px;
+            margin-top: 8px;
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 margin-left: -250px;
@@ -91,7 +178,7 @@
                 </button>
             </div>
             <div class="list-group list-group-flush">
-                <a href="/admin/home" class="list-group-item list-group-item-action ">
+                <a href="/admin/home" class="list-group-item list-group-item-action">
                     <i class="fas fa-home me-2"></i> Dashboard
                 </a>
                 <a href="#" class="list-group-item list-group-item-action">
@@ -104,26 +191,26 @@
                     <i class="fas fa-chart-bar me-2"></i> Analytics
                 </a>
                 <a href="/admin/customer" class="list-group-item list-group-item-action">
-                    <i class="fas fa-chart-bar me-2"></i> customer
+                    <i class="fas fa-users me-2"></i> Customer
                 </a>
                 <a href="/admin/category" class="list-group-item list-group-item-action">
-                    <i class="fas fa-chart-bar me-2"></i> category 
+                    <i class="fas fa-tags me-2"></i> Category
                 </a>
                 <a href="/admin/brand" class="list-group-item list-group-item-action">
-                    <i class="fas fa-chart-bar me-2"></i> Brand 
+                    <i class="fas fa-bookmark me-2"></i> Brand
                 </a>
             </div>
         </nav>
-         <!-- Main Content -->
-         <div id="content" class="content">
-            <div class="p-4">
-                <!-- Header -->
-                <div class="d-flex justify-content-between align-items-center mb-4">
+        <!-- Main Content -->
+        <div id="content" class="content">
+            <!-- Enhanced Top Navigation -->
+            <div class="top-nav">
+                <div class="d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center">
                         <button class="sidebar-toggle me-3">
                             <i class="fas fa-bars"></i>
                         </button>
-                        <!-- <h2 class="mb-0">Dashboard</h2> -->
+                        <h4 class="mb-0 d-none">Bytez.</h4>
                     </div>
                     <div class="d-flex align-items-center">
                         <div class="dropdown me-3">
@@ -138,7 +225,7 @@
                         <!-- Profile Dropdown -->
                         <div class="dropdown profile-dropdown">
                             <div class="d-flex align-items-center" data-bs-toggle="dropdown">
-                                <img src="/api/placeholder/40/40" class="rounded-circle me-2" alt="Profile">
+                                <!-- <img src="/api/placeholder/40/40" class="rounded-circle me-2" alt="Profile"> -->
                                 <div class="d-none d-md-block">
                                     <div class="fw-bold">John Doe</div>
                                     <div class="small text-muted">Admin</div>
@@ -154,3 +241,7 @@
                         </div>
                     </div>
                 </div>
+                </div>
+              
+    
+    

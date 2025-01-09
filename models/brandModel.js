@@ -15,6 +15,12 @@ const brandSchema = new Schema({
     imageUrl: {
         type: String,
         required: false
+    },public_id:{
+        type:String,
+        required:true
+    },status:{
+        type:Boolean,
+        default: true
     },
     createdBy: {
         type: Schema.Types.ObjectId,
