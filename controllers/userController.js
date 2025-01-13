@@ -66,6 +66,7 @@ const registerUser = (async (req,res)=>{
 // after getting the success message the client will call this rout with a parameter email. then this function will generate a otp and save it 
 // then render the otp verification page with the email 
 const sentOtp =(async (req,res)=>{
+    if(req.session.otpValid === true ) return res.redirect('/user/login');
     const email = req.params.email ;
    
     if (!email ) return res.send({ message: 'Email is required.' });
@@ -95,6 +96,8 @@ const sentOtp =(async (req,res)=>{
 // Next verify the otp with the res otp and also check the email and create user 
 
 const verifyOpt = (async (req,res)=>{
+        if(req.session.otpValid === true) return res.redirect('/user/login');
+
         const {otp, email }= req.body ;
 
         // testing the print
@@ -114,6 +117,8 @@ const verifyOpt = (async (req,res)=>{
         // res.send({message:'success'});
 
     if (storedOtp.otp === otp) {
+        req.session.otpValid = true;
+        console.log(`otp is valid (user Controller) ${req.session.otpValid}`);// testing
         if (Date.now() > storedOtp.expiresAt) {
             return res.status(400).send({ message: 'OTP has expired.' });
         }
@@ -200,9 +205,10 @@ const generateAccessAndRefreshToken = async (userId) => {
 const isLoggedIn = (req,res,next)=>{
     try {
         const token = req.cookies?.accessToken || req.cookies?.token;
-        if(!token){
-
-        return next()
+        const message = req.query.status;
+        if(!token || req?.session?.jwtTokenExpired === true ){
+            
+            return next()
         }
         res.redirect('/user/home')
         
@@ -252,7 +258,7 @@ const loginUser = async (req, res) =>{
             secure: true
         };
         console.log(`user from login : ${user?.role}`);// testing print statement
-        
+        req.session.jwtTokenExpired = false //setting a session for token validation 
         return res
         .status(200)
         .cookie('accessToken', accessToken, options)
@@ -271,9 +277,15 @@ const loginUser = async (req, res) =>{
 const logoutUser = async (req, res) => {
     try{
         await User.findByIdAndUpdate(req.user._id, {refreshToken: ''},{new: true});
-
+        req.session.destroy((err) => {
+            if (err) {
+              console.error('Error destroying session:', err);
+              return res.status(500).send('Logout failed'); // Important: Handle errors
+            }
+            console.log('Session destroyed');
+        })
         const options = {
-            maxAge: 24 * 60 * 60 * 1000, //1d
+           
             httpOnly: true,
             secure: true
         };

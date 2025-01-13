@@ -39,25 +39,29 @@ router.get('/forgotPassword', (req, res) => {
     res.render('resetPass/emailValidation.ejs')
 })
 
-router.get('/verifyPassEmail/:email', passSendOtp,);
+router.get('/verifyPassEmail/:email', passSendOtp);
 // verify otp 
 router.post('/verifyPassEmail', validateOtpForPassword);
 
 router.get('/resetPass/:email', (req, res) => {
-    const email = req.params.email;
-    console.log(email)// testing
-    if (!email) return res.send({ success: false, message: 'email required' })
-
-    res.status(200).render('resetPass/resetPass.ejs', { email: email })
+    if(req.session.passOtpValid === true){
+        const email = req.params.email;
+        console.log(email)// testing
+        if (!email) return res.send({ success: false, message: 'email required' })
+    
+       return res.status(200).render('resetPass/resetPass.ejs', { email: email })
+    } 
+    return res.status(401).redirect('/user/forgotPassword')
 });
-router.post('/resetPassword', resetPassword)
 
 // password reset route end 
+router.post('/resetPassword', resetPassword)
+
 
 
 
 router.get('/login', isLoggedIn, (req, res) => {
-
+    console.log('rendering login page')
     res.render('login.ejs')
 });
 
@@ -65,18 +69,16 @@ router.post('/login',isBlocked, loginUser);
 
 // ==================//secured routes
 
-router.get('/', verifyJWT, displayUserHome )
-// router.get('/', verifyJWT, (req, res) => {
-//     console.log(req.user);
-//     res.render('user/userHome.ejs', { user: req?.user });
-// });
 
 router.get('/logout', verifyJWT, logoutUser);
 router.get('/me', verifyJWT, getCurrentUser);
 router.post('/changePassword', verifyJWT, changePassword);
 router.post('/refreshAccessToken', refreshAccessToken);
 
-//===========non protected product route =============//
+//=========== protected product route =============//
+
+router.get('/', verifyJWT, displayUserHome )
+router.get('/home', verifyJWT, displayUserHome )
 
 router.get('/product/:productId',verifyJWT,displayProductUser)
 

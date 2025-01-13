@@ -18,6 +18,11 @@ import userRoutes from './routes/userRoutes.js';
 // importing google auth route
 import googleAuth from './routes/auth.js'
 
+// importing user side product controllers for lon logged in users 
+import {displayAllProducts} from './controllers/user/productController.js'
+
+
+// creating app 
 const app = express();
 
 
@@ -49,9 +54,7 @@ app.use(express.urlencoded({extended:true}));
 // Apply nocache middleware globally
 app.use(nocache());
 //landing page
-app.get('/',(req,res)=>{
-    res.render('index.ejs');
-});
+app.get('/',displayAllProducts)
 
 app.get('/pageerror',(req,res)=>{
   res.render('error.ejs');

@@ -23,6 +23,7 @@ const otpStore = {};
 
 // Generate OTP
 const generateOtp = () => crypto.randomInt(10000, 999999).toString();
+
 const resentOpt =(async (req,res)=>{
     const email = req.params.email;
     const username = req.session.username;
@@ -52,6 +53,7 @@ const resentOpt =(async (req,res)=>{
 })
 
 const passSendOtp=(async (req,res)=>{
+    if(req.session.passOtpValid === true || req.session.passOtpValid === null) return res.redirect('/user/login');
     // const email = req.body.email;
     const email = req.params.email;
     const username = req.session.username;
@@ -88,6 +90,13 @@ const validateOtpForPassword = ( async (req,res)=>{
     console.log(otp , email);
     console.log(otpStore[email]?.otp == otp);
     if(otpStore[email]?.otp == otp){
+
+        // if the otp is valid then create a session passOtpValid = true
+        req.session.passOtpValid = true;
+        req.session.email = email;
+        // delete the otp from the store
+        delete otpStore[email];
+        // redirect to the reset password page
         return res.status(200).send({ success:true, message:'verification successful'})
         // return res.render('resetPass/resetPass.ejs');
     }
@@ -97,6 +106,7 @@ const validateOtpForPassword = ( async (req,res)=>{
 
 //change password 
 const resetPassword = async (req,res)=>{
+    if(!req.session.passOtpValid === true) return res.status(400).json({success:false,message:'session expired'});
     const email = req.body.email;
     const password = req.body.password;
     console.log(email);
@@ -106,6 +116,7 @@ const resetPassword = async (req,res)=>{
         console.log(user)
         user.password = password;
         await user.save({validateBeforeSave:false});
+        req.session.passOtpValid = null;
        return res.status(201).json({success:true, message:'password updated successfully '});
     
     } catch (error) {

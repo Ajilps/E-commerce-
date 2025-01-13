@@ -4,6 +4,7 @@ import { Brand } from "../../models/brandModel.js"
 import { generateUUID } from '../../utils/refCode.js'
 import { uploadImage } from '../../utils/cloudinary.js'
 import fs from 'fs'
+import mongoose from "mongoose";
 const displayAddProducts = ( async (req,res) =>  {
     
     const brand = await Brand.find({});
@@ -78,7 +79,8 @@ const createProduct = (async (req,res)=>{
     imagePath.forEach((filePath) => {
         fs.unlinkSync(filePath);
     });
-    
+    let size = Number(sizes.split('"').join(""));
+    console.log(typeof(tags));
     // save the product to the database
     const product = new Product({
         productId,
@@ -92,8 +94,8 @@ const createProduct = (async (req,res)=>{
         quantity,
         colors,
         status,
-        tags,
-        sizes,
+        tags:JSON.parse(tags),
+        sizes:size ,
         productImageUrls: productImageUrls.map((image) => image.secure_url),
     });
     await product.save();
@@ -150,18 +152,141 @@ const blockProduct = async (req,res)=>{
    }
 }
 
-//edit product
+//display  edit product page 
 
-const editProduct = async (req,res)=>{
-  try {
-    
-  } catch (error) {
-    
-  }
+const displayEditProduct = async (req,res)=>{
+      const productId = req.params.productId;
+      // const product = await Product.findById(productId);
+      console.log(productId)
+      const product = (await Product.aggregate([
+        {
+        $match:{_id:new mongoose.Types.ObjectId(productId)}
+      },
+      {
+        $lookup:{
+          from: 'categories',
+          localField: 'category',
+          foreignField: '_id',
+          as:'category'
+        },
+      },{
+        $lookup:{
+          from: 'brands',
+          localField: 'brand',
+          foreignField: '_id',
+          as:'brand'
+        },
+      },
+      {
+        $unwind:'$category'
+      },{
+        $unwind:'$brand'
+      }]))[0];
+      
+      // console.log(product)
+      if(!product) return res.status(404).json({success:false,message:'product not found'});
+      
+      const brand = await Brand.find({});
+      const category = await Category.find({});
+      // testing
+      // console.log(product)
+     
+      res.status(200).render('admin/products/editProduct.ejs',({product,brand,category})) 
+
 
 }
 
+//save edited products 
+const saveEditedProduct = async (req,res)=>{
+  console.log("testing update on edit ")
+  const {
+    name,
+    price,
+    description,
+    category,
+    brand,
+    regularPrice,
+    sellingPrice,
+    quantity,
+    colors,
+    status,
+    tags,
+    sizes,
+  } = req.body;
+
+  const indexImg =JSON.parse( req?.body?.deleteImageIndexes);
+console.log(indexImg ) //testing
+  const productId = req.params.productId;
+
+  if(req?.files?.length > 0){
+
+    const productImageUrls = req?.files?.map(file => {
+      console.log(`file name : ${file.filename}, path : ${file.path}`);
+      return file?.path;
+    });
+    // upload images to cloudinary and get the secure urls
+    const updatedProductImageUrls = await Promise.all(
+      productImageUrls.map(async (filePath) => {
+        return await uploadImage(filePath);
+      })
+    );
+    // delete the images from the server after uploading to cloudinary
+    productImageUrls.forEach((filePath) => {
+      fs.unlinkSync(filePath);
+    });
+  
+  
+  // save the product to the database
+  let size = Number(sizes.split('"').join(""));
+    console.log(typeof(tags));
+
+  const updatedProduct = await Product.findByIdAndUpdate(
+    productId,
+    {
+      
+      $push:{ productImageUrls: {$each :updatedProductImageUrls?.map((image) => image?.secure_url)}},
+      
+    },
+    { new: true }
+  );
+}
+
+  const updatedProduct = await Product.findByIdAndUpdate(
+    productId,
+    {
+      name,
+      price,
+      description,
+      category,
+      brand,
+      regularPrice,
+      sellingPrice,
+      quantity,
+      colors,
+      status,
+      sizes,
+      $pull: { productImageUrls: { $in: indexImg } },
+      tags:JSON.parse(tags)
+    },
+    { new: true }
+  );
+
+
+  console.log("product updated successfully");
+  res.status(200).json({ success: true, message: "Product updated successfully" });
+
+}
+//end
 
 
 
-export { createProduct, displayAddProducts, listProducts, deleteProduct, unblockProduct, blockProduct }
+export {
+  createProduct,
+  displayAddProducts,
+  listProducts,
+  deleteProduct,
+  unblockProduct,
+  blockProduct,
+  displayEditProduct,
+  saveEditedProduct,
+};

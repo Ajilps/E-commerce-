@@ -85,74 +85,36 @@
                 </table>
             </div>
 
-             <!-- Pagination -->
-    <div class="pagination-container d-flex justify-content-center mt-4">
-        <% if (currentPage > 1) { %>
-            <a class="btn btn-outline-secondary me-2" href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
-        <% } %>
-        
-        <% for (let i = 1; i <= totalPages; i++) { %>
-            <% if (i === currentPage) { %>
-                <span class="btn btn-secondary me-2"><%= i %></span>
-            <% } else { %>
-                <a class="btn btn-outline-secondary me-2" href="?page=<%= i %>"><%= i %></a>
-            <% } %>
-        <% } %>
+            <!-- Pagination -->
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <span>testing</span>
 
-        <% if (currentPage < totalPages) { %>
-            <a class="btn btn-outline-secondary" href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
-        <% } %>
-    </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination mb-0">
+                        <% if (currentPage> 1) { %>
+                            <li class="page-item"><a class="page-link" href="?page=<%= currentPage - 1 %>"><i
+                                        class="fas fa-chevron-left"></i></a></li>
+                            <% } %>
+                                <% for (let i=1; i <=totalPages; i++) { %>
+                                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                        <a class="page-link" href="?page=<%= i %>">
+                                            <%= i %>
+                                        </a>
+                                    </li>
+                                    <% } %>
+                                        <% if (currentPage < totalPages) { %>
+                                            <li class="page-item"><a class="page-link"
+                                                    href="?page=<%= currentPage + 1 %>"><i
+                                                        class="fas fa-chevron-right"></i></a></li>
+                                            <% } %>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-<!-- <script>
-    // Sample data
-    const customers = [
-        {
-            name: 'John Doe',
-            email: 'johndoe@gmail.com',
-            phone: '+17034983827',
-            dob: '24 Jun 2023',
-            status: 'Active',
-            added: '24 Jun 2023'
-        },
-        // Add more customer data here
-    ];
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script> -->
 
-    // Function to create a table row for a customer
-    function createCustomerRow(customer) {
-        return `
-            <tr>
-                <td><input type="checkbox" class="form-check-input"></td>
-                <td>
-                    <div class="d-flex align-items-center">
-                        <div class="rounded-circle bg-light" style="width: 40px; height: 40px"></div>
-                        <span class="ms-2">${customer.name}</span>
-                    </div>
-                </td>
-                <td>${customer.email}</td>
-                <td>${customer.phone}</td>
-                <td>${customer.dob}</td>
-                <td>
-                    <span class="badge ${customer.status === 'Active' ? 'bg-success' : 'bg-danger'}">${customer.status}</span>
-                </td>
-                <td>${customer.added}</td>
-                <td>
-                    <button class="btn btn-sm btn-link"><i class="fas fa-edit"></i></button>
-                    <button class="btn btn-sm btn-link"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>
-        `;
-    }
-
-    // Populate table with sample data
-    const tableBody = document.getElementById('customerTableBody');
-    for (let i = 0; i < 4; i++) {
-        tableBody.innerHTML += createCustomerRow(customers[0]);
-    }
-</script> -->
 
 <%- include('adminFoot.ejs') %>

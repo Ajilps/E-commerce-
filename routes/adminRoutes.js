@@ -2,7 +2,7 @@ import {Router} from 'express'
 import {verifyJWT,isAdmin} from '../middlewares/authMiddleware.js'
 // import {} from '../controllers/admin/adminController.js'
 import {customerInfo, customerBlock, customerUnBlock} from '../controllers/admin/customerController.js'
-import {categoryInfo, addCategory, addOffer, removeOffer, unlistCategory, listCategory, editCategory, updateCategory} from '../controllers/admin/categoryController.js'
+import {categoryInfo, addCategory, addOffer, removeOffer, unlistCategory, listCategory, editCategory, updateCategory, deleteCategory} from '../controllers/admin/categoryController.js'
 import {brandInfo,addBrand, updateBrand, editBrandDisplay, deleteBrand, listBrand, Un_listBrand} from '../controllers/admin/brandController.js'
 //multer
 import multer from'multer';
@@ -12,7 +12,16 @@ import { uploads } from '../utils/multer.js'
 //end of multer
 
 //product controllers
-import {displayAddProducts,createProduct, listProducts, deleteProduct, unblockProduct, blockProduct} from '../controllers/admin/productController.js'
+import {
+  displayAddProducts,
+  createProduct,
+  listProducts,
+  deleteProduct,
+  unblockProduct,
+  blockProduct,
+  displayEditProduct,
+  saveEditedProduct,
+} from "../controllers/admin/productController.js";
 
 
 const router = Router();
@@ -32,7 +41,7 @@ router.get('/customer',customerInfo)
 router.get('/blockCustomer',customerBlock)
 router.get('/unblockCustomer',customerUnBlock)
 
-
+// category routes 
 router.get('/category',categoryInfo)
 router.get('/category/addCategory',(req,res)=>{
     res.render('admin/addCategory.ejs')
@@ -45,6 +54,7 @@ router.get('/category/unlistCategory',unlistCategory)
 router.get('/category/listCategory',listCategory)
 router.get('/category/editCategory',editCategory)
 router.post('/category/updateCategory',updateCategory)
+router.delete('/category/deleteCategory/:categoryId',deleteCategory)
 
 //brand routes
 router.get('/brand',brandInfo)
@@ -73,11 +83,14 @@ router.post('/products/addProducts',uploads.array("images",5),createProduct)
 //delete product 
 router.delete('/products/deleteProduct/:productId',deleteProduct)
 //unblocking product
-router.put('/products/unblockProduct/:productId',unblockProduct)
+router.patch('/products/unblockProduct/:productId',unblockProduct)
 
 //blocking product
+router.patch('/products/blockProduct/:productId',blockProduct)
 
-router.put('/products/blockProduct/:productId',blockProduct)
-
+//editing product display 
+router.get('/products/editProduct/:productId',displayEditProduct)
+// save edited product 
+router.post('/products/editProducts/:productId',uploads.array("images",5),saveEditedProduct)
 
 export default router;

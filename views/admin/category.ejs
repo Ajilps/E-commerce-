@@ -14,9 +14,9 @@
         <a class="btn btn-success text-white" href="/admin/category/addCategory">
             <i class="fas fa-plus me-2"></i>Create Category
         </a>
-        <button class="btn btn-outline-success">
+        <!-- <button class="btn btn-outline-success">
             <i class="fas fa-file-export me-2"></i>Export
-        </button>
+        </button> -->
     </div>
 
     <!-- Table Section -->
@@ -86,7 +86,7 @@
                                 <i class="fas fa-eye"></i>
                             </button> -->
                             <button class="btn btn-sm btn-link text-decoration-none text-danger">
-                                <i class="fas fa-trash"></i>
+                                <i onclick="deleteResource('/admin/category/deleteCategory/<%=category?._id%>')" class="fas fa-trash action-icon"></i>
                             </button>
                         </td>
                     </tr>
@@ -171,6 +171,27 @@
             console.log(err);
         });
     }
+
+     // for deleting a product
+     function deleteResource(url) {
+            if(confirm('Are you sure do you want to delete this product? !!!!!')){
+
+            
+                if (confirm('Are you sure you want to delete this product?')) {
+                    fetch(url, { method: 'DELETE' })
+                    .then(response => response.json())
+                    .then(data => {
+                            if (data.success) {
+                                location.reload();
+                            } else {
+                                alert('Failed to delete product'+data.message);
+                            }
+                        })
+                    .catch((err)=>console.log(err));
+                }
+            }
+        }
+        //end
 </script>
 
 <%- include('adminFoot.ejs') %>

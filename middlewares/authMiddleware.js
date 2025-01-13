@@ -1,7 +1,7 @@
 import {User} from '../models/userModel.js';
 import jwt from 'jsonwebtoken';
 
-export const verifyJWT  =( async (req, res, next) => {
+export const verifyJWT  = ( async (req, res, next) => {
     try {
 
         const token = req.cookies?.accessToken || req.cookies?.token;
@@ -11,30 +11,33 @@ export const verifyJWT  =( async (req, res, next) => {
         }
         console.log('before jwt') // test
 
-        const decodedToken =await jwt.verify(token, process.env.JWT_SECRET);
-        console.log(`user from jwt  ${decodedToken?.email}`);
+        const decodedToken = await jwt.verify(token, process.env.JWT_SECRET);
+        console.log(`user from jwt  ${decodedToken?.email}`); // logging the user 
         const email = decodedToken.email;
         const user = await User.findOne({email}).select('-password -refreshToken');
         if (!user) {
-            return res.status(401).json({success: false, message: " invalid token"});
+            return res.status(401).redirect('/admin/login');
         }
         if(user.isBlocked){
-            return res.status(403).redirect('/user/login');
+            console.log("user blocked")
+            return res.status(403)
+            .clearCookie('accessToken')
+            .clearCookie('refreshToken')
+            .render('userBlocked.ejs',({message:'This user is blocked by the admin. Please contact the admin for farther details ', user:user}));
         }
         req.user = user;
         next();
     } catch (error) {
-        console.log(`user authentication failed - ${error.message}`);
-        res.status(401).json({success: false, message: "Unauthorized - Invalid token"});
+        req.session.jwtTokenExpired =  true ;
+        console.log(`user authentication failed error catch - ${error}`);
+       return res.status(401)
+        .clearCookie('accessToken')
+        .clearCookie('refreshToken')
+        .redirect('/user/login?message=Token expired');
     }
 });
 
-// export const noCache = (req, res, next) => {
-//     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-//     res.header('Expires', '-1');
-//     res.header('Pragma', 'no-cache');
-//     next();
-// }
+
 
 export const isAdmin = (req, res, next) => {
     try{

@@ -53,7 +53,7 @@ const productSchema = new Schema({
         required: true
     },
     sizes: {
-        type: [String],
+        type: [Number],
         required: true
     }, 
      tags:{

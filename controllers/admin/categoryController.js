@@ -164,10 +164,11 @@ const updateCategory = async (req,res)=>{
 }
 
 const deleteCategory = async (req,res)=>{
-    const categoryId = req.query.id;
+    const categoryId = req.params.categoryId;
     const category = await Category.findByIdAndDelete({_id: categoryId});
-    console.log(category); //test
-    res.redirect('/admin/category')
+    console.log(`this category is removed form data base -  ${category}`); //test
+    if(! category) return res.status(404).json({success:false,message:'No category to delete'});
+    return res.status(200).json({success:true,message:'category removed!!!'});
 }
 
 const searchCategory = async (req,res)=>{

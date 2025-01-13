@@ -7,237 +7,25 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* .product-container {
-            max-width: 400px;
-            margin: 0 auto;
-        } */
-        /* .navbar-custom {
-            background-color: #4F46E5;
-        }
-        .category-card {
-            transition: transform 0.2s;
-        }
-        .category-card:hover {
-            transform: translateY(-5px);
-        }
-        .carousel-item {
-            height: 400px;
-            background-size: cover;
-            background-position: center;
-        }
-        .carousel-caption {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 20px;
-            border-radius: 10px;
-        }
-        .carousel-control-prev,
-        .carousel-control-next {
-            width: 5%;
-        }
-        .carousel-indicators {
-            bottom: 30px;
-        }
-
-        .product-container {
-            max-width: 400px;
-            margin: 0 auto;
-        } */
-        .navbar-custom {
-            background-color: #4F46E5;
-        }
-        .category-card {
-            transition: transform 0.2s;
-        }
-        .category-card:hover {
-            transform: translateY(-5px);
-        }
-        .carousel-item {
-            height: 400px;
-            background-size: cover;
-            background-position: center;
-        }
-        .carousel-caption {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 20px;
-            border-radius: 10px;
-        }
-        .carousel-control-prev,
-        .carousel-control-next {
-            width: 5%;
-        }
-        .carousel-indicators {
-            bottom: 30px;
-        }
-        .dropdown-menu {
-            right: 0;
-            left: auto;
-        }
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background-color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #4F46E5;
-        }
-
-        .navbar-custom {
-            background-color: #4F46E5;
-        }
-        .search-container {
-            position: relative;
-            width: 300px;
-        }
-        .search-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: none;
-            z-index: 1000;
-        }
-        .search-results.show {
-            display: block;
-        }
-        .search-result-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            color: #333;
-            text-decoration: none;
-        }
-        .search-result-item:hover {
-            background-color: #f8f9fa;
-        }
-        .search-result-item img {
-            width: 40px;
-            height: 40px;
-            margin-right: 10px;
-            object-fit: cover;
-        }
-        .search-result-info {
-            flex-grow: 1;
-        }
-        .search-result-category {
-            font-size: 0.8em;
-            color: #666;
-        }
-        .search-result-price {
-            font-weight: bold;
-            color: #4F46E5;
-        }
+       
+        
         /* product image  */
-        .productImage{
+        /* .productImage{
             width: 200px;
             height: 200px;
             object-fit: cover;
-        }
+        } */
         /* image card */
         .card{
             max-width: 200px;
             margin: 10px;
-        }
+        } 
     </style>
 </head>
 <body>
+    <%- include('userHeader.ejs') %>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
-        <div class="container">
-            <a class="navbar-brand" href="#">Bytez.</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Categories</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Deals</a>
-                    </li>
-                </ul>
-                <!-- Updated Search Form with Dropdown -->
-                <div class="search-container me-3">
-                    <input class="form-control" type="search" placeholder="Search products..." id="searchInput">
-                    <div class="search-results" id="searchResults">
-                        <a href="#" class="search-result-item">
-                            <img src="/api/placeholder/40/40" alt="iPhone 13">
-                            <div class="search-result-info">
-                                <div>iPhone 13</div>
-                                <div class="search-result-category">Electronics > Smartphones</div>
-                            </div>
-                            <div class="search-result-price">$799</div>
-                        </a>
-                        <a href="#" class="search-result-item">
-                            <img src="/api/placeholder/40/40" alt="MacBook Pro">
-                            <div class="search-result-info">
-                                <div>MacBook Pro</div>
-                                <div class="search-result-category">Electronics > Laptops</div>
-                            </div>
-                            <div class="search-result-price">$1299</div>
-                        </a>
-                        <a href="#" class="search-result-item">
-                            <img src="/api/placeholder/40/40" alt="AirPods Pro">
-                            <div class="search-result-info">
-                                <div>AirPods Pro</div>
-                                <div class="search-result-category">Electronics > Audio</div>
-                            </div>
-                            <div class="search-result-price">$249</div>
-                        </a>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center">
-                    <!-- User Dropdown -->
-                    <div class="dropdown me-3">
-                        <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="user-avatar me-2">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <span class="d-none d-lg-inline"><%=user.username%></span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li class="dropdown-item-text">
-                                <div class="d-flex align-items-center px-2">
-                                    <div class="user-avatar me-2">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                    <div>
-                                        <strong><%=user?.username%></strong>
-                                        <div class="text-muted small"><%=user?.email%></div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-user-circle me-2"></i>My Profile</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-box me-2"></i>My Orders</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-heart me-2"></i>Wishlist</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="/user/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                        </ul>
-                    </div>
-                    <!-- Shopping Cart -->
-                    <a href="#" class="btn btn-outline-light position-relative">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            3
-                            <span class="visually-hidden">items in cart</span>
-                        </span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
+   
 
     <!-- Hero Section with Carousel -->
     <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -282,145 +70,69 @@
         </button>
     </div>
 
-    <!-- Categories -->
-    <!-- <div class="container my-5">
-        <h2 class="mb-4">Shop by Category</h2>
+   
+
+    <!-- Products Section -->
+    <!-- <div class="container my-5 ">
+        <h2 class="mb-4">Featured Products</h2>
         <div class="product-container">
-            <div class="row g-4">
-                <div class="col-6">
-                    <div class="card category-card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Electronics</h5>
-                            <ul class="list-unstyled">
-                                <li>Laptops</li>
-                                <li>Smartphones</li>
-                                <li>Accessories</li>
-                            </ul>
+            <div class="row row-cols-1 row-cols-md-4 g-5">
+                <% //products.forEach(product => { %>
+                    
+                    <div class="col ">
+                        <a href="/user/product/<%= //product._id %>" class="text-decoration-none ">
+                        <div class="card h-100">
+                            <img src="<%=//product.productImageUrls[0]%>" class="card-img-top  productImage img-fluid" alt="Product 1" >
+                            <div class="card-body">
+                                <h5 class="card-title"><%=//product.name%></h5>
+                                <p class="card-text">₹<%=// product.sellingPrice%></p>
+                                <p><%=// product.category.name%> </p>
+                                <p>offer: <%= //product.category.categoryOffers || 0%>  %</p>
+                             
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="card category-card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Fashion</h5>
-                            <ul class="list-unstyled">
-                                <li>Men's Wear</li>
-                                <li>Women's Wear</li>
-                                <li>Kids</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                    </a>
+                    </div> 
+                <%// });  %>
             </div>
         </div>
     </div> -->
 
-    <!-- Products Section -->
-    <div class="container my-5 ">
-        <h2 class="mb-4">Featured Products</h2>
-        <div class="product-container">
-            <div class="row row-cols-1 row-cols-md-4 g-4">
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="<%=products[1].productImageUrls[0]%>" class="card-img-top  productImage" alt="Product 1" >
-                        <div class="card-body">
-                            <h5 class="card-title">Product 1</h5>
-                            <p class="card-text">$99.99</p>
-                            <a href="/user/product/<%= products[1]._id %>"><button class="btn btn-primary w-100">Add to Cart</button></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100 ">
-                        <img src="<%=products[0].productImageUrls[0]%>" class="card-img-top productImage" alt="Product 2">
-                        <div class="card-body">
-                            <h5 class="card-title">Product 2</h5>
-                            <p class="card-text">$149.99</p>
-                            <button class="btn btn-primary w-100">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="/api/placeholder/400/300" class="card-img-top productImage" alt="Product 2">
-                        <div class="card-body">
-                            <h5 class="card-title">Product 2</h5>
-                            <p class="card-text">$149.99</p>
-                            <button class="btn btn-primary w-100">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="/api/placeholder/400/300" class="card-img-top productImage" alt="Product 2">
-                        <div class="card-body">
-                            <h5 class="card-title">Product 2</h5>
-                            <p class="card-text">$149.99</p>
-                            <button class="btn btn-primary w-100">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
+    <!--  -->
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-12 mb-3">
+                <h4 class="text-dark">Recommended for you</h4>
+                <p class="text-secondary small">Personalized picks!</p>
             </div>
         </div>
-    </div>
-    <!-- Products Section -->
-    <div class="container my-5">
-        <h2 class="mb-4">Featured Products</h2>
-        <div class="product-container">
-            <div class="row row-cols-1 row-cols-md-2 g-4">
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="/api/placeholder/400/300" class="card-img-top" alt="Product 1">
-                        <div class="card-body">
-                            <h5 class="card-title">Product 1</h5>
-                            <p class="card-text">$99.99</p>
-                            <button class="btn btn-primary w-100">Add to Cart</button>
+        <div class="row g-4">
+            <!-- Product Card 1 -->
+            <% products.forEach(product => { %>
+            <div class="col-md-4">
+                <a href="/user/product/<%= product._id %>" class="text-decoration-none">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="h-75">
+                                <img src= "<%=product.productImageUrls[0]%>" alt="Product Image" class="img-fluid mb-3 " />
+                            </div>
+                            <h6 class="card-title text-dark"><%=product.name%></h6>
+                            <div class="d-flex justify-content-center align-items-center gap-2">
+                                <span class="text-dark fw-bold">₹<%= product.sellingPrice%></span>
+                                <span class="text-decoration-line-through text-secondary">₹<%= product.regularPrice%></span>
+                                <span class="text-success"><%= product.category.categoryOffers || 0%>% off</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="/api/placeholder/400/300" class="card-img-top" alt="Product 2">
-                        <div class="card-body">
-                            <h5 class="card-title">Product 2</h5>
-                            <p class="card-text">$149.99</p>
-                            <button class="btn btn-primary w-100">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
+                </a>
             </div>
-        </div>
-    </div>
-    <!-- Products Section -->
-    <div class="container my-5">
-        <h2 class="mb-4">Featured Products</h2>
-        <div class="product-container">
-            <div class="row row-cols-1 row-cols-md-2 g-4">
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="/api/placeholder/400/300" class="card-img-top" alt="Product 1">
-                        <div class="card-body">
-                            <h5 class="card-title">Product 1</h5>
-                            <p class="card-text">$99.99</p>
-                            <button class="btn btn-primary w-100">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="/api/placeholder/400/300" class="card-img-top" alt="Product 2">
-                        <div class="card-body">
-                            <h5 class="card-title">Product 2</h5>
-                            <p class="card-text">$149.99</p>
-                            <button class="btn btn-primary w-100">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+            <% });  %>
 
+        
+    <!--  -->
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <%- include ('userFooter.ejs') %>
     <script>
          // Search functionality
          const searchInput = document.getElementById('searchInput');

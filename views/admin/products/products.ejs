@@ -83,7 +83,7 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="#">All Products</a>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link" href="#">Published</a>
                 </li>
                 <li class="nav-item">
@@ -94,7 +94,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Out of Stock</a>
-                </li>
+                </li> -->
             </ul>
 
             <!-- Table -->
@@ -109,7 +109,7 @@
                         <th>Category</th>
                         <th>Brand</th>
                         <th>Stock</th>
-                        <th>Price</th>
+                        <th> Price</th>
                         <th>Status</th>
                         <th>list/ un list</th>
                         <th>Added</th>
@@ -146,8 +146,8 @@
                         </td>
                         <td>24 Jun 2023</td>
                         <td>
-                            <i class="fas fa-edit action-icon"></i>
-                            <i class="fas fa-eye action-icon"></i>
+                            <a href="/admin/products/editProduct/<%=p?._id%>"><i class="fas fa-edit action-icon"></i></a>
+                            <!-- <i class="fas fa-eye action-icon"></i> -->
                             <i onclick="deleteResource('/admin/products/deleteProduct/<%=p?._id%>')" class="fas fa-trash action-icon"></i>
                         </td>
                     </tr>
@@ -205,7 +205,7 @@
         // for changing the product status
         function changeProductStatus(productId, status) {
             fetch(`/admin/products/changeProductStatus/${productId}`, {
-                method: 'PUT',
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -226,7 +226,7 @@
         // function for unblocking product
         function unblockProduct(productId) {
             fetch(`/admin/products/unblockProduct/${productId}`, {
-                method: 'PUT',
+                method: 'PATCH',
             })
            .then(response => response.json())
            .then(data => {
@@ -242,7 +242,7 @@
         // function for blocking product
         function blockProduct(productId) {
             fetch(`/admin/products/blockProduct/${productId}`, {
-                method: 'PUT',
+                method: 'PATCH',
             })
            .then(response => response.json())
            .then(data => {

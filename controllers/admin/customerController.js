@@ -2,14 +2,10 @@ import {User} from '../../models/userModel.js';
 
 const customerInfo = async (req,res)=>{
     try{
-       let search = "";
-       if(req.query.search){
-        search = req.query.search;
-       }
-       let page = 1 ;
-       if(req.query.page){
-        page = req.query.page
-       }
+       let search = req?.query?.search || "";
+
+       let page =req?.query?.page || 1 ;
+       
        const limit = 3;
        const userData = await User.find({
         role:"user",
@@ -37,14 +33,20 @@ const customerInfo = async (req,res)=>{
 }
 const customerBlock = (async (req,res)=>{
     try {
-        let id = req.query.id;
+        let id = req.query?.id;
+        if(!id) return res.status(400).json({success:false,message:'Invalid request or Invalid Id '});
+        
         await User.updateOne({_id:id},{$set:{isBlocked:true}});
+
         res.redirect('/admin/customer')
     } catch (error) {
         console.log(error)
         res.redirect('/pageerror')        
     }
 });
+
+
+
 const customerUnBlock = (async (req,res)=>{
     try {
         let id = req.query.id;

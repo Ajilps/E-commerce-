@@ -443,26 +443,28 @@
         <form id="productForm">
             <div class="form-group">
                 <label for="name">Product Name*</label>
-                <input type="text" id="name" name="name" required>
+                <input type="text" id="name" name="name" value="<%= product.name%>" required>
                 <div class="error" id="nameError">Product name is required</div>
             </div>
 
             <div class="form-group">
                 <label for="price">Price*(MRP)</label>
-                <input type="number" id="price" name="price" min="0" step="0.01" required>
+                <input type="number" id="price" name="price" min="0" step="0.01" value="<%= product.regularPrice%>" required>
                 <div class="error" id="priceError">Price must be a positive number</div>
             </div>
 
             <div class="form-group">
                 <label for="description">Description*</label>
-                <textarea id="description" name="description" required></textarea>
+                <textarea id="description" name="description" required><%= product.description %></textarea>
                 <div class="error" id="descriptionError">Description is required</div>
             </div>
 
             <div class="form-group">
                 <label for="category">Category*</label>
                 <select id="category" name="category" required>
-                    <option value="">Select a category</option>
+               
+                    
+                    <option value="<%= product.category._id %>"><%= product.category.name %></option>
                     <% if(category){ %>
 
                         <% category.forEach(c => { %>
@@ -478,7 +480,7 @@
             <div class="form-group">
                 <label for="Brand">Brand*</label>
                 <select id="Brand" name="Brand" required>
-                    <option value="">Select a Brand</option>
+                    <option value="<%= product.brand._id %>"><%= product.brand.name %></option>
                     <% if(brand){ %>
                         <% brand.forEach(b => { %>
                             <option value="<%= b._id %>"><%= b.name %></option>
@@ -488,22 +490,22 @@
                 </select>
                 <div class="error" id="brandError">Please select a Brand</div>
             </div>
-            <!-- price  -->
+            <!-- size  -->
             <div class="form-group">
                 <label for="regularPrice">Regular Price*</label>
-                <input type="number" id="regularPrice" name="regularPrice" min="0" step="0.01" required>
+                <input type="number" id="regularPrice" name="regularPrice" min="0" step="0.01" value="<%= product.regularPrice%>" required>
                 <div class="error" id="regularPriceError">Regular price must be a positive number</div>
             </div>
 
             <div class="form-group">
                 <label for="sellingPrice">Selling Price*</label>
-                <input type="number" id="sellingPrice" name="sellingPrice" min="0" step="0.01" required>
+                <input type="number" id="sellingPrice" name="sellingPrice" min="0" step="0.01" value="<%= product.sellingPrice%>" required>
                 <div class="error" id="sellingPriceError">Selling price must be a positive number</div>
             </div>
 
             <div class="form-group">
                 <label for="quantity">Quantity*</label>
-                <input type="number" id="quantity" name="quantity" min="0" required>
+                <input type="number" id="quantity" name="quantity" min="0" value="<%= product.quantity%>" required>
                 <div class="error" id="quantityError">Quantity must be a positive number</div>
             </div>
 
@@ -523,30 +525,47 @@
             </div>
             <!-- size -->
             <div class="form-group">
-                <label for="size">Screen Size in inch(separate multiple sizes with commas)*</label>
-                <input type="number" id="size" name="size" min="0" step="0.01" placeholder="e.g. 6.5 " required>
+                <label for="size">Size in inch(separate multiple sizes with commas)*</label>
+                <input type="number" id="size" name="size" min="0" step="0.01" placeholder="e.g. 6.5 " value="<%= product.sizes%>" required>
                 <div class="error" id="sizeError">Please enter at least one size</div>
             </div>
 
             <div class="form-group">
                 <label for="status">Status*</label>
                 <select id="status" name="status" required>
-                    <option value="">Select Status</option>
+                    <option value="<%= product.status%>"><%= product.status %></option>
                     <option value="Available">Available</option>
                     <option value="Out of stock">Out of stock</option>
                     <option value="Discontinued">Discontinued</option>
                 </select>
                 <div class="error" id="statusError">Please select a status</div>
             </div>
-
+           
+            <!--  image  -->
             <div class="form-group">
                 <label>Product Images (up to 5 images)*</label>
                 <input type="file" id="imageInput" accept="image/*" multiple>
                 <div class="error" id="imagesError">At least one image is required</div>
-                <div class="images-container" id="imagesContainer"></div>
+                <div class="images-container" id="imagesContainer">
+                    <% if(product.productImageUrls && product.productImageUrls.length > 0){ %>
+                        <% product.productImageUrls.forEach((image, index) => { %>
+                            <div class="container-fluid">
+                                <div class="position-relative" style="max-width: 150px;">
+                                  <img src="<%=image%>" alt="placeholder" class="img-fluid mb-2">
+                                  <button class="btn btn-danger w-100 productImage"  imgIndex="<%= image %>">Delete</button>
+                                </div>
+                              </div>
+                        <% }) %>
+                    <% } %>
+                </div>
             </div>
             <section> <!-- adding the tag section  -->
-                <div class="tag-container" id="tagContainer"></div>
+                <% let tagFromDb = product.tags%> 
+                <div class="tag-container" id="tagContainer" tagess= <%=tagFromDb %>>
+
+                        
+                  
+                </div>
                 <div class="input-container">
                     <input type="text" id="tagInput" placeholder="👇 Enter a tag and press Enter or Add button">
                 </div>
@@ -556,6 +575,8 @@
                 </div>
                 <!-- <button type="submit">Submit Tags</button> -->
                 
+            
+                </div>
                 <!-- Hidden input to store tags -->
                 <input type="hidden" name="tags" id="hiddenTags">
             </section>
@@ -569,8 +590,9 @@
     <div class="modal" id="cropperModal">
         <div class="modal-content">
             <div class="cropper-container">
-                <img id="cropperImage" src="" alt="Image to crop">
+                <img id="cropperImage" style="max-width: 300px;" src="" alt="Image to crop">
             </div>
+      
             <div class="button-group">
                 <button class="crop-btn" id="cropBtn">Crop Image</button>
                 <button class="remove-btn" id="cancelCropBtn">Cancel</button>
@@ -579,7 +601,63 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
+        let deletedImageIndexes =[]
+          const imageDeleteButtons = document.querySelectorAll('.productImage');
+          imageDeleteButtons.forEach(button => {
+            button.addEventListener('click', function(e){
+                e.preventDefault()
+                const imageIndex = String(this.getAttribute('imgIndex'));
+                // console.log(imageIndex)
+                deletedImageIndexes.push(imageIndex);
+                deleteProductImage(this);
+
+            });
+          });
+          const deleteProductImage =async(button)=>{
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                    // removing the image container from the form 
+                        const imageContainer = button.parentNode
+                        console.log(`image button ${imageContainer.parentNode.remove()}`);
+                    
+                        Swal.fire(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success'
+                        )
+                    }
+                });
+
+
+          }
+           
+       
+
+    </script>
+
+
+    <script>
+    window.onload = function(e){
+                let tagFromDb = document.getElementById('tagContainer').attributes.tagess.value;
+                let arr =Array.from( tagFromDb.split(","))
+          arr.forEach(tag=>{
+            addTag(tag)
+              
+        })
+            }
+       
+
           let cropper = null;
         let currentImageItem = null;
         const MAX_IMAGES = 5;
@@ -608,8 +686,8 @@
             return tag;
         }
         // function for adding that tag
-        function addTag() {
-            const tagText = tagInput.value.trim();
+        function addTag(tag) {
+            const tagText = tag ||tagInput.value.trim();
             if (tagText && !tags.has(tagText)) {
                 tags.add(tagText);
                 tagContainer.appendChild(createTag(tagText));
@@ -720,7 +798,7 @@
 
             cropper = new Cropper(cropperImage, {
                 aspectRatio: 1,
-                viewMode: 2,
+                viewMode: 0,
                 background: false
             });
         }
@@ -765,7 +843,7 @@
         // Form validation and submission
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+           
             if (!validateForm()) {
                 return;
             }
@@ -792,7 +870,8 @@
                 // Process size input - split by commas and trim whitespace
                 const sizeInput = document.getElementById('size').value;
                 // const sizes = sizeInput.split(',').map(size => size.trim()).filter(size => size !== '');
-                formData.append('sizes', JSON.stringify(sizeInput));
+                
+                formData.append('sizes', sizeInput);
 
                 formData.append('status', document.getElementById('status').value);
 
@@ -813,20 +892,24 @@
 
                 // calling the function for adding the tags to the form data 
                 appendTagsToFormData(formData);
-
-                const response = await fetch('/admin/products/addProducts', {
+                // appendDeletedImageIndexToFormData(formData)
+                formData.append('deleteImageIndexes',JSON.stringify( deletedImageIndexes) );
+                        //testing 
+                        console.log(`image index from form data  ${formData.deleteImageIndexes}`)
+                const response = await fetch('/admin/products/editProducts/<%= product?._id%>', {
                     method: 'POST',
                     body: formData
                 });
 
                 if (response.ok) {
-                    alert('Product created successfully!');
+                    alert('Product updated successfully!');
                     form.reset();
                     imagesContainer.innerHTML = '';
                     processedImages.clear();
+                    window.location.href ='/admin/products';
                 } else {
                     const errorData = await response.json();
-                    throw new Error(errorData.message || 'Failed to create product');
+                    throw new Error(errorData.message || 'Failed to update product');
                 }
             } catch (error) {
                 alert('Error creating product: ' + error.message);
@@ -883,10 +966,10 @@
             }
 
             // Validate images
-            if (processedImages.size === 0) {
-                document.getElementById('imagesError').style.display = 'block';
-                isValid = false;
-            }
+            // if (processedImages.size === 0) {
+            //     document.getElementById('imagesError').style.display = 'block';
+            //     isValid = true;
+            // }
                     // New validation rules
             const regularPrice = document.getElementById('regularPrice').value;
             if (!regularPrice || regularPrice <= 0) {
@@ -911,7 +994,7 @@
                 document.getElementById('statusError').style.display = 'block';
                 isValid = false;
             }
-            const sizeInput = document.getElementById('size').value;
+            const sizeInput = document.getElementById('size').value.trim();
             if (!sizeInput) {
                 document.getElementById('sizeError').style.display = 'block';
                 isValid = false;
