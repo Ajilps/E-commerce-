@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <style>
+        .product-img {
+            max-width: 120px;
+            height: auto;
+        }
+        .quantity-input {
+            width: 60px;
+            text-align: center;
+        }
+        .cart-item {
+            border-bottom: 1px solid #eee;
+            padding: 1rem 0;
+        }
+        .summary-card {
+            position: sticky;
+            top: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <%- include('../userHeader.ejs') %>
+   
+
+    <div class="container py-4">
+        <div class="row g-4">
+            <!-- Cart Items -->
+            <div class="col-lg-8">
+                <div class="bg-white rounded shadow-sm p-4">
+                    <h2 class="mb-4">Shopping Cart</h2>
+                    
+                    <!-- Cart Item 1 -->
+                    <div class="cart-item">
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <img src="/api/placeholder/120/120" alt="Product" class="product-img">
+                            </div>
+                            <div class="col-md-5">
+                                <h5>Smartphone Pro Max</h5>
+                                <p class="text-muted mb-0">Black, 256GB</p>
+                                <span class="badge bg-success">In Stock</span>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    <button class="btn btn-outline-secondary">-</button>
+                                    <input type="text" class="form-control quantity-input" value="1">
+                                    <button class="btn btn-outline-secondary">+</button>
+                                </div>
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <p class="h5 mb-0">$149.99</p>
+                                <button class="btn btn-link text-danger p-0 mt-2">
+                                    <i class="bi bi-trash"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cart Item 2 -->
+                    <div class="cart-item">
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <img src="/api/placeholder/120/120" alt="Product" class="product-img">
+                            </div>
+                            <div class="col-md-5">
+                                <h5>Smartphone Ultra</h5>
+                                <p class="text-muted mb-0">Silver, 128GB</p>
+                                <span class="badge bg-success">In Stock</span>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    <button class="btn btn-outline-secondary">-</button>
+                                    <input type="text" class="form-control quantity-input" value="1">
+                                    <button class="btn btn-outline-secondary">+</button>
+                                </div>
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <p class="h5 mb-0">$149.99</p>
+                                <button class="btn btn-link text-danger p-0 mt-2">
+                                    <i class="bi bi-trash"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-4">
+                <div class="bg-white rounded shadow-sm p-4 summary-card">
+                    <h4 class="mb-4">Order Summary</h4>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Price</span>
+                        <span>$319.98</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Discount</span>
+                        <span>-$31.90</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Shipping</span>
+                        <span class="text-success">Free</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Coupon Applied</span>
+                        <span>$0.00</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-4">
+                        <strong>Total</strong>
+                        <strong>$288.08</strong>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Coupon Code">
+                            <button class="btn btn-outline-dark">Apply</button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-dark w-100">Proceed to Checkout</button>
+                    
+                    <div class="text-muted text-center mt-3">
+                        <small>Estimated Delivery by Feb 1, 2023</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<%- include('../userFooter.ejs') %>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -10,6 +10,12 @@ import {
   getCurrentUser,
   changePassword,
   refreshAccessToken,
+  getCurrentUserDetails,
+  getCurrentUserShippingDetails,
+  displayChangePassword,
+  showShippingAddressForm,
+  displayWallet,
+  displayCart,
 } from "../controllers/userController.js";
 
 import { verifyJWT } from "../middlewares/authMiddleware.js";
@@ -69,13 +75,20 @@ router.post('/login',isBlocked, loginUser);
 
 // ==================//secured routes
 
+//=========== protected product route =============//
 
 router.get('/logout', verifyJWT, logoutUser);
-router.get('/me', verifyJWT, getCurrentUser);
 router.post('/changePassword', verifyJWT, changePassword);
 router.post('/refreshAccessToken', refreshAccessToken);
+router.get('/me', verifyJWT, getCurrentUser);
+router.get('/accountDetails', verifyJWT, getCurrentUserDetails);
+router.get('/shippingAddress', verifyJWT, getCurrentUserShippingDetails);
+router.get('/shippingAddress/addAddress', verifyJWT, showShippingAddressForm);
+router.get('/accountDetails/changePassword', verifyJWT, displayChangePassword);
+router.get('/wallet', verifyJWT, displayWallet);
+router.get('/cart', verifyJWT, displayCart);
 
-//=========== protected product route =============//
+
 
 router.get('/', verifyJWT, displayUserHome )
 router.get('/home', verifyJWT, displayUserHome )

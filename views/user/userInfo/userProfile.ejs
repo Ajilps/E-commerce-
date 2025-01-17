@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .sidebar {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            color: #666;
+            text-decoration: none;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        
+        .sidebar-link.active {
+            background-color: #000;
+            color: white;
+        }
+        
+        .sidebar-link i {
+            margin-right: 10px;
+        }
+        
+        .settings-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .avatar-container {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 30px;
+        }
+        
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .form-control {
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .change-password-btn {
+            background: none;
+            border: none;
+            color: #007bff;
+            text-decoration: underline;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../userHeader.ejs') %>
+    <div class="container py-4">
+        <nav class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/user/home">HOME</a></li>
+                <li class="breadcrumb-item"><a href="#">PROFILE</a></li>
+                <li class="breadcrumb-item active">ACCOUNT</li>
+            </ol>
+        </nav>
+        
+        <div class="row">
+            <%- include('./userSidePanel.ejs') %>
+            
+            <div class="col-lg-9">
+                <div class="settings-card">
+                    <h5 class="mb-4">ACCOUNT SETTING</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-3 text-center mb-4">
+                            <div class="avatar-container mx-auto">
+                                <img src="/api/placeholder/120/120" alt="Profile Picture">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-9">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">First Name</label>
+                                            <input type="text" class="form-control" value="muhammed">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Second Name</label>
+                                            <input type="text" class="form-control" value="nabeel">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" class="form-control" value="nabeel@gmail.com">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">&nbsp;</label>
+                                            <button type="button" class="btn btn-outline-dark d-block">
+                                                <a href="/user/accountDetails/changePassword">Change Password <i class="fas fa-external-link-alt ms-2"></i></a>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Secondary Email</label>
+                                            <input type="email" class="form-control" placeholder="-">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Phone Number</label>
+                                            <input type="tel" class="form-control" value="+91 70349 85827">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Country/Region</label>
+                                            <select class="form-select">
+                                                <option selected>India</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">States</label>
+                                            <select class="form-select">
+                                                <option selected>Kerala</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Pin Code</label>
+                                            <input type="text" class="form-control" value="673570">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4">
+                                    <button type="submit" class="btn btn-dark px-4">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<%- include('../userFooter.ejs')%>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

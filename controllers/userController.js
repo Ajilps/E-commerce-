@@ -167,16 +167,6 @@ const isBlocked =(async (req,res,next)=>{
 })  
 
 
-
-
-
-
-
-
-
-
-
-
 const generateAccessAndRefreshToken = async (userId) => {
     try {
         
@@ -364,15 +354,91 @@ const changePassword = async (req, res) => {
 
 const getCurrentUser = async (req, res) => {
     try {
-        return res.status(200).json({success: true, user: req.user});
+        return res.status(200).render('user/userInfo/userDashboard.ejs',{success: true, user: req.user});
 
     }   catch (error) {
         console.error(`user retrieval failed - ${error.message}`);
     }
 }
 
+//  get Current User Details
+
+const getCurrentUserDetails = async (req,res)=>{
+    try {
+       
+        return res.status(200).render('user/userInfo/userProfile.ejs',{success: true, user: req.user});
+    } catch (error) {
+        console.error(`user details retrieval failed - ${error.message}`);
+    }
+
+}
+
+// getCurrentUserShippingDetails
+const getCurrentUserShippingDetails = async (req,res) =>{
+    try {
+       
+        return res.status(200).render('user/userInfo/userShipping.ejs',{success: true, user: req.user});
+    } catch (error) {
+        console.error(`user shipping details retrieval failed - ${error.message}`);
+    }
+}
+
+//displayChangePassword
+const displayChangePassword = async (req,res) =>{
+    try {
+       
+        return res.status(200).render('user/userInfo/changePassword.ejs',{success: true,user: req.user});
+    } catch (error) {
+        console.error(`password change view failed - ${error.message}`);
+    }
+}
+
+// addShippingAddress get
+const showShippingAddressForm = async (req,res) => {
+    try {
+       
+        return res.status(200).render('user/userInfo/addAddress.ejs',{ user: req.user });
+    } catch (error) {
+        console.error(`user shipping address addition failed - ${error.message}`);
+    }
+}
+
+// display wallet 
+const displayWallet = async (req,res) =>{
+    try {
+       
+        return res.status(200).render('user/userInfo/userWallet.ejs',{ success: true, user: req.user});
+    } catch (error) {
+        console.error(`user wallet retrieval failed - ${error.message}`);
+    }
+}
+
+// display cart
+const displayCart = async (req,res) =>{
+    try {
+       
+        return res.status(200).render('user/cart/cart.ejs',{ success: true, user: req.user});
+    } catch (error) {
+        console.error(`user cart retrieval failed - ${error.message}`);
+    }
+}
 
 
-
-
-export {isBlocked, isLoggedIn, verifyOpt, sentOtp ,registerUser, loginUser, logoutUser, refreshAccessToken, changePassword, getCurrentUser,userData};
+export {
+  isBlocked,
+  isLoggedIn,
+  verifyOpt,
+  sentOtp,
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+  changePassword,
+  getCurrentUser,
+  getCurrentUserDetails,
+  getCurrentUserShippingDetails,
+  displayChangePassword,
+  showShippingAddressForm,
+  displayWallet,
+  displayCart,
+};

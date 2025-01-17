@@ -736,6 +736,9 @@
         // console.log('Calculating selling price...');
         calculateSellingPrice(categoryOfferValue, brandOfferValue);
         });
+        // const calculatePriceOnSubmit = ()=>{
+        //     calculateSellingPrice(categoryOfferValue, brandOfferValue);
+        // }
 
         function calculateSellingPrice(categoryOfferValue, brandOfferValue) {
         const regularPrice = parseFloat(document.getElementById('regularPrice')?.value) || 0;
@@ -971,7 +974,8 @@
             specKeys.forEach((key, index) => {
                 specifications[key] = specValues[index];
             });
-            console.log(specifications)// testing
+            // console.log(specifications)// testing
+            calculateSellingPrice(categoryOfferValue, brandOfferValue); //calling price calculate on submit
             
             if (!validateForm()) {
                 return;

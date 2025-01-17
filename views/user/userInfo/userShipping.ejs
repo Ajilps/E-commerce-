@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipping Address</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .sidebar {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            color: #666;
+            text-decoration: none;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        
+        .sidebar-link.active {
+            background-color: #000;
+            color: white;
+        }
+        
+        .sidebar-link i {
+            margin-right: 10px;
+        }
+        
+        .address-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+            border: 1px solid #eee;
+        }
+        
+        .address-card .default-badge {
+            position: absolute;
+            right: 100px;
+            top: 20px;
+            background-color: #87CEEB;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+        
+        .address-actions {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+        }
+        
+        .address-actions button {
+            background: none;
+            border: none;
+            color: #666;
+            margin-left: 10px;
+        }
+        
+        .radio-container {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        
+        .radio-container.active {
+            border-color: #87CEEB;
+        }
+        
+        .radio-container .inner-circle {
+            width: 12px;
+            height: 12px;
+            background-color: #87CEEB;
+            border-radius: 50%;
+            display: none;
+        }
+        
+        .radio-container.active .inner-circle {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../userHeader.ejs') %>
+    <div class="container py-4">
+        <nav class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">HOME</a></li>
+                <li class="breadcrumb-item"><a href="#">PROFILE</a></li>
+                <li class="breadcrumb-item active">ADDRESS</li>
+            </ol>
+        </nav>
+        
+        <div class="row">
+            <%- include('./userSidePanel.ejs') %>
+            
+            <div class="col-lg-9">
+                <div class="d-flex justify-content-end mb-4">
+                    <button class="btn btn-dark">
+                        <a href="/user/shippingAddress/addAddress">Add Address</a>
+                    </button>
+                </div>
+                
+                <div class="address-card">
+                    <div class="d-flex">
+                        <div class="radio-container active">
+                            <div class="inner-circle"></div>
+                        </div>
+                        <div>
+                            <h6 class="mb-2">Muhammed Nabeel C</h6>
+                            <p class="mb-1">Micro Grafein, Theriveedu Road, Kozhikode, KERALA 673032, India</p>
+                            <p class="mb-0 text-muted">Phone Number: 7558963319</p>
+                        </div>
+                    </div>
+                    <span class="default-badge">Default</span>
+                    <div class="address-actions">
+                        <button><i class="fas fa-trash"></i></button>
+                        <button><i class="fas fa-edit"></i></button>
+                    </div>
+                </div>
+                
+                <div class="address-card">
+                    <div class="d-flex">
+                        <div class="radio-container">
+                            <div class="inner-circle"></div>
+                        </div>
+                        <div>
+                            <h6 class="mb-2">Muhammed Nabeel C</h6>
+                            <p class="mb-1">Micro Grafein, Theriveedu Road, Kozhikode, KERALA 673032, India</p>
+                            <p class="mb-0 text-muted">Phone Number: 7558963319</p>
+                        </div>
+                    </div>
+                    <div class="address-actions">
+                        <button><i class="fas fa-trash"></i></button>
+                        <button><i class="fas fa-edit"></i></button>
+                    </div>
+                </div>
+                
+                <div class="address-card">
+                    <div class="d-flex">
+                        <div class="radio-container">
+                            <div class="inner-circle"></div>
+                        </div>
+                        <div>
+                            <h6 class="mb-2">Muhammed Nabeel C</h6>
+                            <p class="mb-1">Micro Grafein, Theriveedu Road, Kozhikode, KERALA 673032, India</p>
+                            <p class="mb-0 text-muted">Phone Number: 7558963319</p>
+                        </div>
+                    </div>
+                    <div class="address-actions">
+                        <button><i class="fas fa-trash"></i></button>
+                        <button><i class="fas fa-edit"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<%- include('../userFooter.ejs') %>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

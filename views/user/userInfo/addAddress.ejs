@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Address</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .sidebar {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            color: #666;
+            text-decoration: none;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        
+        .sidebar-link.active {
+            background-color: #000;
+            color: white;
+        }
+        
+        .sidebar-link i {
+            margin-right: 10px;
+        }
+        
+        .form-control, .form-select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .form-label {
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .optional-label {
+            color: #999;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../userHeader.ejs')%>
+    <div class="container py-4">
+        <nav class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">HOME</a></li>
+                <li class="breadcrumb-item"><a href="#">PROFILE</a></li>
+                <li class="breadcrumb-item"><a href="#">ADDRESS</a></li>
+                <li class="breadcrumb-item active">ADD</li>
+            </ol>
+        </nav>
+        
+        <div class="row">
+            <%- include('./userSidePanel.ejs') %>
+            
+            <div class="col-lg-9">
+                <div class="bg-white p-4 rounded-3 shadow-sm">
+                    <h5 class="mb-4">Create Address</h5>
+                    
+                    <form>
+                        <div class="row mb-3">
+                            <label class="form-label">User name</label>
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <input type="text" class="form-control" placeholder="First name">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" placeholder="Last name">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Company Name <span class="optional-label">(Optional)</span></label>
+                            <input type="text" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            <textarea class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-3 mb-3 mb-md-0">
+                                <label class="form-label">Country</label>
+                                <select class="form-select">
+                                    <option value="">Select...</option>
+                                    <option>United States</option>
+                                    <option>Canada</option>
+                                    <option>United Kingdom</option>
+                                    <option>Australia</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3 mb-md-0">
+                                <label class="form-label">Region/State</label>
+                                <select class="form-select">
+                                    <option value="">Select...</option>
+                                    <option>California</option>
+                                    <option>Texas</option>
+                                    <option>New York</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3 mb-md-0">
+                                <label class="form-label">City</label>
+                                <select class="form-select">
+                                    <option value="">Select...</option>
+                                    <option>Los Angeles</option>
+                                    <option>San Francisco</option>
+                                    <option>San Diego</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Zip Code</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-dark px-4">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<%- include('../userFooter.ejs') %>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

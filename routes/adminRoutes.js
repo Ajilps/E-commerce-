@@ -23,6 +23,7 @@ import {
   saveEditedProduct,
   getTags,
   displayAddVariant,
+  saveVariantProduct,
 } from "../controllers/admin/productController.js";
 
 
@@ -102,6 +103,8 @@ router.get('/products/editProduct/getTags/:productId',getTags)
 router.post('/products/editProducts/:productId',uploads.array("images",5),saveEditedProduct);
 // Adding new variant for a product
 router.get('/products/addVariant/:productId',displayAddVariant);
+
+router.post('/products/addVariant/:parentId',uploads.array("images",5), saveVariantProduct)
 
 
 
