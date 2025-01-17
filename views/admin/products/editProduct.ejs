@@ -446,60 +446,99 @@
                 <input type="text" id="name" name="name" value="<%= product.name%>" required>
                 <div class="error" id="nameError">Product name is required</div>
             </div>
-
-            <div class="form-group">
-                <label for="price">Price*(MRP)</label>
-                <input type="number" id="price" name="price" min="0" step="0.01" value="<%= product.regularPrice%>" required>
-                <div class="error" id="priceError">Price must be a positive number</div>
-            </div>
-
+            <!-- Description -->
             <div class="form-group">
                 <label for="description">Description*</label>
                 <textarea id="description" name="description" required><%= product.description %></textarea>
                 <div class="error" id="descriptionError">Description is required</div>
             </div>
-
+                   <!-- product specification -->
+                    
+            
+                   <div class="container form-container">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <span class="text-center mb-4">Product Specifications</span>
+                            
+                                <div id="specifications">
+                                    <div class="specification-container card-body p-3 mb-3 fade-in">
+                                        <% let spec =product?.specifications %>
+                                        <% Object.entries(spec).forEach(([key,value])=>{ %>
+                                            <div class="row g-3">
+                                                <div class="col-md-5">
+                                                    <input type="text" class="form-control" name="specKey[]" placeholder="Specification Key" value="<%= key %>" required>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <input type="text" class="form-control" name="specValue[]" placeholder="Specification Value" value="<%= value %>" required>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button type="button" class="btn btn-outline-danger w-100" onclick="removeSpecification(this)">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                    <% }) %>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-4">
+                                    <!-- <button type="submit" class="btn btn-primary btn-lg px-5">
+                                        <i class="fas fa-save me-2"></i>Submit
+                                    </button> -->
+                                    <button type="button" class="btn btn-success btn-float" onclick="addSpecification()">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                          
+                        </div>
+                    </div>
+                </div><!-- end of spec -->
+                
+                <!-- price (MRP) -->
+                <div class="form-group">
+                    <label for="regularPrice">Regular Price* (MRP)</label>
+                    <input type="number" id="regularPrice" name="regularPrice" min="0" step="0.01" value="<%= product.regularPrice%>" required>
+                    <div class="error" id="regularPriceError">Regular price must be a positive number</div>
+                </div>
+                
+                 <!-- offer -->
+            <div class="form-group">
+                <label for="offer">offer %</label>
+                <input type="number" id="offer" name="offer" min="0" step="0.01" value="<%= product.offer%>" >
+                <div class="error" id="offerError">offer must be a positive number</div>
+            </div>
+                
+            <!-- category -->
             <div class="form-group">
                 <label for="category">Category*</label>
                 <select id="category" name="category" required>
-               
-                    
-                    <option value="<%= product.category._id %>"><%= product.category.name %></option>
+                    <option offer="<%= product.category.categoryOffers   %>"  value="<%= product.category._id %>"><%= product.category.name %> - <%= product.category.categoryOffers %> %  </option>
                     <% if(category){ %>
-
                         <% category.forEach(c => { %>
-                            <option value="<%= c._id %>"><%= c.name %></option>
+                            <option offer="<%= c.categoryOffers %>" value="<%= c._id %>"><%= c.name %> - (offer <%= c.categoryOffers || 0  %> %)</option>
                         <% }) %>
                     <% }  %>
-                    
-                    
                 </select>
                 <div class="error" id="categoryError">Please select a category</div>
             </div>
+
             <!-- brand  -->
             <div class="form-group">
                 <label for="Brand">Brand*</label>
                 <select id="Brand" name="Brand" required>
-                    <option value="<%= product.brand._id %>"><%= product.brand.name %></option>
+                    <option offer="<%= product.brand.offer %>" value="<%= product.brand._id %>"><%= product.brand.name %> - <%=product.brand.offer %> %</option>
                     <% if(brand){ %>
                         <% brand.forEach(b => { %>
-                            <option value="<%= b._id %>"><%= b.name %></option>
+                            <option offer="<%= b.offer || 0 %>" value="<%= b._id %>"><%= b.name %> - (offer <%= b.offer || 0 %> %)</option>
                         <% }) %>
                     <% } %>
-                    
                 </select>
                 <div class="error" id="brandError">Please select a Brand</div>
             </div>
-            <!-- size  -->
-            <div class="form-group">
-                <label for="regularPrice">Regular Price*</label>
-                <input type="number" id="regularPrice" name="regularPrice" min="0" step="0.01" value="<%= product.regularPrice%>" required>
-                <div class="error" id="regularPriceError">Regular price must be a positive number</div>
-            </div>
-
+           
+            <!-- Selling price Automatically calculated on click -->
             <div class="form-group">
                 <label for="sellingPrice">Selling Price*</label>
-                <input type="number" id="sellingPrice" name="sellingPrice" min="0" step="0.01" value="<%= product.sellingPrice%>" required>
+                <input type="number" id="sellingPrice" name="sellingPrice" min="0" step="0.01" value="<%= product.sellingPrice%>" required readonly>
                 <div class="error" id="sellingPriceError">Selling price must be a positive number</div>
             </div>
 
@@ -560,11 +599,8 @@
                 </div>
             </div>
             <section> <!-- adding the tag section  -->
-                <% let tagFromDb = product.tags%> 
-                <div class="tag-container" id="tagContainer" tagess= <%=tagFromDb %>>
-
-                        
-                  
+                
+                <div class="tag-container" id="tagContainer" >
                 </div>
                 <div class="input-container">
                     <input type="text" id="tagInput" placeholder="👇 Enter a tag and press Enter or Add button">
@@ -581,7 +617,7 @@
                 <input type="hidden" name="tags" id="hiddenTags">
             </section>
 
-            <button type="submit" class="submit-btn">Create Product</button>
+            <button type="submit" class="submit-btn">Update Product</button>
             <button type="reset" id="cancel">cancel</button>
             <div class="loading" id="loading">Submitting product...</div>
         </form>
@@ -602,6 +638,39 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        //function for specification
+        function addSpecification() {
+            const specContainer = document.getElementById('specifications');
+            const newSpec = document.createElement('div');
+            newSpec.classList.add('specification-container', 'card-body', 'p-3', 'mb-3', 'fade-in');
+            newSpec.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <input type="text" class="form-control" name="specKey[]" placeholder="Specification Key" required>
+                    </div>
+                    <div class="col-md-5">
+                        <input type="text" class="form-control" name="specValue[]" placeholder="Specification Value" required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-outline-danger w-100" onclick="removeSpecification(this)">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            specContainer.appendChild(newSpec);
+        }
+
+        function removeSpecification(button) {
+            const specContainer = button.closest('.specification-container');
+            specContainer.style.opacity = '0';
+            specContainer.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                specContainer.remove();
+            }, 300);
+        }
+    </script>
 
     <script>
         let deletedImageIndexes =[]
@@ -645,17 +714,65 @@
        
 
     </script>
+    <script>
+        //calculating selling price by calculating regular price and offer and brand offer and category offer 
+        // take the biggest offer and and calculate the offer with it 
+        let categoryOfferValue = 0;
+        let brandOfferValue = 0;
+
+        document.getElementById('category').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        categoryOfferValue = parseFloat(selectedOption.getAttribute('offer')) || 0;
+        // console.log('Selected Category Offer:', categoryOfferValue);
+        });
+
+        document.getElementById('Brand').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        brandOfferValue = parseFloat(selectedOption.getAttribute('offer')) || 0;
+        // console.log('Selected Brand Offer:', brandOfferValue)
+        });
+
+        document.getElementById('sellingPrice').addEventListener('click', (e) => {
+        // console.log('Calculating selling price...');
+        calculateSellingPrice(categoryOfferValue, brandOfferValue);
+        });
+
+        function calculateSellingPrice(categoryOfferValue, brandOfferValue) {
+        const regularPrice = parseFloat(document.getElementById('regularPrice')?.value) || 0;
+        const offer = parseFloat(document.getElementById('offer')?.value) || 0;
+
+        // Logging for testing purposes
+        // console.log('Brand Offer:', brandOfferValue, 'Category Offer:', categoryOfferValue);
+
+        let sellingPrice = regularPrice;
+
+        if (offer > 0) {
+            sellingPrice -= regularPrice * (offer / 100);
+        }
+        if (brandOfferValue > 0) {
+            sellingPrice -= sellingPrice * (brandOfferValue / 100);
+        }
+        if (categoryOfferValue > 0) {
+            sellingPrice -= sellingPrice * (categoryOfferValue / 100);
+        }
+
+        document.getElementById('sellingPrice').value = sellingPrice.toFixed(2); // Rounding to 2 decimal places
+        }
+    </script>
 
 
     <script>
-    window.onload = function(e){
-                let tagFromDb = document.getElementById('tagContainer').attributes.tagess.value;
-                let arr =Array.from( tagFromDb.split(","))
-          arr.forEach(tag=>{
-            addTag(tag)
-              
-        })
-            }
+        // sending a get request for fetching the tags of the product 
+    window.onload = async function(e){
+            const tagFromDb = await fetch('getTags/<%= product._id%>')
+            .then((result)=> result.json()).then((data)=>{
+                data.tags.forEach((tag)=>{
+                    addTag(tag);
+                    console.log(tag)
+                });
+            });
+        }
+            
        
 
           let cropper = null;
@@ -844,23 +961,33 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
            
+            
+            loading.style.display = 'block';
+            
+            // adding all specification to a object
+            const specKeys = Array.from(document.querySelectorAll('input[name="specKey[]"]')).map(input => input.value);
+            const specValues = Array.from(document.querySelectorAll('input[name="specValue[]"]')).map(input => input.value);
+            const specifications = {};
+            specKeys.forEach((key, index) => {
+                specifications[key] = specValues[index];
+            });
+            console.log(specifications)// testing
+            
             if (!validateForm()) {
                 return;
             }
 
-            loading.style.display = 'block';
-
             try {
                 const formData = new FormData();
                 formData.append('name', document.getElementById('name').value);
-                formData.append('price', document.getElementById('price').value);
+                formData.append('offer', document.getElementById('offer').value);
                 formData.append('description', document.getElementById('description').value);
                 formData.append('category', document.getElementById('category').value);
                 formData.append('brand', document.getElementById('Brand').value);
                 formData.append('regularPrice', document.getElementById('regularPrice').value);
                 formData.append('sellingPrice', document.getElementById('sellingPrice').value);
                 formData.append('quantity', document.getElementById('quantity').value);
-                
+                formData.append('specifications', JSON.stringify( specifications));
                 
                 // Get selected colors
                 const colorSelect = document.getElementById('color');
@@ -902,16 +1029,30 @@
                 });
 
                 if (response.ok) {
-                    alert('Product updated successfully!');
-                    form.reset();
-                    imagesContainer.innerHTML = '';
-                    processedImages.clear();
-                    window.location.href ='/admin/products';
+                   
+                    Swal.fire({
+                        title: 'Success',
+                        text: 'Product updated successfully!',
+                        icon:'success',
+                        confirmButtonText: 'Okay'
+                    }).then(()=>{
+
+                        form.reset();
+                        imagesContainer.innerHTML = '';
+                        processedImages.clear();
+                        window.location.href ='/admin/products';
+                    })
                 } else {
                     const errorData = await response.json();
                     throw new Error(errorData.message || 'Failed to update product');
                 }
             } catch (error) {
+                Swal.fire({
+                        title: 'fail',
+                        text: 'Failed to update product! ',
+                        icon:'error',
+                        confirmButtonText: 'Okay'
+                    })
                 alert('Error creating product: ' + error.message);
                 console.log(error.message)
             } finally {
@@ -942,11 +1083,11 @@
                 isValid = false;
             }
 
-            const price = document.getElementById('price').value;
-            if (!price || price <= 0) {
-                document.getElementById('priceError').style.display = 'block';
-                isValid = false;
-            }
+            // const price = document.getElementById('price').value;
+            // if (!price || price <= 0) {
+            //     document.getElementById('priceError').style.display = 'block';
+            //     isValid = false;
+            // }
 
             const description = document.getElementById('description').value;
             if (!description.trim()) {

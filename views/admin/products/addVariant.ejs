@@ -418,26 +418,22 @@
         .form-group {
             animation: fadeIn 0.5s ease-out forwards;
         }
-        .cropper-container { 
-            max-width:600px; /* Adjust the width as needed */ 
-           max-height: 600px;  /* Adjust the height as needed */
-         }
     </style>
 
 
-    <div class="container">
+<div>
+    <nav class="mt-4 mb-4">
+        <ul class="breadcrumb">
+            <li><a href="/admin/home">Dashboard</a></li>
+            <li><a href="/admin/products">Product List</a></li>
+            <li class="active">Create Product</li>
+        </ul>
+    </nav>
+</div>
+<div class="container">
+        <h1 class="page-title">Create Product Variant</h1>
         <header class="page-header">
             <div class="header-container">
-                <div>
-                    <h1 class="page-title">Create Product</h1>
-                    <nav>
-                        <ul class="breadcrumb">
-                            <li><a href="#">Dashboard</a></li>
-                            <li><a href="#">Product List</a></li>
-                            <li class="active">Create Product</li>
-                        </ul>
-                    </nav>
-                </div>
                 <!-- <div class="header-actions">
                     <button class="btn btn-cancel">Cancel</button>
                     <button class="btn btn-save">Save Product</button>
@@ -446,8 +442,12 @@
         </header>
         <form id="productForm">
             <div class="form-group">
+                <label for="parentProduct">Variant of Id: <%= parentProduct.productId %></label>
+                <label for="parentProduct">Variant of name: <%= parentProduct.name %></label>
+            </div>
+            <div class="form-group">
                 <label for="name">Product Name*</label>
-                <input type="text" id="name" name="name" required>
+                <input type="text" id="name" name="name" value="<%= parentProduct.name %>" required>
                 <div class="error" id="nameError">Product name is required</div>
             </div>
 
@@ -457,98 +457,41 @@
                 <textarea id="description" name="description" required></textarea>
                 <div class="error" id="descriptionError">Description is required</div>
             </div>
-            <!-- product specification -->
-            
-                <div class="container form-container">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <span class="text-center mb-4">Product Specifications</span>
-                            
-                                <div id="specifications">
-                                    <div class="specification-container card-body p-3 mb-3 fade-in">
-                                        <div class="row g-3">
-                                            <div class="col-md-5">
-                                                <input type="text" class="form-control" name="specKey[]" placeholder="Specification Key" value="RAM/Storage" required>
-                                            </div>
-                                            <div class="col-md-5">
-                                                <input type="text" class="form-control" name="specValue[]" placeholder="Specification Value" required>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <button type="button" class="btn btn-outline-danger w-100" onclick="removeSpecification(this)">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-center mt-4">
-                                    <!-- <button type="submit" class="btn btn-primary btn-lg px-5">
-                                        <i class="fas fa-save me-2"></i>Submit
-                                    </button> -->
-                                    <button type="button" class="btn btn-success btn-float" onclick="addSpecification()">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                </div>
-                          
-                        </div>
-                    </div>
-                </div>
-            
-            
+            <div class="form-group">
+                <label for="price">Offer</label>
+                <input type="number" id="offer" name="offer" min="0" step="0.01" required>
+                <div class="error" id="offerError">Price must be a positive number</div>
+            </div>
             <!-- price  -->
             <div class="form-group">
-                <label for="regularPrice">Regular Price* (MRP)</label>
+                <label for="regularPrice">Regular Price*</label>
                 <input type="number" id="regularPrice" name="regularPrice" min="0" step="0.01" required>
                 <div class="error" id="regularPriceError">Regular price must be a positive number</div>
             </div>
 
-            <!-- offer -->
             <div class="form-group">
-                <label for="offer">offer %</label>
-                <input type="number" id="offer" name="offer" min="0" step="0.01" >
-                <div class="error" id="offerError">offer must be a positive number</div>
+                <label for="sellingPrice">Selling Price*</label>
+                <input type="number" id="sellingPrice" name="sellingPrice" min="0" step="0.01" required>
+                <div class="error" id="sellingPriceError">Selling price must be a positive number</div>
             </div>
-        <!-- category -->
-            <div class="form-group">
-                
-                <label for="category">Category*</label>
-                <select  id="category" name="category" required>
-                    <option  value="">Select a category</option>
-                    <% if(category){ %>
 
-                        <% category.forEach(c => { %>
-                            <%if(c.isListed){%>
-                            <option offer="<%= c.categoryOffers   %>" value="<%= c._id %>"><%= c.name %> - (offer <%= c.categoryOffers || 0  %> %)</option>
-                        <% }}) %>
-                    <% }  %>
-                    
-                    
+            <div class="form-group">
+                <label for="category">Category*</label>
+                <select id="category" name="category" required>
+                    <option value="<%= parentProduct.category._id %>"><%= parentProduct.category.name %></option>
+                   
                 </select>
                 <div class="error" id="categoryError">Please select a category</div>
-                
             </div>
             <!-- brand  -->
             <div class="form-group">
                 <label for="Brand">Brand*</label>
                 <select id="Brand" name="Brand" required>
-                    <option  value="">Select a Brand</option>
-                    <% if(brand){ %>
-                        <% brand.forEach(b => { %>
-                            <% if(b.isListed){ %>
-                            <option offer="<%= b.offer || 0 %>" value="<%= b._id %>"> <%= b.name %> - (offer <%= b.offer || 0 %> %)</option>
-                        <% }}) %>
-                    <% } %>
+                    <option value="<%= parentProduct.brand._id %>"><%= parentProduct.brand.name %></option>
+                   
                     
                 </select>
                 <div class="error" id="brandError">Please select a Brand</div>
-            </div>
-
-             <!-- selling price -->
-            
-             <div class="form-group">
-                <label for="sellingPrice">Selling Price </label>
-                <input type="number" id="sellingPrice" name="sellingPrice" readonly >
-                <div class="error" id="sellingPriceError">Selling price must be a positive number</div>
             </div>
 
             <div class="form-group">
@@ -581,7 +524,7 @@
             <div class="form-group">
                 <label for="status">Status*</label>
                 <select id="status" name="status" required>
-                  
+                    <option value="">Select Status</option>
                     <option value="Available">Available</option>
                     <option value="Out of stock">Out of stock</option>
                     <option value="Discontinued">Discontinued</option>
@@ -629,85 +572,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-    <script>
-        //calculating selling price by calculating regular price and offer and brand offer and category offer 
-        // take the biggest offer and and calculate the offer with it 
-        // add event listener on regularPrice, offer, Brand, category
-        let categoryOfferValue = 0;
-        let brandOfferValue = 0;
-
-        document.getElementById('category').addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        categoryOfferValue = parseFloat(selectedOption.getAttribute('offer')) || 0;
-        // console.log('Selected Category Offer:', categoryOfferValue);
-        });
-
-        document.getElementById('Brand').addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        brandOfferValue = parseFloat(selectedOption.getAttribute('offer')) || 0;
-        // console.log('Selected Brand Offer:', brandOfferValue)
-        });
-
-        document.getElementById('sellingPrice').addEventListener('click', (e) => {
-        // console.log('Calculating selling price...');
-        calculateSellingPrice(categoryOfferValue, brandOfferValue);
-        });
-
-        function calculateSellingPrice(categoryOfferValue, brandOfferValue) {
-        const regularPrice = parseFloat(document.getElementById('regularPrice')?.value) || 0;
-        const offer = parseFloat(document.getElementById('offer')?.value) || 0;
-
-        // Logging for testing purposes
-        // console.log('Brand Offer:', brandOfferValue, 'Category Offer:', categoryOfferValue);
-
-        let sellingPrice = regularPrice;
-
-        if (offer > 0) {
-            sellingPrice -= regularPrice * (offer / 100);
-        }
-        if (brandOfferValue > 0) {
-            sellingPrice -= sellingPrice * (brandOfferValue / 100);
-        }
-        if (categoryOfferValue > 0) {
-            sellingPrice -= sellingPrice * (categoryOfferValue / 100);
-        }
-
-        document.getElementById('sellingPrice').value = sellingPrice.toFixed(2); // Rounding to 2 decimal places
-        }
-    </script>
-    <script>
-        //function for specification
-        function addSpecification() {
-            const specContainer = document.getElementById('specifications');
-            const newSpec = document.createElement('div');
-            newSpec.classList.add('specification-container', 'card-body', 'p-3', 'mb-3', 'fade-in');
-            newSpec.innerHTML = `
-                <div class="row g-3">
-                    <div class="col-md-5">
-                        <input type="text" class="form-control" name="specKey[]" placeholder="Specification Key" required>
-                    </div>
-                    <div class="col-md-5">
-                        <input type="text" class="form-control" name="specValue[]" placeholder="Specification Value" required>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="button" class="btn btn-outline-danger w-100" onclick="removeSpecification(this)">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-            specContainer.appendChild(newSpec);
-        }
-
-        function removeSpecification(button) {
-            const specContainer = button.closest('.specification-container');
-            specContainer.style.opacity = '0';
-            specContainer.style.transform = 'translateY(20px)';
-            setTimeout(() => {
-                specContainer.remove();
-            }, 300);
-        }
-    </script>
     <script>
           let cropper = null;
         let currentImageItem = null;
@@ -846,9 +710,8 @@
 
             cropper = new Cropper(cropperImage, {
                 aspectRatio: 1,
-                viewMode: 0,
-                background: false,
-               
+                viewMode: 2,
+                background: false
             });
         }
 
@@ -898,14 +761,6 @@
             }
 
             loading.style.display = 'block';
-            // adding all specification to a object
-            const specKeys = Array.from(document.querySelectorAll('input[name="specKey[]"]')).map(input => input.value);
-            const specValues = Array.from(document.querySelectorAll('input[name="specValue[]"]')).map(input => input.value);
-            const specifications = {};
-            specKeys.forEach((key, index) => {
-                specifications[key] = specValues[index];
-            });
-            console.log(specifications)// testing
 
             try {
                 const formData = new FormData();
@@ -917,7 +772,6 @@
                 formData.append('regularPrice', document.getElementById('regularPrice').value);
                 formData.append('sellingPrice', document.getElementById('sellingPrice').value);
                 formData.append('quantity', document.getElementById('quantity').value);
-                formData.append('specifications', JSON.stringify( specifications));
                 
                 
                 // Get selected colors

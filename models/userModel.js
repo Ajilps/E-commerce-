@@ -8,8 +8,6 @@ const addressSchema = new Schema({
     phone:{
         type: Number,
         required: false,
-        sparse: true,
-        default: null
     },
     street: {
         type: String,

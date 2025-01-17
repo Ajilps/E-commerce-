@@ -59,6 +59,87 @@
             font-size: 0.9rem;
         }
     </style>
+    <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+    
+        .product-slider {
+          max-width: 800px;
+          margin: 20px auto;
+          padding: 20px;
+        }
+    
+        .main-image-container {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 1;
+          margin-bottom: 20px;
+          overflow: hidden;
+          border-radius: 8px;
+          background-color: #f3f4f6;
+        }
+    
+        .main-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: opacity 0.3s ease;
+        }
+    
+        .zoom-container {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+    
+        .main-image-container:hover .zoom-container {
+          opacity: 1;
+        }
+    
+        .thumbnails {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 10px;
+        }
+    
+        .thumbnail {
+          position: relative;
+          aspect-ratio: 1;
+          border-radius: 6px;
+          overflow: hidden;
+          cursor: pointer;
+          border: 2px solid transparent;
+          transition: border-color 0.3s ease;
+        }
+    
+        .thumbnail.active {
+          border-color: #3b82f6;
+        }
+    
+        .thumbnail img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+    
+        @media (max-width: 640px) {
+          .product-slider {
+            padding: 10px;
+          }
+          
+          .thumbnails {
+            gap: 5px;
+          }
+        }
+      </style>
 </head>
 <body>
     <%- include('../userHeader.ejs') %>
@@ -74,16 +155,24 @@
 
         <div class="row">
             <!-- Product Images -->
-            <div class="col-md-6">
-                <img src="<%=product.productImageUrls[0]%>" class="product-img mb-3" alt="iPhone 15 Pro">
-                <div class="d-flex gap-2">
-                    <button class="btn btn-light"><i class="fas fa-chevron-left"></i></button>
-                    <img src="<%=product.productImageUrls[1]%>" class="thumbnail" alt="Thumbnail 1">
-                    <img src="<%=product.productImageUrls[2]%>" class="thumbnail" alt="Thumbnail 2">
-                    <img src="<%=product.productImageUrls[3]%>" class="thumbnail" alt="Thumbnail 3">
-                    <button class="btn btn-light"><i class="fas fa-chevron-right"></i></button>
+            <div class="product-slider col-md-6">
+                <div class="main-image-container" id="mainContainer">
+                  <img src="<%=product.productImageUrls[0]%>" alt="Product" class="main-image" id="mainImage">
+                  <div class="zoom-container" id="zoomContainer"></div>
                 </div>
-            </div>
+            
+                <div class="thumbnails">
+                    <% product.productImageUrls.forEach((imageUrl)=>{%>
+
+                        <div class="thumbnail active">
+                          <img src="<%=imageUrl%>" alt="Thumbnail 1" onclick="changeImage(this.src, this)">
+                        </div>
+                        <%  }) %>
+                 
+                </div>
+              </div>
+
+
 
             <!-- Product Details -->
             <div class="col-md-6">
@@ -219,5 +308,32 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const mainContainer = document.getElementById('mainContainer');
+        const mainImage = document.getElementById('mainImage');
+        const zoomContainer = document.getElementById('zoomContainer');
+    
+        // Handle image change from thumbnails
+        function changeImage(src, thumbnail) {
+          mainImage.src = src;
+          zoomContainer.style.backgroundImage = `url(${src})`;
+          
+          // Update active thumbnail
+          document.querySelector('.thumbnail.active').classList.remove('active');
+          thumbnail.parentElement.classList.add('active');
+        }
+    
+        // Handle zoom effect
+        mainContainer.addEventListener('mousemove', (e) => {
+          const rect = mainContainer.getBoundingClientRect();
+          const x = ((e.clientX - rect.left) / rect.width) * 100;
+          const y = ((e.clientY - rect.top) / rect.height) * 100;
+    
+          zoomContainer.style.backgroundImage = `url(${mainImage.src})`;
+          zoomContainer.style.backgroundPosition = `${x}% ${y}%`;
+          zoomContainer.style.backgroundSize = '200%';
+          zoomContainer.style.backgroundRepeat = 'no-repeat';
+        });
+      </script>
 </body>
 </html>

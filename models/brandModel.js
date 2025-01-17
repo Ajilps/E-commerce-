@@ -15,7 +15,11 @@ const brandSchema = new Schema({
     imageUrl: {
         type: String,
         required: false
-    },public_id:{
+    },offer:{
+        type: Number,
+        default: 0
+    }
+    ,public_id:{
         type:String,
         required:true
     },status:{

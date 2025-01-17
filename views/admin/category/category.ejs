@@ -1,4 +1,4 @@
-<%- include('adminHead.ejs') %>
+<%- include('../adminHead.ejs') %>
 
 <div class="container mt-4">
     <!-- Header Section -->
@@ -47,7 +47,13 @@
                         </td>
                         
                         <!-- Offer Price -->
-                        <td><%= category.categoryOffers || 0 %> %</td>
+                        <td>
+                        <% if (category.categoryOffers) { %>
+                            <span class="badge rounded-pill alert-success text-black"><%= category.categoryOffers%>%</span>
+                            <% } else { %>
+                                <span class="badge rounded-pill alert-danger text-black">No Offer</span>
+                                <% } %>
+                            </td>
 
                         <!-- Offer Actions -->
                         <td>
@@ -117,60 +123,93 @@
 
 
 <script>
-    // Function to handle user input from the prompt
-   async function addOffer(categoryId) {
-        // Show a prompt to the user
-        const  amount =await prompt("Please enter the offer percentage ");
-    console.log(amount);
-    if(amount){
-        // Send a POST request to the server
-       await fetch(`/admin/category/addOffer`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ offer:amount,categoryId })
-        }).then((res)=>{
-            return res.json();
-        }).then((data)=>{
-            if(data.success){
-                alert("Offer added successfully");
-            }
-            else{
-                alert(data.message || "An error occurred. Please try again later.");
-            }
-            location.reload();
-        }).catch((err)=>{
-            console.log(err);
-        });
+// add offer and delete offer 
+    async function addOffer(categoryId) {
+    
+    Swal.fire({ title: 'Enter a number', 
+    input: 'number', 
+    inputAttributes: { min: 1, max: 100 }, 
+    showCancelButton: true, confirmButtonText: 'Submit',
+    cancelButtonText: 'Cancel' })
+    .then((result) => { 
+        if (result.isConfirmed) { 
+            const number = result.value; 
 
-        // Parse the JSON response
-     
-    }
-    }
-
-    async function removeOffer(categoryId) {
-        // Send a POST request to the server
-        await fetch(`/admin/category/removeOffer`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ categoryId })
-        }).then((res)=>{
-            return res.json();
-        }).then((data)=>{
-            if(data.success){
-                alert("Offer removed successfully");
-            }
-            else{
-                alert(data.message || "An error occurred. Please try again later.");
-            }
-            location.reload();
-        }).catch((err)=>{
-            console.log(err);
+            fetch(`/admin/category/addOffer`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ offer:number,categoryId })
+    }).then((res)=>{
+        return res.json();
+    }).then((data)=>{
+        if(data.success){
+            Swal.fire({ title: 'Success!',
+            text: 'offer added successfully.',
+            icon: 'success',
+            confirmButtonText: 'Great' })
+            .then(()=>location.reload());
+        }
+        else{
+        
+            Swal.fire({ title: 'Oops!', 
+            text: `Something went wrong.${data.message || ""} `,
+            icon: 'error',
+            confirmButtonText: 'Try Again' })
+            .then(()=>location.reload());
+        }
+        
+    }).catch((err)=>{
+        Swal.fire({ title: 'Oops!', 
+            text: 'Something went wrong.',
+            icon: 'error',
+            confirmButtonText: 'Try Again' })
+            .then(()=>location.reload());
+        console.log(err);
+       
+    });    
+        }
         });
-    }
+  
+console.log(number);
+
+}
+// delete offer function 
+async function removeOffer(categoryId) {
+    await fetch(`/admin/category/removeOffer`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ categoryId })
+    }).then((res)=>{
+        return res.json();
+    }).then((data)=>{
+        if(data.success){
+            Swal.fire({ title: 'Success!',
+            text: 'offer deleted successfully.',
+            icon: 'success',
+            confirmButtonText: 'Great' })
+            .then(()=>location.reload());
+        }
+        else{
+            Swal.fire({ title: 'Oops!', 
+            text: 'Something went wrong.',
+            icon: 'error',
+            confirmButtonText: 'Try Again' })
+            .then(()=>location.reload());
+        }
+       
+    }).catch((err)=>{
+        console.log(err);
+        Swal.fire({ title: 'Oops!', 
+            text: 'Something went wrong.',
+            icon: 'error',
+            confirmButtonText: 'Try Again' })
+            .then(()=>location.reload());
+    });
+}
 
      // for deleting a product
      function deleteResource(url) {
@@ -194,4 +233,4 @@
         //end
 </script>
 
-<%- include('adminFoot.ejs') %>
+<%- include('../adminFoot.ejs') %>

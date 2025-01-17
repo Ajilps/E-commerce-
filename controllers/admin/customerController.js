@@ -16,16 +16,20 @@ const customerInfo = async (req,res)=>{
 
        }).limit(limit*1)
        .skip((page-1)*limit)
-       .exec();
+       
 
        const count = await User.find({
-        isAdmin: false,
+        role:"user",
         $or:[
             {username: {$regex: ".*"+search+".*"}},
             {email: {$regex: ".*"+search+".*"}},
         ],
        }).countDocuments();
-       res.render('admin/customer.ejs',{data:userData,totalPages: Math.ceil(count/limit), currentPage:page})
+// rendering the page 
+       res.render('admin/customer/customer.ejs',{
+        data:userData,
+        totalPages: Math.ceil(count/limit), 
+        currentPage:page})
         
     } catch (error) {
         res.redirect('/pageerror')

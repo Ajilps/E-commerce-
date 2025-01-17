@@ -12,12 +12,12 @@ const brandInfo = async (req, res) => {
   const totalBrands = await Brand.countDocuments();
   const totalPages = Math.ceil(totalBrands / limit);
   // const brands = await Brand.find({})
-  const brandData = await Brand.find({}) 
+  const brandData = await Brand.find({})
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit)
     .then((brands) => {
-      res.render("admin/brand.ejs", {
+      res.render("admin/brand/brand.ejs", {
         brands,
         currentPage: page,
         totalPages: totalPages,
@@ -33,7 +33,7 @@ const brandInfo = async (req, res) => {
 const editBrandDisplay = async (req, res) => {
   const brandId = req.query.id;
   const brand = await Brand.findById(brandId);
-  res.render("admin/editBrand.ejs", { brand });
+  res.render("admin/brand/editBrand.ejs", { brand });
 };
 
 // update brand
@@ -43,7 +43,7 @@ const updateBrand = async (req, res) => {
   const updatedBy = req.user._id;
   console.log(req?.file);
 
-  if (req?.file?.filename) {
+  if (req.file.filename) {
     uploadImage(req.file.path)
       .then(async (result) => {
         console.log(result); // testing the result
@@ -98,15 +98,16 @@ const updateBrand = async (req, res) => {
 //===============================================// delete brand
 const deleteBrand = async (req, res) => {
   const brandId = req.query.id;
-  if(!brandId){
-    return res.status(400).json({success:false, message: "Brand ID is required"})
+  if (!brandId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Brand ID is required" });
   }
-  // or make the brand as disable 
-//   await Brand.findByIdAndUpdate({brandId},{$set:{status:false}})
+  // or make the brand as disable
+  //   await Brand.findByIdAndUpdate({brandId},{$set:{status:false}})
 
-
-  const brand =await Brand.findById(brandId)
-  await deleteImage(brand?.public_id)
+  const brand = await Brand.findById(brandId);
+  await deleteImage(brand?.public_id);
   Brand.findByIdAndDelete(brandId)
     .then(() => {
       res
@@ -122,19 +123,25 @@ const deleteBrand = async (req, res) => {
 };
 
 // list brand
-const listBrand = async(req,res)=>{
-    const brandId = req?.query?.id;
-    if(!brandId)return res.status(400).json({success:false,message:'brand Id required'});
-    await Brand.findByIdAndUpdate(brandId,{$set:{isListed:true}})
-    return res.status(200).redirect('/admin/brand')
-}
+const listBrand = async (req, res) => {
+  const brandId = req?.query?.id;
+  if (!brandId)
+    return res
+      .status(400)
+      .json({ success: false, message: "brand Id required" });
+  await Brand.findByIdAndUpdate(brandId, { $set: { isListed: true } });
+  return res.status(200).redirect("/admin/brand");
+};
 //  un-list brand
-const Un_listBrand = async(req,res)=>{
-    const brandId = req?.query?.id;
-    if(!brandId) return res.status(400).json({success:false,message:'brand Id required'});
-    await Brand.findByIdAndUpdate(brandId,{$set:{isListed:false}})
-    return res.status(200).redirect('/admin/brand')
-}
+const Un_listBrand = async (req, res) => {
+  const brandId = req?.query?.id;
+  if (!brandId)
+    return res
+      .status(400)
+      .json({ success: false, message: "brand Id required" });
+  await Brand.findByIdAndUpdate(brandId, { $set: { isListed: false } });
+  return res.status(200).redirect("/admin/brand");
+};
 
 // creating new brand and saving to database
 const addBrand = async (req, res) => {
@@ -155,7 +162,7 @@ const addBrand = async (req, res) => {
         description,
         createdBy,
         imageUrl,
-        public_id
+        public_id,
       });
       console.log(brand);
       await brand
@@ -175,4 +182,82 @@ const addBrand = async (req, res) => {
   } catch (error) {}
 };
 
-export { brandInfo, addBrand, updateBrand, editBrandDisplay, deleteBrand, listBrand, Un_listBrand };
+// add offer
+const addBrandOffer = async (req, res) => {
+  try {
+    const brandId = req.body.brandId;
+    if (!brandId)
+      return res
+        .status(401)
+        .json({ success: false, message: "brand Id is required" });
+    const offer = req.body.offer;
+    if (!offer)
+      return res
+        .status(401)
+        .json({ success: false, message: "invalid offer " });
+
+    await Brand.findByIdAndUpdate(brandId, { $set: { offer: offer } })
+      .then((data) => {
+        // console.log(data);// test
+        return res
+          .status(201)
+          .json({ success: true, message: "offer added successfully" });
+      })
+      .catch((err) => {
+        console.error(`Error in adding offer for the brand - ${err.message}`);
+        return res
+          .status(401)
+          .json({ success: false, message: "invalid brand Id " });
+      });
+
+    // return res.status(404).json({success:false,message:'invalid brand Id '});
+  } catch (error) {
+    console.log(`Error in adding offer for the brand `);
+    return res
+      .status(500)
+      .json({ success: false, message: "internal server error" });
+  }
+};
+
+// delete brand offer
+const removeBrandOffer = async (req, res) => {
+  try {
+    const brandId = req.body.brandId;
+    if (!brandId)
+      return res
+        .status(401)
+        .json({ success: false, message: "brand Id is required" });
+    const brand = await Brand.findByIdAndUpdate(brandId, {
+      $set: { offer: null },
+    })
+      .then((data) => {
+        // console.log(data);
+        return res
+          .status(200)
+          .json({ success: true, message: "offer removed successfully" });
+      })
+      .catch((err) => {
+        console.error(`Error in removing offer for the brand - ${err.message}`);
+        return res
+          .status(401)
+          .json({ success: false, message: "Invalid brand id " });
+      });
+  } catch (error) {
+    console.log(`Error in removing offer for the brand `);
+    return res
+      .status(500)
+      .json({ success: false, message: "internal server error" });
+  }
+};
+
+export {
+  brandInfo,
+  addBrand,
+  updateBrand,
+  editBrandDisplay,
+  deleteBrand,
+  listBrand,
+  Un_listBrand,
+  addBrandOffer,
+  removeBrandOffer,
+};

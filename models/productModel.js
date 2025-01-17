@@ -3,6 +3,10 @@ const {Schema} = mongoose;
 
 
 const productSchema = new Schema({
+    variantId:[{
+        type:Schema.Types.ObjectId,
+        ref:"Product"
+    }],
     name: {
         type: String,
         required: true
@@ -34,6 +38,10 @@ const productSchema = new Schema({
      },
     description: {
         type: String,
+        required: true
+    },
+    specifications:{
+        type: Object,
         required: true
     },
     brand: {

@@ -1,6 +1,7 @@
 import { Category } from '../../models/categoryModel.js'
 import {Product} from '../../models/productModel.js'
 
+// render the category info page 
 const categoryInfo =(async (req,res)=>{
     try {
         const page = parseInt(req.query.page) || 1;
@@ -13,7 +14,7 @@ const categoryInfo =(async (req,res)=>{
 
         const totalCategories = await Category.countDocuments()
         const totalPages = Math.ceil(totalCategories / limit);
-        res.render('admin/category.ejs',{
+        res.render('admin/category/category.ejs',{
             categories: categoryData,
             currentPage: page,
             totalPages: totalPages,
@@ -138,7 +139,7 @@ const editCategory = async (req,res)=>{
     // const catName =await Catego?ry.findOne({name})
     const category = await Category.findById({_id: categoryId});    
     console.log(category); //test
-    res.render('admin/editCategory.ejs',{category})
+    res.render('admin/category/editCategory.ejs',{category})
 }   
 
 const updateCategory = async (req,res)=>{
@@ -165,6 +166,7 @@ const updateCategory = async (req,res)=>{
 
 const deleteCategory = async (req,res)=>{
     const categoryId = req.params.categoryId;
+    
     const category = await Category.findByIdAndDelete({_id: categoryId});
     console.log(`this category is removed form data base -  ${category}`); //test
     if(! category) return res.status(404).json({success:false,message:'No category to delete'});
@@ -176,7 +178,7 @@ const searchCategory = async (req,res)=>{
     const regex = new RegExp(search, 'i');
     try {
         const categories = await Category.find({$or: [{name: regex}, {description: regex}]});
-        res.render('admin/category.ejs',{categories, search})
+        res.render('admin/category/category.ejs',{categories, search})
     } catch (error) {
         console.error(`Error searching for category - ${error.message}`);
         res.redirect('/pageerror');
