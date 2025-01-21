@@ -423,6 +423,16 @@ const displayCart = async (req,res) =>{
     }
 }
 
+// display displayCheckout
+  const displayCheckout = async (req,res) => {
+    try {
+       
+        return res.status(200).render('user/cart/checkout.ejs',{ success: true, user: req.user});
+    } catch (error) {
+        console.error(`user checkout display failed - ${error.message}`);
+    }
+}
+
 
 export {
   isBlocked,
@@ -441,4 +451,5 @@ export {
   showShippingAddressForm,
   displayWallet,
   displayCart,
+  displayCheckout,
 };

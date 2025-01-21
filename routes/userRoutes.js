@@ -16,12 +16,13 @@ import {
   showShippingAddressForm,
   displayWallet,
   displayCart,
+  displayCheckout,
 } from "../controllers/userController.js";
 
 import { verifyJWT } from "../middlewares/authMiddleware.js";
 
 //importing user side product controllers 
-import {displayProductUser, displayUserHome} from '../controllers/user/productController.js'
+import {displayProductUser, displayUserHome, displayStore} from '../controllers/user/productController.js'
 // import {sentOtp,verifyOpt,resentOpt} from '../controllers/verifyEmail.js'
 
 const router = express.Router();
@@ -63,9 +64,6 @@ router.get('/resetPass/:email', (req, res) => {
 // password reset route end 
 router.post('/resetPassword', resetPassword)
 
-
-
-
 router.get('/login', isLoggedIn, (req, res) => {
     console.log('rendering login page')
     res.render('login.ejs')
@@ -76,25 +74,24 @@ router.post('/login',isBlocked, loginUser);
 // ==================//secured routes
 
 //=========== protected product route =============//
+router.use(verifyJWT); // verifying all the requests 
 
-router.get('/logout', verifyJWT, logoutUser);
-router.post('/changePassword', verifyJWT, changePassword);
+router.get('/logout',  logoutUser);
+router.post('/changePassword',  changePassword);
 router.post('/refreshAccessToken', refreshAccessToken);
-router.get('/me', verifyJWT, getCurrentUser);
-router.get('/accountDetails', verifyJWT, getCurrentUserDetails);
-router.get('/shippingAddress', verifyJWT, getCurrentUserShippingDetails);
-router.get('/shippingAddress/addAddress', verifyJWT, showShippingAddressForm);
-router.get('/accountDetails/changePassword', verifyJWT, displayChangePassword);
-router.get('/wallet', verifyJWT, displayWallet);
-router.get('/cart', verifyJWT, displayCart);
+router.get('/me',  getCurrentUser);
+router.get('/accountDetails',  getCurrentUserDetails);
+router.get('/shippingAddress',  getCurrentUserShippingDetails);
+router.get('/shippingAddress/addAddress',  showShippingAddressForm);
+router.get('/accountDetails/changePassword',  displayChangePassword);
+router.get('/wallet',  displayWallet);
+router.get('/cart', displayCart);
+router.get('/cart/checkout',  displayCheckout);
+router.get('/',  displayUserHome )
+router.get('/home',  displayUserHome )
+router.get('/product/:productId',displayProductUser)
 
-
-
-router.get('/', verifyJWT, displayUserHome )
-router.get('/home', verifyJWT, displayUserHome )
-
-router.get('/product/:productId',verifyJWT,displayProductUser)
-
-
+//store route
+router.get('/store',displayStore)
 
 export default router;

@@ -219,21 +219,12 @@ const displayEditProduct = async (req, res) => {
           foreignField: "_id",
           as: "brand",
         },
-      }, {
-        $lookup: {
-          from: 'products', // The name of the collection to join (case-sensitive)
-          localField: 'variantId', // The field in the product document containing the array of ObjectIds
-          foreignField: '_id', // The field in the `products` collection to match against
-          as: 'variants' // The name of the field to add the joined documents
-        }
-      },
+      }, 
       {
         $unwind: "$category",
       },
       {
         $unwind: "$brand",
-      },{
-        $unwind: "$variants"
       },
     ])
   )[0];

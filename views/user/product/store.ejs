@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <style>
+        .color-circle {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px #ddd;
+        }
+        .color-circle.active {
+            box-shadow: 0 0 0 2px #000;
+        }
+        .product-card {
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        .product-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .product-img {
+            aspect-ratio: 1;
+            object-fit: cover;
+        }
+        .rating {
+            background: #fff4e5;
+            color: #945800;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .new-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .wishlist-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+    </style>
+     <style>
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #1d4ed8;
+            --accent-color: #fff4e5;
+            --text-color: #374151;
+            --light-gray: #f3f4f6;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .color-circle {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px #ddd;
+            transition: transform 0.2s;
+        }
+
+        .color-circle:hover {
+            transform: scale(1.1);
+        }
+
+        .color-circle.active {
+            box-shadow: 0 0 0 2px var(--primary-color);
+        }
+
+        .product-card {
+            transition: all 0.3s ease;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .product-img {
+            aspect-ratio: 1;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-img {
+            transform: scale(1.05);
+        }
+
+        .rating {
+            background: var(--accent-color);
+            color: #945800;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .new-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: var(--primary-color);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .wishlist-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+        }
+
+        .wishlist-btn:hover {
+            transform: scale(1.1);
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .form-select, .form-control {
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            padding: 10px 16px;
+        }
+
+        .form-select:focus, .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        #clearFilter {
+            background: #ef4444;
+            color: white;
+            border: none;
+            margin-bottom: 20px;
+        }
+
+        #clearFilter:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        .breadcrumb {
+            padding: 12px 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .card-subtitle {
+            font-size: 0.95rem;
+            color: #6b7280;
+        }
+
+        .price-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .original-price {
+            color: #9ca3af;
+            text-decoration: line-through;
+        }
+
+        .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h6 {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #4b5563;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <%- include('../userHeader.ejs') %>
+    <div class="container-fluid py-4">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#" class="text-decoration-none">HOME</a></li>
+                <li class="breadcrumb-item active">STORE</li>
+            </ol>
+        </nav>
+
+        <div class="row g-4">
+            <!-- Filters Sidebar -->
+             <!-- <form action="">
+                -->
+          
+            <div class="col-lg-3">
+                <div class="card shadow-sm ">
+                    <div class="card-body ">
+                        <form action="" id="filterForm">
+                            <button id="clearFilter" class="btn align-items">Clear all filter</button>
+                      
+                        <h5 class="mb-4">Filter By</h5>
+                        
+                        <span class="me-2">SORT BY</span>
+                        <select id="sort" class="form-select"  style="width: auto;">
+                            <% if(sort) {%>
+                                <% if(sort == 'name-asc'){ %>
+                                    <option value="name-asc" selected>A to Z</option>
+                                <% } else if(sort == 'name-desc'){ %>
+                                     <option value="name-desc" selected>Z - A</option>
+                                <% } else if(sort == 'price-asc'){ %>
+                                     <option value="price-asc" selected>PRICE LOW TO HIGH</option>
+                                <% } else if(sort == 'price-desc'){ %>
+                                     <option value="price-desc" selected>PRICE HIGH TO LOW</option>
+                                <% } else if(sort == 'rating-asc'){ %>
+                                     <option value="rating-asc" selected>RATING HIGH TO LOW</option>
+                                <% } else if(sort == 'rating-desc'){ %>
+                                        <option value="rating-desc" selected>RATING LOW TO HIGH</option>
+                                <% } else if(sort == 'discount-asc'){ %>
+                                     <option value="discount-asc" selected>OFFER LOW TO HIGH</option>
+                                <% } else if(sort == 'discount-desc'){ %>
+                                     <option value="discount-desc" selected>OFFER HIGH TO LOW</option>
+                                <% } %>
+                                <% } %>
+                            <option value="">Select</option>
+                            <option value="name-asc" >A to Z</option>
+                            <option value="name-desc" >Z - A</option>
+                            <option value="price-asc">PRICE LOW TO HIGH</option>
+                            <option value="price-desc">PRICE HIGH TO LOW</option>
+                            <option value="rating-asc">RATING HIGH TO LOW</option>
+                            <option value="rating-desc">RATING LOW TO HIGH</option>
+                            <option value="discount-asc">OFFER LOW TO HIGH</option>
+                            <option value="discount-desc">OFFER HIGH TO LOW</option>
+                        </select>
+                       
+
+                        <!-- Category -->
+                        <div class="mb-4">
+                            <h6>Category</h6>
+                            <select id="category" class="form-select">
+                                <% if(category){ %>
+
+                                    <% categories.forEach(categories => { %>
+
+                                       <% if( categories._id == category ){ %>
+
+                                            <option value="<%= categories._id%>"><%= categories.name%></option>
+                                        
+                                            <% } %>
+                                     <% }) %>
+                                     <% } else { %>
+                                        <option value="">select category</option>
+                                   <% } %>
+                                     <% categories.forEach(categories => { %>
+                                        <option value="<%= categories._id%>"><%= categories.name%></option>
+                                     <% }) %>
+                            </select>
+                        </div>
+
+                        <!-- Availability -->
+                        <div class="mb-4">
+                            <h6>Availability</h6>
+
+                            <select id="availability" class="form-select">
+                                <% if(availability){ %>
+                                    <% if(availability == 'InStock'){ %>
+                                        <option value="InStock">In Stock</option>
+                                    <% } else if(availability == 'OutOfStock'){ %>
+                                        <option value="OutOfStock">Out Of Stock</option>
+                                    <% } else { %>
+                                        <option value="All">All</option>
+                                    <% } %>
+                                <% } %>
+                                <option value="All">All</option>
+                                <option value="InStock">In Stock</option>
+                                <option vlaue="OutOfStock">Out Of Stock</option>
+                            </select>
+
+                            <!-- <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="inStock">
+                                <label class="form-check-label" for="inStock">In Stock (1248)</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="outOfStock">
+                                <label class="form-check-label" for="outOfStock">Out Of Stock (1020)</label>
+                            </div> -->
+                        </div>
+
+                        <!-- Price Range -->
+                        <!-- <div class="mb-4">
+                            <h6>Price</h6>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <% //if(priceFrom){ let from = priceFrom  }%>
+                                    <input type="number" id="priceFrom" class="form-control" placeholder="From" value=" <%=//priceFrom  %> ">
+                                </div>
+                                <div class="col-6">
+                                    <%// if(priceTo) let to = priceTo %>
+                                    <input type="number" id="priceTo" class="form-control" placeholder="To" value="<%=// priceTo %>">
+                                </div>
+                            </div>
+                        </div> -->
+
+                        <!-- Brand -->
+                        <div class="mb-4">
+                            <h6>Brand</h6>
+                            <select id="brand" class="form-select">
+                                <% if(brand){ %>
+                                    <% brands.forEach(brands => { %>
+                                        <% if( brands._id == brand ){ %>
+                                            <option value="<%= brands._id%>"><%= brands.name%></option>
+                                        <% }  %>
+                                             
+                                    <% }) %>
+                                <% } else { %>
+                                    <option value="">select brand</option>
+                               <% } %>
+                            <% brands.forEach(brands => { %>
+                                <option value="<%= brands._id%>"><%= brands.name%></option>
+                            <% }) %>
+                               
+                                
+                            </select>
+                        </div>
+                    
+                        <!-- Rating -->
+                        <div class="mb-4">
+                            <h6>Rating</h6>
+                            <select id="rating" class="form-select">
+                                <% if(rating){ %>
+                                     <% if( rating == '5' ){ %>
+                                        <option value="5">5★ & Above</option>
+                                    <% } else if( rating == '4' ){ %>
+                                        <option value="4">4★ & Above</option>
+                                    <% } else if( rating == '3' ){ %>
+                                        <option value="3">3★ & Above</option>
+                                    <% }  %>
+                                       
+                                <% } %>
+                                
+                                <option value="">Select rating</option>
+                                <option value="5">5★ & Above</option>
+                                <option value="4">4★ & Above</option>
+                                <option value="3">3★ & Above</option>
+                            </select>
+                            
+                        </div>
+
+                        <!-- Discounts -->
+                        <div class="mb-4">
+                            <h6>Discounts</h6>
+                            <select id="discount" class="form-select">
+                                <% if(discount){ %>
+                                     <% if( discount == '100% Or More'){ %>
+                                        <option value="100% Or More">100% Or More</option>
+                                    <% } else if( discount == '80% Or More'){ %>
+                                        <option value="80% Or More">80% Or More</option>
+                                    <% } else if( discount == '60% Or More'){ %>
+                                        <option value="60% Or More">60% Or More</option>
+                                    <% }  %>
+
+                                <% } %>
+                                <option value="">Select discount</option>
+                                <option value="40% Or More">40% Or More</option>
+                                <option value="30% Or More">30% Or More</option>
+                                <option value="20% Or More">20% Or More</option>
+                                <option value="10% Or More">10% Or More</option>
+                            </select>
+                           
+                        </div>
+
+                        <!-- Colors -->
+                      <!--   <div>
+                            <h6>Color</h6>
+                            <div>
+                                <span class="color-circle active" style="background: #000;"></span>
+                                <span class="color-circle" style="background: #fff;"></span>
+                                <span class="color-circle" style="background: #FF0000;"></span>
+                                <span class="color-circle" style="background: #FFD700;"></span>
+                                <span class="color-circle" style="background: #00FFFF;"></span>
+                                <span class="color-circle" style="background: #00FF00;"></span>
+                                <span class="color-circle" style="background: #0000FF;"></span>
+                                <span class="color-circle" style="background: #800080;"></span>
+                            </div>
+                        </div> -->
+                        <!-- <button class="btn " type="submit"> submit</button> -->
+                        </form>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Products Grid -->
+            <div class="col-lg-9">
+                <!-- Sort and View Options -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="d-flex align-items-center">
+                       
+                    </div>
+                 
+                    <!-- <div class="d-flex align-items-center gap-2">
+                        <span class="text-muted">2210 PRODUCTS</span>
+                        <div class="btn-group">
+                            <button class="btn btn-outline-secondary"><i class="bi bi-grid"></i></button>
+                            <button class="btn btn-outline-secondary"><i class="bi bi-list"></i></button>
+                        </div>
+                    </div> -->
+                </div>
+
+                <!-- Products -->
+                <div class="row g-4">
+                <% if(products){ %>
+                   <% products.forEach((product)=>{ %>
+                      
+                    <!-- Product Card Template -->
+                    <div class="col-md-4 col-lg-3" id="product-template">
+                        <div class="card product-card">
+                            <a href="/user/product/<%= product._id %>" class="text-decoration-none">
+                            <div class="position-relative">
+                                <img src="<%= product.productImageUrls[0] %>" class="card-img-top product-img" alt="iPhone">
+                                <span class="new-badge">NEW</span>
+                                <button class="wishlist-btn">♡</button>
+
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="card-title mb-0">₹<%= product.sellingPrice %></h5>
+                                    <del class="card-title mb-0 text-muted ">₹<%= product.regularPrice %></del>
+                                    <span class="rating">★ <%= product.rating %></span>
+                                </div>
+                                <h6 class="card-subtitle mb-2"><%= product.name %></h6>
+                                <p class="card-text text-muted small"><%= product.description %></p>
+                                <!-- <div class="mt-2">
+                                    <span class="color-circle active" style="background: #00FFFF;"></span>
+                                    <span class="color-circle" style="background: #FF0000;"></span>
+                                    <span class="color-circle" style="background: #000;"></span>
+                                    <span class="color-circle" style="background: #808080;"></span>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div></a>
+                    <!-- Repeat product cards 11 more times -->
+                    <%}) %>
+                        <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+<%- include('../userFooter.ejs') %>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+       // request a search result 
+       window.onload = function() {
+       
+       }
+
+        const filterForm = document.getElementById('filterForm');
+        
+        // handel every input change 
+        filterForm.querySelectorAll('input,select, textarea').forEach(input =>{
+            input.addEventListener('input', function(e){
+                e.preventDefault();
+                searchProducts(e); // call the searchProducts function when any input changes
+            });
+            // input.addEventListener('change', function(e){
+            //     e.preventDefault();
+            //     searchProducts(e); // call the searchProducts function when any input changes
+            // });
+            console.log("testing event listener ")
+        })
+            let search = `<%= search %>`
+
+        if(search){
+            const searchInput = document.getElementById('searchInput')
+            searchInput.value = search;
+        }
+       const searchInput = document.getElementById('searchInput')
+       searchInput.addEventListener('keydown', function(e){
+            // e.preventDefault();
+            if(e.key === 'Enter'){
+                console.log('enter key pressed')
+                searchProducts(e);
+            }
+        });
+
+
+       function searchProducts(e) {
+        e.preventDefault();
+      
+       const sort = document.getElementById('sort')?.value
+       const category = document.getElementById('category')?.value
+       const availability = document.getElementById('availability')?.value
+      // const priceFrom = document.getElementById('priceFrom')?.value
+       //const priceTo = document.getElementById('priceTo')?.value
+       const brand = document.getElementById('brand')?.value
+       const rating  = document.getElementById('rating')?.value
+       const discount = document.getElementById('discount')?.value
+       const searchInput = document.getElementById('searchInput')?.value
+         console.log(sort,category,availability,brand,rating,discount)
+         console.log(rating)
+
+         // set a time out to prevent multiple requests
+            // if the user is still typing
+            const timeout = setTimeout(() => {
+                //    
+                
+                window.location.href = `?search=${searchInput}&sort=${sort}&category=${category}&availability=${availability}&brand=${brand}&rating=${rating}&discount=${discount}`
+            }, 500);
+            // clearTimeout(timeout);
+        };
+        let newUrl = ``;
+        window.history.pushState({},"");
+
+        document.getElementById("clearFilter").addEventListener("click", function(e){
+            e.preventDefault();
+            window.location.href = `/user/store`
+        })
+           
+    </script>
+</body>
+</html>

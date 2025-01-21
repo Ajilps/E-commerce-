@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <style>
+        .product-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background: #dee2e6;
+        }
+        .timeline-item {
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+        .timeline-icon {
+            position: absolute;
+            left: -30px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #28a745;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .order-progress {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+        .progress-step {
+            text-align: center;
+            position: relative;
+            width: 25%;
+        }
+        .progress-line {
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background: #dee2e6;
+        }
+        .progress-dot {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 2px solid #28a745;
+            border-radius: 50%;
+            margin: 0 auto 8px;
+            position: relative;
+            z-index: 1;
+        }
+        .progress-step.active .progress-dot {
+            background: #28a745;
+        }
+        .progress-step.completed .progress-dot {
+            background: #28a745;
+        }
+        .progress-step.completed .progress-line {
+            background: #28a745;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <%- include('../userHeader.ejs') %>
+    <div class="container py-4">
+        <!-- Header -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#" class="text-decoration-none">HOME</a></li>
+                <li class="breadcrumb-item"><a href="#" class="text-decoration-none">ORDERS</a></li>
+                <li class="breadcrumb-item active">DETAILS</li>
+            </ol>
+        </nav>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h6 class="mb-0">#DEASVG701</h6>
+                    <h5 class="mb-0">$1199.00</h5>
+                </div>
+
+                <!-- Order Progress -->
+                <div class="order-progress">
+                    <div class="progress-step completed">
+                        <div class="progress-dot"></div>
+                        <div class="progress-line"></div>
+                        <small>Order Placed</small>
+                    </div>
+                    <div class="progress-step completed">
+                        <div class="progress-dot"></div>
+                        <div class="progress-line"></div>
+                        <small>Packaging</small>
+                    </div>
+                    <div class="progress-step active">
+                        <div class="progress-dot"></div>
+                        <div class="progress-line"></div>
+                        <small>On The Road</small>
+                    </div>
+                    <div class="progress-step">
+                        <div class="progress-dot"></div>
+                        <small>Delivered</small>
+                    </div>
+                </div>
+
+                <!-- Products -->
+                <h6 class="mb-3">Products (02)</h6>
+                <div class="table-responsive mb-4">
+                    <table class="table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>PRODUCTS</th>
+                                <th>PRICE</th>
+                                <th>QUANTITY</th>
+                                <th>SUB TOTAL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="/api/placeholder/60/60" alt="Product" class="product-img me-3">
+                                        <div>Google Pixel 6 Pro 5G Android Phone...</div>
+                                    </div>
+                                </td>
+                                <td>$899</td>
+                                <td>×1</td>
+                                <td>$899</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="/api/placeholder/60/60" alt="Product" class="product-img me-3">
+                                        <div>Spigen Crystal Clear for Google Pixel 6 Pro...</div>
+                                    </div>
+                                </td>
+                                <td>$39</td>
+                                <td>×1</td>
+                                <td>$39</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Order Activity -->
+                <h6 class="mb-3">Order Activity</h6>
+                <div class="timeline mb-4">
+                    <div class="timeline-item">
+                        <div class="timeline-icon">✓</div>
+                        <div>Your order has been delivered. Thank you for shopping at Store!</div>
+                        <small class="text-muted">23 Jan 2021 at 7:30 PM</small>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">✓</div>
+                        <div>Our delivery man John Wiki has picked up your order for delivery.</div>
+                        <small class="text-muted">22 Jan 2021 at 2:00 PM</small>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">✓</div>
+                        <div>Your order has reached at last mile hub.</div>
+                        <small class="text-muted">22 Jan 2021 at 8:00 AM</small>
+                    </div>
+                </div>
+
+                <!-- Addresses -->
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <h6 class="mb-3">Billing Address</h6>
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <strong>Ryan Gilbert</strong><br>
+                                795 Folsom Ave<br>
+                                San Francisco, CA 94107<br>
+                                <strong>Phone:</strong> +1-202-555-0133<br>
+                                <strong>Email:</strong> ryan@gilbert.com
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="mb-3">Shipping Address</h6>
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <strong>Ryan Gilbert</strong><br>
+                                795 Folsom Ave<br>
+                                San Francisco, CA 94107<br>
+                                <strong>Phone:</strong> +1-202-555-0133<br>
+                                <strong>Email:</strong> ryan@gilbert.com
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="mb-3">Order Notes</h6>
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <p class="text-muted mb-0">Please be careful to any dent on package before accepting delivery.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('../userFooter.ejs')%>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
