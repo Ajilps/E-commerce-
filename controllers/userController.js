@@ -351,9 +351,10 @@ const changePassword = async (req, res) => {
 }
 
 //get current user
-
+// show the dash board of the user (get)
 const getCurrentUser = async (req, res) => {
     try {
+        // console.log(`user from get current user : ${req.user}`);// testing print statement
         return res.status(200).render('user/userInfo/userDashboard.ejs',{success: true, user: req.user});
 
     }   catch (error) {
@@ -361,10 +362,11 @@ const getCurrentUser = async (req, res) => {
     }
 }
 
-//  get Current User Details
+//  get Current User Details (get)
 
 const getCurrentUserDetails = async (req,res)=>{
     try {
+        // console.log(`user from get current user details : ${req.user}`);// testing print statement
        
         return res.status(200).render('user/userInfo/userProfile.ejs',{success: true, user: req.user});
     } catch (error) {
@@ -373,9 +375,24 @@ const getCurrentUserDetails = async (req,res)=>{
 
 }
 
-// getCurrentUserShippingDetails
+// getCurrentUserShippingDetails (get)
 const getCurrentUserShippingDetails = async (req,res) =>{
+
+
     try {
+    //     const newAddress = {
+    //         phone: 1234567890,
+    //         street: "123 Main Street",
+    //         city: "New York",
+    //         state: "NY",
+    //         pinCode: 10001,
+    //         country: "USA",
+    //         isDefault: false,
+                // email: req.user.email,
+
+    //     };
+    //    const add =await  User.findByIdAndUpdate(req.user._id, { $push: { addresses: newAddress } }, { new: true });
+    //    console.log(add)
        
         return res.status(200).render('user/userInfo/userShipping.ejs',{success: true, user: req.user});
     } catch (error) {
@@ -383,13 +400,37 @@ const getCurrentUserShippingDetails = async (req,res) =>{
     }
 }
 
-//displayChangePassword
+//displayChangePassword (get)
 const displayChangePassword = async (req,res) =>{
     try {
-       
+        
         return res.status(200).render('user/userInfo/changePassword.ejs',{success: true,user: req.user});
     } catch (error) {
         console.error(`password change view failed - ${error.message}`);
+    }
+}
+// change password (post)
+const changePasswordWithOldPss = async (req,res) =>{
+
+    try {
+        const {oldPassword, newPassword} = req?.body;
+        console.log(Object.values( req.body));
+        console.log(`user from change password : ${oldPassword} , ${newPassword}`);// testing print statement
+        // if(!oldPassword || !newPassword){
+        //     return res.status(400).json({success: false, message: "Invalid request"});
+        // }
+        const user = await User.findById(req.user._id);
+        const isOldPasswordValid = await user.isPasswordMatch(oldPassword);
+        if(!isOldPasswordValid){
+            console.log(isOldPasswordValid)
+            return res.status(400).json({success: false, message: "Invalid credentials"});
+        }
+        user.password = newPassword;
+        await user.save({validateBeforeSave: false});
+        return res.status(200).json({success: true, message: "Password changed successfully"});
+    } catch (error) {
+        console.error(`user password change failed - ${error.message}`);
+        return res.status(500).json({success: false, message: "Server error"});
     }
 }
 
@@ -397,13 +438,164 @@ const displayChangePassword = async (req,res) =>{
 const showShippingAddressForm = async (req,res) => {
     try {
        
+       
         return res.status(200).render('user/userInfo/addAddress.ejs',{ user: req.user });
     } catch (error) {
         console.error(`user shipping address addition failed - ${error.message}`);
     }
 }
+// add new shipping address post
+const addNewShippingAddress = async (req,res) => {
+    try {
+        const {firstName, address, email, phone, street, city, state, zipCode, country} = req.body;
+        console.log(req.body);
+        if(!phone  || !city || !state || !zipCode || !country || !address || !email || !firstName  ){
+            return res.status(400).json({success: false, message: "Invalid request"});
+        }
+        const newAddress = {
+            phone,
+            street,
+            city,
+            state,
+            zipCode,
+            country,
+            email,
+            name : firstName,
+            
+            address,
+            
+        };
+        const user = await User.findByIdAndUpdate(req.user._id, { $push: { addresses: newAddress } }, { new: true });
+        return res.status(200).json({success: true, message: "Address added successfully", user});
+    } catch (error) {
+        console.error(`user shipping address addition failed - ${error.message}`);
+    }
+}
 
-// display wallet 
+// edit shipping address (get)
+const editShippingAddress = async (req,res) => {
+    try {
+     const addressId = req.params.addressId;
+        return res.status(200).render('user/userInfo/editAddress.ejs',{ success: true, user: req.user, addressId});
+    } catch (error) {
+        console.error(`user shipping address edit failed - ${error.message}`);
+    }
+}
+// edit shipping address (post)
+const updateShippingAddress = async (req,res) => {
+    try {
+        const addressId = req.params.addressId;
+        const {firstName, lastName, address, email, phone, street, city, state, zipCode, country} = req.body;
+        // console.log(req.body);
+        if(!phone  || !city || !state || !zipCode || !country || !address || !email || !firstName  ){
+            return res.status(400).json({success: false, message: "Invalid request"});
+        }
+        const updatedAddress = {
+            phone,
+            street,
+            city,
+            state,
+            zipCode,
+            country,
+            email,
+            name: firstName,
+            
+            address,
+            
+        };
+
+       // Find the user and update the specific address in the addresses array
+    const result = await User.findOneAndUpdate(
+        { 
+            _id: req.user._id,
+            'addresses._id': addressId 
+        },
+        { 
+            $set: { 'addresses.$': updatedAddress }
+        },
+        { 
+            new: true,
+            runValidators: true 
+        }
+    );
+
+    if (!result) {
+        return res.status(404).json({
+            success: false,
+            message: "Address not found or user does not exist"
+        });
+    }
+
+    return res.status(200).json({ 
+        success: true, 
+        user: result
+    });
+
+} catch (error) {
+    console.error(`User shipping address update failed - ${error.message}`);
+    return res.status(500).json({
+        success: false,
+        message: "Failed to update address",
+        error: error.message
+    });
+}
+}
+
+// set default shipping address (get)
+const setDefaultAddress = async (req, res) => {
+    try {
+        const addressId = req.params.addressId;
+        // console.log(addressId);
+
+        // First, set all addresses isDefault to false
+        await User.updateOne(
+            { _id: req.user._id },
+            { $set: { "addresses.$[].isDefault": false } }
+        );
+
+        // Then set the specified address isDefault to true
+        const user = await User.findOneAndUpdate(
+            { 
+                _id: req.user._id,
+                'addresses._id': addressId 
+            },
+            { 
+                $set: { 'addresses.$.isDefault': true }
+            },
+            { 
+                new: true,
+                runValidators: true 
+            }
+        );
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "Address not found"
+            });
+        }
+
+        return res.status(200).redirect('/user/shippingAddress');
+        
+
+    } catch (error) {
+        console.error(`User shipping address default setting failed - ${error.message}`);
+        return res.status(500).redirect('/pageerror');
+    }
+};
+// delete shipping address (delete)
+const deleteShippingAddress = async (req,res) => {
+    try {
+        const addressId = req.params.addressId;
+        console.log(addressId);
+        const user = await User.findByIdAndUpdate(req.user._id, { $pull: { addresses: { _id: addressId } } }, { new: true });
+        return res.status(200).json({success: true, message: "Address deleted successfully", user});
+    } catch (error) {
+        console.error(`user shipping address deletion failed - ${error.message}`);
+    }
+}
+
+// display wallet  (get)
 const displayWallet = async (req,res) =>{
     try {
        
@@ -413,7 +605,7 @@ const displayWallet = async (req,res) =>{
     }
 }
 
-// display cart
+// display cart (get)
 const displayCart = async (req,res) =>{
     try {
        
@@ -423,7 +615,7 @@ const displayCart = async (req,res) =>{
     }
 }
 
-// display displayCheckout
+// display displayCheckout (get)
   const displayCheckout = async (req,res) => {
     try {
        
@@ -452,4 +644,10 @@ export {
   displayWallet,
   displayCart,
   displayCheckout,
+  changePasswordWithOldPss,
+  addNewShippingAddress,
+  editShippingAddress,
+  updateShippingAddress,
+  deleteShippingAddress,
+  setDefaultAddress
 };

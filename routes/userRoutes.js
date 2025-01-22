@@ -17,6 +17,12 @@ import {
   displayWallet,
   displayCart,
   displayCheckout,
+  changePasswordWithOldPss,
+  addNewShippingAddress,
+  editShippingAddress,
+  updateShippingAddress,
+  deleteShippingAddress,
+  setDefaultAddress,
 } from "../controllers/userController.js";
 
 import { verifyJWT } from "../middlewares/authMiddleware.js";
@@ -82,8 +88,14 @@ router.post('/refreshAccessToken', refreshAccessToken);
 router.get('/me',  getCurrentUser);
 router.get('/accountDetails',  getCurrentUserDetails);
 router.get('/shippingAddress',  getCurrentUserShippingDetails);
-router.get('/shippingAddress/addAddress',  showShippingAddressForm);
-router.get('/accountDetails/changePassword',  displayChangePassword);
+router.get('/shippingAddress/addAddress',  showShippingAddressForm); // adding new address
+router.post('/shippingAddress/addAddress',  addNewShippingAddress); // adding new address post
+router.get('/shippingAddress/editAddress/:addressId',  editShippingAddress); //show edit address
+router.patch('/shippingAddress/editAddress/:addressId',  updateShippingAddress); // edit address
+router.get('/shippingAddress/setDefault/:addressId',  setDefaultAddress); // edit address
+router.delete('/shippingAddress/deleteAddress/:addressId',  deleteShippingAddress); // delete address
+router.get('/accountDetails/changePassword/:userId',  displayChangePassword);
+router.post('/accountDetails/changePassword/:userId',  changePasswordWithOldPss);
 router.get('/wallet',  displayWallet);
 router.get('/cart', displayCart);
 router.get('/cart/checkout',  displayCheckout);

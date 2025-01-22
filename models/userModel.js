@@ -5,13 +5,25 @@ import { type } from 'node:os';
 
 // Create Address Schema
 const addressSchema = new Schema({
+    name: {
+        type: String,
+        
+    },
+    address: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+    },
     phone:{
         type: Number,
         required: false,
     },
     street: {
         type: String,
-        required: true
+        
     },
     city: {
         type: String,
@@ -21,7 +33,7 @@ const addressSchema = new Schema({
         type: String,
         required: true
     },
-    pinCode: {
+    zipCode: {
         type: Number,
         required: true
     },
@@ -81,6 +93,11 @@ const userSchema = new Schema({
         type: String,
         default: '1'
     },
+    // defaultAddress: {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'addresses',
+    //     required: true
+    // },
     wishlist:
          [{
         type: Schema.Types.ObjectId,

@@ -122,6 +122,17 @@
             <!-- Updated Search Form with Dropdown -->
             <div class="search-container me-3">
                 <input class="form-control"  type="search" placeholder="Search products..." id="searchInput">
+
+                <!-- <script>
+                    const searchInput = document.getElementById('searchInput');
+                    searchInput.addEventListener('keydown', function(e){
+                        // e.preventDefault();
+                        if(e.key === 'Enter'){ {
+                            window.location.href = `/user/store?search=${searchInput.value}`;
+                        } 
+                        }
+                    })
+                </script> -->
                 <!-- <div class="search-results" id="searchResults">
                     <a href="#" class="search-result-item">
                         <img src="/api/placeholder/40/40" alt="iPhone 13">
@@ -192,3 +203,4 @@
         </div>
     </div>
 </nav>
+

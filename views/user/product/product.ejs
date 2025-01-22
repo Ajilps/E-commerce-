@@ -344,6 +344,16 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+       <script>
+                    const searchInput = document.getElementById('searchInput');
+                    searchInput.addEventListener('keydown', function(e){
+                        // e.preventDefault();
+                        if(e.key === 'Enter'){ {
+                            window.location.href = `/user/store?search=${searchInput.value}`;
+                        } 
+                        }
+                    })
+                </script>
     <script>
         const mainContainer = document.getElementById('mainContainer');
         const mainImage = document.getElementById('mainImage');

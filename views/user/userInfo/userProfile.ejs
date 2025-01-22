@@ -74,6 +74,7 @@
 </head>
 <body>
     <%- include('../userHeader.ejs') %>
+
     <div class="container py-4">
         <nav class="mb-3">
             <ol class="breadcrumb">
@@ -91,85 +92,57 @@
                     <h5 class="mb-4">ACCOUNT SETTING</h5>
                     
                     <div class="row">
-                        <div class="col-md-3 text-center mb-4">
+                        <!-- <div class="col-md-3 text-center mb-4">
                             <div class="avatar-container mx-auto">
                                 <img src="/api/placeholder/120/120" alt="Profile Picture">
                             </div>
-                        </div>
+                        </div> -->
                         
                         <div class="col-md-9">
                             <form>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label">First Name</label>
-                                            <input type="text" class="form-control" value="muhammed">
+                                            <label class="form-label"><First Name>First Name </label>
+                                            <input type="text" class="form-control" value="<%= user.username%>">
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Second Name</label>
-                                            <input type="text" class="form-control" value="nabeel">
-                                        </div>
-                                    </div>
+                                   
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Email</label>
-                                            <input type="email" class="form-control" value="nabeel@gmail.com">
+                                            <input type="email" class="form-control" value="<%= user.email%>">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">&nbsp;</label>
                                             <button type="button" class="btn btn-outline-dark d-block">
-                                                <a href="/user/accountDetails/changePassword">Change Password <i class="fas fa-external-link-alt ms-2"></i></a>
+                                                <a href="/user/accountDetails/changePassword/<%= user._id%>">Change Password <i class="fas fa-external-link-alt ms-2"></i></a>
                                             </button>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <!-- <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Secondary Email</label>
                                             <input type="email" class="form-control" placeholder="-">
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Phone Number</label>
-                                            <input type="tel" class="form-control" value="+91 70349 85827">
+                                            <input type="tel" class="form-control" value="<%= user.phone  %>">
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">Country/Region</label>
-                                            <select class="form-select">
-                                                <option selected>India</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">States</label>
-                                            <select class="form-select">
-                                                <option selected>Kerala</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">Pin Code</label>
-                                            <input type="text" class="form-control" value="673570">
-                                        </div>
-                                    </div>
-                                </div>
+                                
 
                                 <div class="mt-4">
                                     <button type="submit" class="btn btn-dark px-4">Save Changes</button>

@@ -74,25 +74,26 @@
             <div class="col-lg-9">
                 <div class="bg-white p-4 rounded-3 shadow-sm">
                     <h5 class="mb-4">Create Address</h5>
-                    
+                    <% user.addresses.forEach((address)=>{  %>
+                      <%  if(address._id == addressId){%>
                     <form id="addressForm" >
                         <div class="row mb-3">
-                            <label class="form-label">User name</label>
+                            <label class="form-label"> User Name </label>
                             <div class="col-md-6 mb-3 mb-md-0">
-                                <input type="text" name="firstName" id="firstName" class="form-control" placeholder="name">
+                                <input type="text" name="firstName" id="firstName" class="form-control" placeholder="name" value="<%=address.name %>">
                             </div>
                            
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Address</label>
-                            <textarea class="form-control" name="address" id="address" rows="3"></textarea>
+                            <textarea class="form-control" name="address" id="address" rows="3" > <%= address.address  %></textarea>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-3 mb-3 mb-md-0">
                                 <label class="form-label">Country</label>
                                 <select id="country" name="country" class="form-select">
-                                    <option value="">Select...</option>
+                                    <option value=" <%= address.country %>">  <%= address.country %></option>
                                     <option value="AF">Afghanistan</option>
                                     <option value="AL">Albania</option>
                                     <option value="DZ">Algeria</option>
@@ -118,26 +119,26 @@
                             </div>
                             <div class="col-md-3 mb-3 mb-md-0">
                                 <label class="form-label">Region/State</label>
-                                <input type="text" class="form-control" name="state" id="state">
+                                <input type="text" class="form-control" name="state" id="state" value=" <%= address.state %>">
                             </div>
                             <div class="col-md-3 mb-3 mb-md-0">
                                 <label class="form-label">City</label>
-                                <input type="text" class="form-control" name="city" id="city">
+                                <input type="text" class="form-control" name="city" id="city" value=" <%= address.city %>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Zip Code</label>
-                                <input type="text" class="form-control" name="zipCode" id="zipCode">
+                                <input type="text" class="form-control" name="zipCode" id="zipCode" value=" <%= address.zipCode %>">
                             </div>
                         </div>
 
                         <div class="row mb-4">
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="email" id="email">
+                                <input type="email" class="form-control" name="email" id="email" value=" <%= address.email %>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control" name="phone" id="phone">
+                                <input type="tel" class="form-control" name="phone" id="phone" value=" <%= address.phone %>">
                             </div>
                         </div>
 
@@ -145,6 +146,9 @@
                             <button type="submit" class="btn btn-dark px-4">Save</button>
                         </div>
                     </form>
+                    
+                    
+                      <% }}); %>
                 </div>
             </div>
         </div>
@@ -225,7 +229,7 @@
     // If validation passes, prepare the data for submission
     const formData = {
         firstName,
-        
+      
         address,
         country,
         state,
@@ -237,8 +241,8 @@
 
     try {
         // Submit the form data
-        const response = await fetch('/user/shippingAddress/addAddress', {
-            method: 'POST',
+        const response = await fetch('/user/shippingAddress/editAddress/<%= addressId%>', {
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
