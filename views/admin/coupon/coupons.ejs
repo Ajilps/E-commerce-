@@ -1,0 +1,61 @@
+<%- include('../adminHead.ejs')  %>
+  <div class="container-fluid my-5">
+    <h1 class="mb-4">Coupon List</h1>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <!-- <div class="btn-group" role="group">
+        <button type="button" class="btn btn-outline-primary">All</button>
+        <button type="button" class="btn btn-outline-primary">Active</button>
+        <button type="button" class="btn btn-outline-primary">Expired</button>
+      </div> -->
+      <a href="/admin/coupons/create" class="btn btn-dark btn-outline-primary">Create Coupon</a> 
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Coupon Code</th>
+            <th>Discount</th>
+           
+            <th>Start</th>
+            <th>Expiry</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+      <% if(coupons){ %>
+        <% coupons.forEach(coupon=>{ %>
+          <tr>
+            <td><%= coupon.code %></td>
+            <td>  <%= coupon.discountValue%> %</td>
+            <%  const start = coupon.startDate.toISOString().split('T')[0];
+                const expiry = coupon.expiryDate.toISOString().split('T')[0]; %>
+
+            <td><%= start %></td>
+            <td><%= expiry %></td>
+            <td><%= coupon.isActive %></td>
+            <% const created = coupon?.createdAt.toISOString().split('T')[0]; %>
+            <td><%= created  %></td>
+            <td><button class="btn btn-sm btn-outline-primary"> <a href="/admin/coupons/update/<%= coupon._id %>"> Edit </a>  </button></td>
+          </tr>
+      <% })} %>
+          <!-- Add more rows as needed -->
+        </tbody>
+      </table>
+    </div>
+    <!-- <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center">
+        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item"><a class="page-link" href="#">4</a></li>
+        <li class="page-item"><a class="page-link" href="#">5</a></li>
+        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+      </ul>
+    </nav> -->
+  </div>
+
+  
+  <%- include('../adminFoot.ejs') %>

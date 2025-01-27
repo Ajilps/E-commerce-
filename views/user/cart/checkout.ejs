@@ -40,17 +40,26 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">Shipping Address</h5>
-                            <button class="btn btn-outline-primary btn-sm">Edit</button>
+                            <h5 class="mb-0" >Shipping Address</h5>
+                            <a href="/user/shippingAddress" class="btn btn-outline-primary btn-sm">Edit</a>
                         </div>
-                        <div class="mb-3">
+                        <% user.addresses.forEach(address => { %> 
+                            <% if(address.isDefault){ %>
+                            <div class="mb-3">
+                                <strong><%= address.name %></strong><br>
+                                <%= address.address %>, <%= address.city %>, <%= address.state %> <%= address.zip %>, <%= address.country %><br>
+                                Phone Number: <%= address.phone %>
+                            </div>
+
+                      <% } }) %>
+                        <!-- <div class="mb-3">
                             <strong>Muhammed Nabeel C</strong><br>
                             Micro Grafix, Theriveed, Road, Kozhikode, KERALA 673032, India<br>
                             Phone Number: 7558663319
-                        </div>
+                        </div> -->
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="sameAddress">
-                            <label class="form-check-label" for="sameAddress">
+                            <input class="form-check-input" type="checkbox" id="sameAddress" checked>
+                            <label class="form-check-label" for="sameAddress" >
                                 Billing Address is same as shipping address
                             </label>
                         </div>
@@ -104,31 +113,39 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="mb-4">Order Summary</h5>
-                        
+                        <% let total = 0;
+                        let discount = 0; %>
+                        <% if(cart){  %>
+                            <% cart.products.forEach(product=>{ %>
+                                <% if(product.quantity !=0 ){ %>
+                       <p><%= product.productId.name%></p>
                         <!-- Product 1 -->
-                        <div class="d-flex mb-3">
-                            <img src="/api/placeholder/60/60" alt="Camera" class="product-img me-3">
+                        <div class="d-flex mb-3 .cart-item">
+                            <img src="<%=  product.productId.productImageUrls[0] %>" alt="Camera" class="product-img me-3">
                             <div class="flex-grow-1">
-                                <h6 class="mb-0">Canon EOS 1500D DSLR Camera Body+ 18-...</h6>
-                                <small class="text-muted">1 × $70</small>
+                                <h6 class="mb-0"><%= product.productId.name%></h6>
+                                <small class="text-muted"><span class="quantity"><%= product.quantity%></span> × <span class="price">₹ <%= product.productId.sellingPrice %></span></small>
                             </div>
                         </div>
-
+                        <%  total += product.productId.sellingPrice *  product.quantity %>
+                        <%  discount += (Number( product.productId.regularPrice )- Number( product.productId.sellingPrice)) *  product.quantity %>
+                        <% }})} %>
                         <!-- Product 2 -->
-                        <div class="d-flex mb-4">
+                        <!-- <div class="d-flex mb-4">
                             <img src="/api/placeholder/60/60" alt="Headphones" class="product-img me-3">
                             <div class="flex-grow-1">
                                 <h6 class="mb-0">Wired Over-Ear Gaming Headphones with U...</h6>
                                 <small class="text-muted">3 × $250</small>
                             </div>
-                        </div>
+                        </div> -->
 
                         <hr>
 
                         <!-- Order Details -->
                         <div class="mb-2 d-flex justify-content-between">
                             <span>Sub-total</span>
-                            <span>$320</span>
+                          
+                            <span>₹ <%=Math.ceil( total) %> </span>
                         </div>
                         <div class="mb-2 d-flex justify-content-between">
                             <span>Shipping</span>
@@ -136,19 +153,19 @@
                         </div>
                         <div class="mb-2 d-flex justify-content-between">
                             <span>Discount</span>
-                            <span>$24</span>
+                            <span>₹<%=Math.ceil(  discount) %></span>
                         </div>
                         <div class="mb-4 d-flex justify-content-between">
                             <span>Tax</span>
-                            <span>$61.99</span>
+                            <span>₹<%= Math.ceil( total *.18)%></span>
                         </div>
 
                         <div class="d-flex justify-content-between mb-4">
                             <strong>Total</strong>
-                            <strong>$357.99 USD</strong>
+                            <strong>₹ <%=    Math.ceil( (total *.18) + total)%></strong>
                         </div>
 
-                        <button class="btn btn-dark w-100">Place Order</button>
+                        <button id="placeOrderBtn" class="btn btn-dark w-100">Place Order</button>
                     </div>
                 </div>
             </div>
@@ -156,5 +173,47 @@
     </div>
 <%- include('../userFooter.ejs') %>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <script>
+        // place order
+        const placeOrderBtn = document.querySelector('#placeOrderBtn');
+        placeOrderBtn.addEventListener('click', () => {
+            // validate form
+            // address
+            
+            // payment option
+            // additional information
+            // submit form
+
+            fetch('/user/order/placeOrder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    products: `<%= JSON.stringify(cart.products) %>`,
+                    total: `<%= Math.ceil( (total *.18) + total) %>`,
+                    discount: `<%= Math.ceil(  discount) %>`,
+                    tax: `<%= Math.ceil( total *.18) %>`,
+                    shipping: 0,
+                    payment: 'Cash on Delivery',
+                    notes: 'Notes about your order, e.g. special notes for delivery',
+                    address: `<%= JSON.stringify(user.addresses.filter(address => address.isDefault)[0]) %>`
+                })
+            })
+              Swal.fire({
+                title: 'Sweet!',
+                text: 'Order placed successfully !',
+                icon: 'success',
+                confirmButtonText: 'Cool'
+            }).then(() => {
+                window.location.href = '/user/orders';
+            });
+
+        });
+        
+    </script>
 </body>
 </html>

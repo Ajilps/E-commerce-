@@ -1,0 +1,234 @@
+<%- include('../adminHead.ejs') %>
+ 
+
+
+
+<div class="container-sm  container-md container-lg my-4 py-4 ">
+    <h1 class="mb-4">Coupon</h1>
+    <% if( coupon) { %>
+      
+      <form>
+        <div class="mb-3">
+          <label for="couponCode" class="form-label">Coupon code</label>
+          <input type="text" uppercase="true" class="form-control" id="couponCode" aria-describedby="couponCodeHelp" value="<%= coupon.code  %>">
+        </div>
+        <div class="mb-3">
+          <label for="start" class="form-label">Start</label>
+          <p></p>
+          <input type="date" class="form-control" id="start" value="<%= start%>">
+        </div>
+        <div class="mb-3">
+          <label for="expiry" class="form-label">Expiry</label>
+          <input type="date" class="form-control" id="expiry" value="<%= expiry  %>">
+        </div>
+        <div class="mb-3">
+          <label for="discountAmount" class="form-label">Discount percentage %</label>
+          <input type="number" class="form-control" id="discountAmount" value="<%= coupon.discountValue  %>">
+        </div>
+        <button type="submit" class="btn btn-primary">Update Coupon</button>
+        <button type="button" class="btn btn-secondary">Cancel</button>
+      </form>
+
+      <% } else{  %> 
+        
+    <form>
+      <div class="mb-3">
+        <label for="couponCode" class="form-label">Coupon code</label>
+        <input type="text" class="form-control" id="couponCode" aria-describedby="couponCodeHelp">
+      </div>
+      <div class="mb-3">
+        <label for="start" class="form-label">Start</label>
+        <input type="date" class="form-control" id="start">
+      </div>
+      <div class="mb-3">
+        <label for="expiry" class="form-label">Expiry</label>
+        <input type="date" class="form-control" id="expiry">
+      </div>
+      <div class="mb-3">
+        <label for="discountAmount" class="form-label">Discount percentage %</label>
+        <input type="number" class="form-control" id="discountAmount">
+      </div>
+      <button type="submit" class="btn btn-primary">Create Coupon</button>
+      <button type="button" class="btn btn-secondary">Cancel</button>
+    </form>
+    <% } %>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+  <script>
+    
+    document.querySelector('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if(!validate()){
+        console.log('validation failed');
+        return;
+      }
+      // get form values
+      const couponCode = document.querySelector('#couponCode').value;
+      const start = document.querySelector('#start').value;
+      const expiry = document.querySelector('#expiry').value;
+      const discountAmount = document.querySelector('#discountAmount').value;
+
+      // if the form is for editing, send a put request instead
+      const edit = '<%= cNew %>';
+      console.log(edit);
+      if( edit ){
+        const coupon = '<%= coupon?._id %>';
+        console.log('updating');
+        await fetch(`/admin/coupons/update/${coupon}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body : JSON.stringify({
+            couponCode,
+            start,
+            expiry,
+            discountAmount
+          })
+        })
+       .then(response => response.json()).then(response =>{
+        if(response.success){
+          Swal.fire({
+            title: 'Coupon updated successfully!',
+            text: 'Coupon updated successfully!',
+            icon: 'success', confirmButtonText: 'OK'
+          }).then(()=>{
+            window.location.href = '/admin/coupons';
+          });
+        }else{
+          Swal.fire({
+            title: 'Something went wrong!',
+            text: 'Something went wrong!',
+            icon: 'error', confirmButtonText: 'Try Again'
+          }).then(()=>{
+            window.location.href = '/admin/coupons';
+          });
+        }
+       }).catch(err => {
+        console.log(err);
+      });
+
+      }else{
+
+        console.log('creating');
+        
+        // send data to server or database (post request)
+        await fetch('/admin/coupons/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body : JSON.stringify({
+            couponCode,
+            start,
+            expiry,
+            discountAmount
+          })
+        }).then(response => response.json()).then(response =>{
+          if(response.success){
+            Swal.fire({
+              title: 'Coupon created successfully!',
+              text: 'Coupon created successfully!',
+              icon: 'success', confirmButtonText: 'OK'
+            }).then(()=>{
+              window.location.href = '/admin/coupons';
+            });
+          }else{
+            Swal.fire({
+              title: 'Something went wrong!',
+              text: 'Something went wrong!',
+              icon: 'error', confirmButtonText: 'Try Again'
+            }).then(()=>{
+              window.location.href = '/admin/coupons';
+            });
+          }
+        }).catch(err => {
+          console.log(err);
+        });
+
+      }
+
+
+     
+
+      console.log(couponCode, start, expiry, discountAmount);
+    });
+
+
+    // validate form
+    function validate(){
+      const couponCode = document.querySelector('#couponCode').value;
+
+      if(!couponCode){
+        Swal.fire({
+          title: 'Coupon code is required!',
+          text: 'Something went wrong!',
+          icon: 'error', confirmButtonText: 'Try Again'
+        });
+
+        return false;
+      }
+      const start = document.querySelector('#start').value;
+      if(!start){
+        Swal.fire({
+          title: 'Start date is required',
+          text: 'Something went wrong!',
+          icon: 'error', confirmButtonText: 'Try Again'
+        });
+        return false;
+      }
+      if(start < new Date().toISOString().split('T')[0]){
+        Swal.fire({
+          title: 'Start date cannot be in the past',
+          text: 'Something went wrong!',
+          icon: 'error', confirmButtonText: 'Try Again'
+        });
+
+        return false;
+      }
+      const expiry = document.querySelector('#expiry').value;
+      if(!expiry){
+        Swal.fire({
+          title: 'Expiry date is required',
+          text: 'Something went wrong!',
+          icon: 'error', confirmButtonText: 'Try Again'
+        });
+        
+        return false;
+      }
+      if(expiry < new Date().toISOString().split('T')[0]){
+        Swal.fire({
+          title: 'Expiry date cannot be in the past',
+          text: 'Something went wrong!',
+          icon: 'error', confirmButtonText: 'Try Again'
+        });
+        
+        return false;
+      }
+      const discountAmount = document.querySelector('#discountAmount').value;
+      if(!discountAmount){
+        Swal.fire({
+          title: 'Discount amount is required',
+          text: 'Something went wrong!',
+          icon: 'error', confirmButtonText: 'Try Again'
+        });
+        return false;
+      }
+      if(isNaN(discountAmount) || discountAmount <= 0 || discountAmount > 100){
+        Swal.fire({
+          title: 'Discount amount should be a positive number and less than or equal to 100',
+          text: 'Something went wrong!',
+          icon: 'error', confirmButtonText: 'Try Again'
+        });
+        return false;
+      }
+
+      return true;
+    }
+
+  </script>
+
+  <%- include('../adminFoot.ejs') %>

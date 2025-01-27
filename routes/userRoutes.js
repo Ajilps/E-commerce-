@@ -15,8 +15,7 @@ import {
   displayChangePassword,
   showShippingAddressForm,
   displayWallet,
-  displayCart,
-  displayCheckout,
+  
   changePasswordWithOldPss,
   addNewShippingAddress,
   editShippingAddress,
@@ -25,6 +24,20 @@ import {
   setDefaultAddress,
 } from "../controllers/userController.js";
 
+import { displayWishlist } from "../controllers/user/wishlistController.js"; //wishlist controller
+
+import {
+  displayCart,
+  addToCart,
+  removeFromCart,
+  updateCart,
+} from "../controllers/user/cartController.js"; //cart controller
+
+import { displayCheckout,
+     placeOrder,
+     displayOrders, 
+     displayOrdersDetails
+     } from "../controllers/user/userOrderController.js"; //checkout controller
 import { verifyJWT } from "../middlewares/authMiddleware.js";
 
 //importing user side product controllers 
@@ -97,13 +110,22 @@ router.delete('/shippingAddress/deleteAddress/:addressId',  deleteShippingAddres
 router.get('/accountDetails/changePassword/:userId',  displayChangePassword);
 router.post('/accountDetails/changePassword/:userId',  changePasswordWithOldPss);
 router.get('/wallet',  displayWallet);
-router.get('/cart', displayCart);
-router.get('/cart/checkout',  displayCheckout);
 router.get('/',  displayUserHome )
 router.get('/home',  displayUserHome )
 router.get('/product/:productId',displayProductUser)
+router.get('/store',displayStore); //store route
+router.get('/wishlist', displayWishlist); //wishlist route
+router.get('/cart', displayCart);
+router.post('/cart/add/:productId', addToCart );
+router.put('/cart/update/:productId', updateCart ); // update cart item quantity
+router.delete('/cart/remove/:productId', removeFromCart );// remove item from cart
 
-//store route
-router.get('/store',displayStore)
+router.get('/cart/checkout',  displayCheckout);
+
+router.get('/orders',displayOrders)
+router.get('/orders/orderDetails/:orderId',displayOrdersDetails)
+router.post('/order/placeOrder', placeOrder);
+
+
 
 export default router;

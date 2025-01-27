@@ -6,6 +6,8 @@
     <title>Shopping Cart</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
     <style>
         .product-img {
             max-width: 120px;
@@ -35,87 +37,83 @@
             <div class="col-lg-8">
                 <div class="bg-white rounded shadow-sm p-4">
                     <h2 class="mb-4">Shopping Cart</h2>
-                    
+                    <% if(cart){ %>
+                    <% cart.products[1]  %>
+
+                    <% cart.products.forEach(product=>{ %>
+                       
                     <!-- Cart Item 1 -->
                     <div class="cart-item">
                         <div class="row align-items-center">
                             <div class="col-md-2">
-                                <img src="/api/placeholder/120/120" alt="Product" class="product-img">
+                                <img src="<%=  product.productId.productImageUrls[0] %>" alt="Product" class="product-img">
                             </div>
                             <div class="col-md-5">
-                                <h5>Smartphone Pro Max</h5>
-                                <p class="text-muted mb-0">Black, 256GB</p>
-                                <span class="badge bg-success">In Stock</span>
+                                <h5><%=  product.productId.name %></h5>
+                                <p class="text-muted mb-0"></p>
+                                    
+                               <% if(product.productId.quantity == 0){ %> 
+                                <span class="badge bg-danger">Out of Stock</span>
+                                <% }else{ %>
+                                     <% if(product.productId.quantity <= 5){ %> 
+                                <span class="badge bg-warning">Low Stock</span>
+                                <% }else{ %>
+                                    <span class="badge bg-success">In Stock</span>
+                                     <% } %>
+                                     <% } %>
                             </div>
                             <div class="col-md-3">
                                 <div class="input-group">
-                                    <button class="btn btn-outline-secondary">-</button>
-                                    <input type="text" class="form-control quantity-input" value="1">
-                                    <button class="btn btn-outline-secondary">+</button>
+                                    
+                                    <input type="number" name="itemQuantity" class="form-control quantity-input "
+                                     stock="<%= product.productId.quantity %>"
+                                       data-id="<%= product._id %>" 
+                                        min="1" 
+                                        value="<%= (product.productId.quantity < product.quantity)? product.productId.quantity :product.quantity %>"
+                                         max="5" >
+                                    
                                 </div>
                             </div>
                             <div class="col-md-2 text-end">
-                                <p class="h5 mb-0">$149.99</p>
-                                <button class="btn btn-link text-danger p-0 mt-2">
+                               
+                                <p class="h5 mb-0 actualPrice" value="<%= product.productId.regularPrice %>"> <del>₹ <%= product.productId.regularPrice %></del></p>
+                                <p class="h5 mb-0 price" value="<%= product.productId.sellingPrice %>">₹ <%= product.productId.sellingPrice %></p>
+                                <button class="btn btn-link text-danger p-0 mt-2 remove-item" data-id="<%= product._id %>">
                                     <i class="bi bi-trash"></i> Remove
                                 </button>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Cart Item 2 -->
-                    <div class="cart-item">
-                        <div class="row align-items-center">
-                            <div class="col-md-2">
-                                <img src="/api/placeholder/120/120" alt="Product" class="product-img">
-                            </div>
-                            <div class="col-md-5">
-                                <h5>Smartphone Ultra</h5>
-                                <p class="text-muted mb-0">Silver, 128GB</p>
-                                <span class="badge bg-success">In Stock</span>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="input-group">
-                                    <button class="btn btn-outline-secondary">-</button>
-                                    <input type="text" class="form-control quantity-input" value="1">
-                                    <button class="btn btn-outline-secondary">+</button>
-                                </div>
-                            </div>
-                            <div class="col-md-2 text-end">
-                                <p class="h5 mb-0">$149.99</p>
-                                <button class="btn btn-link text-danger p-0 mt-2">
-                                    <i class="bi bi-trash"></i> Remove
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <% })} %>
+                    
                 </div>
             </div>
 
             <!-- Order Summary -->
             <div class="col-lg-4">
+                
                 <div class="bg-white rounded shadow-sm p-4 summary-card">
                     <h4 class="mb-4">Order Summary</h4>
                     <div class="d-flex justify-content-between mb-3">
                         <span>Price</span>
-                        <span>$319.98</span>
+                        <span id="price"></span>
                     </div>
                     <div class="d-flex justify-content-between mb-3">
                         <span>Discount</span>
-                        <span>-$31.90</span>
+                        <span id="discount">-</span>
                     </div>
                     <div class="d-flex justify-content-between mb-3">
                         <span>Shipping</span>
-                        <span class="text-success">Free</span>
+                        <span id="shipping" class="text-success">Free</span>
                     </div>
                     <div class="d-flex justify-content-between mb-3">
                         <span>Coupon Applied</span>
-                        <span>$0.00</span>
+                        <span id="coupon">0.00</span>
                     </div>
                     <hr>
                     <div class="d-flex justify-content-between mb-4">
                         <strong>Total</strong>
-                        <strong>$288.08</strong>
+                        <strong id="total"></strong>
                     </div>
 
                     <div class="mb-3">
@@ -128,7 +126,7 @@
                     <button class="btn btn-dark w-100"><a href="/user/cart/checkout">Proceed to Checkout</a></button>
                     
                     <div class="text-muted text-center mt-3">
-                        <small>Estimated Delivery by Feb 1, 2023</small>
+                       
                     </div>
                 </div>
             </div>
@@ -136,5 +134,147 @@
     </div>
 <%- include('../userFooter.ejs') %>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // creating order summary
+    function createOrderSummary() {
+            let Total = 0;
+            let Discount = 0;
+            let Shipping = 0;
+            let Coupon = 0;
+            let price = 0;
+            let itemQuantity = 0;
+            const Items = document.querySelectorAll('.cart-item');
+            Items.forEach(item => {
+                let itemPrice = parseInt(item.querySelector('.price').getAttribute('value'));
+                itemQuantity = parseInt(item.querySelector('.quantity-input').value);
+                const actualPrice = parseInt(item.querySelector('.actualPrice').getAttribute('value'));
+                price = itemPrice * itemQuantity;
+                Discount += (actualPrice - itemPrice) * itemQuantity;
+
+                Total += price;
+                console.log(Discount, Total);
+            });
+            console.log('updated');
+            console.log(itemQuantity);
+            document.getElementById('price').innerText = `₹ ${Total}`;
+            document.getElementById('discount').innerText = `₹ ${Discount}`;
+            document.getElementById('total').innerText = `₹ ${Total}`;
+            // Shipping = Total > 500? 0 : 0;
+            document.getElementById('shipping').innerText = `₹ ${Shipping}`;
+            document.getElementById('total').innerText = `₹ ${Total + Shipping}`;
+
+
+        }
+        createOrderSummary();
+    </script>
+
+    <script>
+        // remove item from cart
+        document.querySelectorAll('.remove-item').forEach(item => {
+            item.addEventListener('click', async function() {
+               
+                Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to delete this from cart !",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        const productId = this.getAttribute('data-id');
+                        const response = await fetch(`/user/cart/remove/${productId}`, {
+                            method: 'DELETE'
+                        });
+                        if (response.ok) {
+                                             
+                            window.location.reload();
+                        }
+                    }
+                });
+                })
+        });
+
+        // update item quantity
+        document.querySelectorAll('.quantity-input').forEach(input => {
+            input.addEventListener('change', async function(e) {
+                e.preventDefault();
+                createOrderSummary();
+                const productId = this.getAttribute('data-id');
+                const stock = this.getAttribute('stock');
+                const quantity = parseInt(this.value);
+                
+                if (  quantity > stock) {
+                    console.log( quantity, stock);
+                    if (quantity > stock){
+                        this.value = stock;
+                    }
+                    // this.value = 1;
+                    Toastify({
+                        text: `Quantity should be between 1 and ${stock}`,
+                        duration: 3000,
+                        // destination: "
+                        newWindow: true,
+                        close: true,
+                        gravity: "top", // `top` or `bottom`
+                        position: "left", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                        onClick: function(){} // Callback after click
+                    }).showToast();
+                   return 
+                }
+
+                await fetch(`/user/cart/update/${productId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ quantity,productId })
+                }).then(response => response.json()).then(response => {
+                    console.log(response);
+                
+
+                if (response.success) {
+                    Toastify({
+                        text: `${response.message}`,
+                        duration: 3000,
+                        // destination: "https://github.com/apvarun/toastify-js",
+                        newWindow: true,
+                        close: true,
+                        gravity: "top", // `top` or `bottom`
+                        position: "left", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+                        createOrderSummary();
+                }else{
+                     Toastify({
+                    text: `${response.message}`,
+                    className: "info",
+                    style: {
+                        background: "linear-gradient(to right, #00b09b, #96c93d)",
+                    }
+                    }).showToast();
+
+            };
+        });
+       
+        
+        });
+        });
+
+    </script>
+
+  
 </body>
 </html>

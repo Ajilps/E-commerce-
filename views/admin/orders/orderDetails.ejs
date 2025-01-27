@@ -1,0 +1,91 @@
+<%- include('../adminHead.ejs')  %>
+
+  <div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1>Order Details</h1>
+      <div>
+        <button class="btn btn-primary me-2">+ Add Order</button>
+        <button class="btn btn-outline-secondary">Export</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Order #302011</h5>
+            <p class="card-text">Processing</p>
+            <p class="card-text">Added: 12 Dec 2022</p>
+            <p class="card-text">Payment Method: Visa</p>
+            <p class="card-text">Shipping Method: Flat Shipping</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Customer</h5>
+            <p class="card-text">Josh Adam</p>
+            <p class="card-text">joshadam@mail.com</p>
+            <p class="card-text">909 427 2910</p>
+          </div>
+        </div>
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Document</h5>
+            <p class="card-text">Invoice: INV-32011</p>
+            <p class="card-text">Shipping: SHP-2011REQ</p>
+            <p class="card-text">Rewards: 480 point</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Order List (+2 Orders)</h5>
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>SKU</th>
+                <th>Total</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Logic+ Wireless Mouse</td>
+                <td>302011</td>
+                <td>$121.00</td>
+                <td>$121.00</td>
+              </tr>
+              <tr>
+                <td>Smartwatch E2</td>
+                <td>302011</td>
+                <td>$590.00</td>
+                <td>$590.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Subtotal: $711.00</p>
+        <p>VAT(0%): $0.00</p>
+        <p>Shipping Rate: $20.00</p>
+        <p>Total: $731.00</p>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Address</h5>
+        <p>Billing Address:<br>
+        1833 Bel Meadow Drive, Fontana, California 92335, USA</p>
+        <p>Shipping Address:<br>
+        1833 Bel Meadow Drive, Fontana, California 92335, USA</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

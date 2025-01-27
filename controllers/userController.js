@@ -605,15 +605,7 @@ const displayWallet = async (req,res) =>{
     }
 }
 
-// display cart (get)
-const displayCart = async (req,res) =>{
-    try {
-       
-        return res.status(200).render('user/cart/cart.ejs',{ success: true, user: req.user});
-    } catch (error) {
-        console.error(`user cart retrieval failed - ${error.message}`);
-    }
-}
+
 
 // display displayCheckout (get)
   const displayCheckout = async (req,res) => {
@@ -642,7 +634,6 @@ export {
   displayChangePassword,
   showShippingAddressForm,
   displayWallet,
-  displayCart,
   displayCheckout,
   changePasswordWithOldPss,
   addNewShippingAddress,

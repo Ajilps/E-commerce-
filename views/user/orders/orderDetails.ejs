@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Details</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+</head>
+<body>
+    <%- include('../userHeader.ejs')%>
+  <div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1>Order Details</h1>
+      <!-- <div>
+        <button class="btn btn-primary me-2">+ Add Order</button>
+        <button class="btn btn-outline-secondary">Export</button>
+      </div> -->
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Order: <%= order._id %></h5>
+            <p class="card-text">Order Placed: <%= order.createdAt %></p>
+            <p class="card-text">Expected Arrival: 23 Jan, 2023</p>
+            <p class="card-text">Total: ₹<%= order.totalPrice %></p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Products </h5>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <%#orders.forEach(order=>{ %>
+                    <p><%#= order._id %></p>
+                    <% order.products.forEach(product=>{   %>
+                  
+                  <tr>
+                    <td><%= product.productId.name %></td>
+                    <td>₹<%= product.productId.sellingPrice %>/-</td>
+                    <td>1</td>
+                    <td>₹<%= product.productId.sellingPrice %>/-</td>
+                  </tr>
+                  <!-- <tr>
+                    <td>Google Pixel 6 Pro - Crystal Clear Phone Case with 12ft Anti Drop</td>
+                    <td>₹300</td>
+                    <td>1</td>
+                    <td>₹300</td>
+                  </tr> -->
+                  <% }) %>
+        <%# }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Order Activity</h5>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">Order Placed: 17 Jan, 2023 at 7:38 PM</li>
+              <li class="list-group-item">Packaging: 19 Jan, 2023 at 8:00 AM</li>
+              <li class="list-group-item">On The Road: 21 Jan, 2023 at 8:00 AM</li>
+              <li class="list-group-item">Delivered: 23 Jan, 2023 at 7:38 PM</li>
+              <li class="list-group-item">Order Confirmed: 23 Jan, 2023 at 2:21 PM</li>
+            </ul>
+          </div>
+        </div> -->
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Billing Address</h5>
+        <% user.addresses.forEach(address => { %> 
+          <% if(address.isDefault){ %>
+          <div class="mb-3">
+              <strong><%= address.name %></strong><br>
+              <%= address.address %>, <%= address.city %>, <%= address.state %> <%= address.zip %>, <%= address.country %><br>
+              Phone Number: <%= address.phone %>
+          </div>
+
+    <% } }) %>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Shipping Address</h5>
+        <% user.addresses.forEach(address => { %> 
+          <% if(address.isDefault){ %>
+          <div class="mb-3">
+              <strong><%= address.name %></strong><br>
+              <%= address.address %>, <%= address.city %>, <%= address.state %> <%= address.zip %>, <%= address.country %><br>
+              Phone Number: <%= address.phone %>
+          </div>
+
+    <% } }) %>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Order Notes</h5>
+        <p>Deliver on weekends if possible. Ensure signature upon delivery.</p>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../userFooter.ejs') %>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

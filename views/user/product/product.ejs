@@ -6,6 +6,8 @@
     <title>iPhone 15 Pro - Product Details</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
     <style>
         .product-img {
             max-width: 400px;
@@ -191,7 +193,7 @@
                         <span>
                             <i class="fas fa-tag-alt text-success"></i>
                             <span class="ms-1">SAVE <%= product.offer %> %
-                                 <span class="text-muted">OFFER</span>
+                                 <span class="text-muted">Product OFFER</span>
     
                                  
                             </span>
@@ -203,7 +205,7 @@
                     <span>
                         <i class="fas fa-tag-alt text-success"></i>
                         <span class="ms-1">SAVE <%= product.category.categoryOffers %> %
-                             <span class="text-muted">CategoryOFFER</span>
+                             <span class="text-muted">Category OFFER</span>
                         </span>
                     </span>
                 </div>
@@ -229,33 +231,38 @@
                         <div class="color-option" style="background-color: #FFB6C1"></div>
                     </div>
                 </div> -->
+                <div class="mb-4"> 
+                    <% if(product.quantity == 0 ){ %>
+                        <span class="text-danger">Out of Stock</span>
+                    <% } %>
+
+                    <span> Stock : <%= product.quantity %></span>
+                </div>
 
                 <span> <%= //product?.variants%></span>
 
                 <!-- Storage Selection -->
-                <div class="mb-4">
+                <!-- <div class="mb-4">
                     <p class="mb-2">Choose a storage:</p>
                     <div class="d-flex gap-3">
-                        <% product.variants.forEach((variant)=>{  %> 
-                        <% Object.entries(variant.specifications).forEach(([key, value])=>{ %>
+                        <%// product.variants.forEach((variant)=>{  %> 
+                        <%# Object.entries(variant.specifications).forEach(([key, value])=>{ %>
                             <div class="storage-option ">
-                                <%= key +":"+ value %>
+                                <%=// key +":"+ value %>
                             </div>
-                            <% }) %>
-                            <%}) %>
-                        <!-- <div class="storage-option">
-                            512GB ROM & 8GB RAM
-                        </div> -->
+                            <% //}) %>
+                            <% //}) %>
+                       
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Quantity and Add to Cart -->
                 <div class="d-flex align-items-center gap-3 mb-4">
                     <!-- <button class="btn btn-outline-secondary">-</button> -->
-                    <input type="number" class="form-control text-center" style="width: 60px" value="1" max="5">
+                    <input type="number" id="quantity" class="form-control text-center" style="width: 60px" value="1" min="1" step="1" max="5">
                     <!-- <button class="btn btn-outline-secondary">+</button> -->
-                    <button class="btn btn-dark flex-grow-1">
-                        <a href=""> <i class="fas fa-shopping-cart me-2"></i>Add To Cart</a>
+                    <button id="addToCart" class="btn btn-dark flex-grow-1">
+                        <i class="fas fa-shopping-cart me-2"></i>Add To Cart
                     </button>
                 </div>
 
@@ -278,10 +285,17 @@
                 <div class="tab-content py-3">
                     <div class="tab-pane fade show active" id="highlights">
                         <ul class="list-unstyled">
-                            <li><i class="fas fa-check me-2 text-success"></i>128 GB ROM</li>
-                            <li><i class="fas fa-check me-2 text-success"></i>15.49 Cm (6.1 inch) Super Retina XDR Display</li>
-                            <li><i class="fas fa-check me-2 text-success"></i>12MP + 12MP + 12MP Front Camera</li>
-                            <li><i class="fas fa-check me-2 text-success"></i>A15 Bionic Chip, 6 Core Processor</li>
+                            <% Object.entries(product.specifications).forEach(([key, value])=>{ %>
+                                <li><i class="fas fa-check me-2 text-success"></i><%= key +":"+ value %></li>
+                                <% }) %>
+                        </ul>
+                    </div>
+                </div>
+                <div class="tab-content py-3">
+                    <div class="tab-pane fade show active" id="description">
+                        <ul class="list-unstyled">
+                          <%= product.description %>
+                       
                         </ul>
                     </div>
                 </div>
@@ -289,7 +303,7 @@
                 <!-- Ratings & Reviews -->
                 <div class="mt-4">
                     <h4>Ratings & Reviews</h4>
-                    <div class="d-flex align-items-center gap-4 mb-3">
+                    <!-- <div class="d-flex align-items-center gap-4 mb-3">
                         <div class="text-center">
                             <h2 class="mb-0">4.8 ★</h2>
                             <small class="text-muted">1,64,000 Ratings</small>
@@ -315,10 +329,10 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Reviews -->
-                    <div class="reviews">
+                    <!-- <div class="reviews">
                         <div class="d-flex gap-3 mb-3">
                             <img src="/api/placeholder/40/40" class="review-avatar" alt="Reviewer">
                             <div>
@@ -337,13 +351,15 @@
                                 <small class="text-muted">2 mins ago</small>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
        <script>
                     const searchInput = document.getElementById('searchInput');
                     searchInput.addEventListener('keydown', function(e){
@@ -380,6 +396,91 @@
           zoomContainer.style.backgroundSize = '200%';
           zoomContainer.style.backgroundRepeat = 'no-repeat';
         });
+      </script>
+
+      <script>
+        // add to cart
+        const addToCart = document.getElementById('addToCart');
+        addToCart.addEventListener('click', function(e){
+         
+            e.preventDefault();
+            const quantity = document.getElementById('quantity').value;
+            // if the quantity is grater than the stock then show a error message and return
+            const stock = `<%=product.quantity%>`;
+            let status = true;
+            if(quantity > Number(stock)){
+                status = false;
+                if(stock == 0){
+                    Toastify({
+                    text: "Product is out of stock",
+                    className: "info",
+                    style: {
+                        background: "linear-gradient(to right, #00b09b, #96c93d)",
+                    }
+                    }).showToast();
+                    return;
+                }else{
+                    
+                    Toastify({
+                        text: "Quantity is greater than the stock",
+                        className: "info",
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        }
+                        }).showToast();
+                        return;
+                }
+            }
+
+            // send the request to the server
+            if(status){
+            fetch(`/user/cart/add/<%=product._id%>`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({quantity, productId : `<%=product._id%>`})
+            }).then(res => res.json())
+            .then(data => {
+                console.log(data);
+                if(data.success){
+                    Toastify({
+                        text: `${data.message}`,
+                        duration: 3000,
+                        destination: "https://github.com/apvarun/toastify-js",
+                        newWindow: true,
+                        close: true,
+                        gravity: "top", // `top` or `bottom`
+                        position: "right", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+
+                }
+                else{
+                    Toastify({
+                        text: `${data.message}`,
+                        duration: 3000,
+                        destination: "https://github.com/apvarun/toastify-js",
+                        newWindow: true,
+                        close: true,
+                        gravity: "top", // `top` or `bottom`
+                        position: "right", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                        onClick: function(){} // Callback after click
+                        }).showToast();
+                }
+            }).catch(err => {
+                console.log(err);
+            })
+        }
+        })       
       </script>
 </body>
 </html>

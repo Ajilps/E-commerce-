@@ -26,6 +26,14 @@ import {
   saveVariantProduct,
 } from "../controllers/admin/productController.js";
 
+import {displayOrders} from '../controllers/admin/orderController.js'
+
+import {
+  displayCoupons,
+  createCoupon,
+  displayAddCouponForm,
+  editCoupon,
+} from "../controllers/admin/couponController.js";
 
 const router = Router();
 
@@ -106,7 +114,15 @@ router.get('/products/addVariant/:productId',displayAddVariant);
 
 router.post('/products/addVariant/:parentId',uploads.array("images",5), saveVariantProduct)
 
+// orders
+router.get('/orders',displayOrders);
 
+// coupons
+router.get('/coupons',displayCoupons);
+router.get('/coupons/create',displayAddCouponForm);
+router.post('/coupons/create',createCoupon);
+router.get('/coupons/update/:couponId',displayAddCouponForm);
+router.patch('/coupons/update/:couponId',editCoupon);
 
 
 
