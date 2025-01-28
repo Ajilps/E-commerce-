@@ -54,6 +54,11 @@
             color: #999;
             font-weight: normal;
         }
+        .error{
+            color: red;
+            font-weight: bold;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -80,12 +85,14 @@
                             <label class="form-label">User name</label>
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <input type="text" name="firstName" id="firstName" class="form-control" placeholder="name">
+                                <span class="error" id="firstNameError"> Enter a valid username</span>
                             </div>
                            
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Address</label>
                             <textarea class="form-control" name="address" id="address" rows="3"></textarea>
+                            <span class="error" id="addressError"> Enter a valid address</span>
                         </div>
 
                         <div class="row mb-3">
@@ -115,18 +122,22 @@
                                     <option value="JP">Japan</option>
                                     <option value="JO">Jordan</option>
                                 </select>
+                                <span class="error" id="countryError">Select a country</span>
                             </div>
                             <div class="col-md-3 mb-3 mb-md-0">
                                 <label class="form-label">Region/State</label>
                                 <input type="text" class="form-control" name="state" id="state">
+                                <span class="error" id="stateError">Enter a valid state/region</span>
                             </div>
                             <div class="col-md-3 mb-3 mb-md-0">
                                 <label class="form-label">City</label>
                                 <input type="text" class="form-control" name="city" id="city">
+                                <span class="error" id="cityError">Enter a valid city</span>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Zip Code</label>
                                 <input type="text" class="form-control" name="zipCode" id="zipCode">
+                                <span class="error" id="zipCodeError">Enter a valid zip code</span>
                             </div>
                         </div>
 
@@ -134,10 +145,12 @@
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <label class="form-label">Email</label>
                                 <input type="email" class="form-control" name="email" id="email">
+                                <span class="error" id="emailError">Enter a valid email</span>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Phone Number</label>
                                 <input type="tel" class="form-control" name="phone" id="phone">
+                                <span class="error" id="phoneError">Enter a valid phone number</span>
                             </div>
                         </div>
 
@@ -168,48 +181,8 @@
     const email = document.getElementById('email').value.trim();
     const phone = document.getElementById('phone').value.trim();
 
-    // Validation rules
-    const errors = [];
-
-    // Name validation
-    if (firstName === '') errors.push('First name is required');
    
-
-    // Address validation
-    if (address === '') errors.push('Address is required');
-
-    // Location validation
-    if (country === '') errors.push('Please select a country');
-    if (state === '') errors.push('State/Region is required');
-    if (city === '') errors.push('City is required');
-    if (zipCode === '') errors.push('Zip code is required');
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (email === '') {
-        errors.push('Email is required');
-    } else if (!emailRegex.test(email)) {
-        errors.push('Please enter a valid email address');
-    }
-
-    // Phone validation
-    const phoneRegex = /^\+?[\d\s-]{10,}$/;
-    if (phone === '') {
-        errors.push('Phone number is required');
-    } else if (!phoneRegex.test(phone)) {
-        errors.push('Please enter a valid phone number');
-    }
-
-    // If there are validation errors, show them using SweetAlert2
-    if (errors.length > 0) {
-        await Swal.fire({
-            title: 'Validation Error',
-            html: `Please correct the following errors:<br><br>${errors.join('<br>')}`,
-            icon: 'error',
-            confirmButtonText: 'OK'
-        });
-        return;
-    }
+            if(validate()){
 
     // Show loading state
     Swal.fire({
@@ -273,7 +246,63 @@
             confirmButtonText: 'OK'
         });
     }
+}
 });
+
+function validate(){
+   
+    const firstName = document.getElementById('firstName').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const country = document.getElementById('country').value;
+    const state = document.getElementById('state').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const zipCode = document.getElementById('zipCode').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+
+    if(firstName.trim() === ""){
+        document.getElementById('firstNameError').style.display = 'block';
+        return false;
+    }
+   
+    if(address.trim() === ""){
+        document.getElementById('addressError').style.display = 'block';
+        return false;
+    }
+    if(city.trim() === ""){
+        document.getElementById('cityError').style.display = 'block';
+        return false;
+    }
+    if(zipCode.trim() === ""){
+        document.getElementById('zipCodeError').style.display = 'block';
+        return false;
+    }
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email === '') {
+        document.getElementById('emailError').style.display = 'block';
+        return false
+    } else if (!emailRegex.test(email)) {
+        document.getElementById('emailError').style.display = 'block';
+        document.getElementById('emailError').innerText = 'Enter a valid email address ';
+
+        return false
+    }
+
+ // Phone validation
+ const phoneRegex = /^\+?[\d\s-]{10,}$/;
+    if (phone === '') {
+        document.getElementById('phoneError').style.display = 'block';
+        return false
+    } else if (!phoneRegex.test(phone)) {
+        document.getElementById('phoneError').style.display = 'block'
+        document.getElementById('phoneError').innerText = 'enter a valid phone number '
+        return false
+    }
+
+
+return true;
+}
     </script>
 </body>
 </html>

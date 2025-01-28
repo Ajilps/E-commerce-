@@ -22,7 +22,7 @@
         <thead>
           <tr>
             <th>Order ID</th>
-            <th>Product</th>
+            <th>Products</th>
             <th>Date</th>
             <th>Customer</th>
             <th>Total</th>
@@ -37,23 +37,38 @@
           <% if(orders){ %>
           <% orders.forEach(order=>{ %>
             <p><%#= order._id %></p>
+           <% let totalQ = 0 %>
             <% order.products.forEach(product=>{   %>
+              <%  totalQ += product.quantity %>
+              <% }) %>
           <tr>
-            <td>302012</td>
-            <td><%= product._id %></td>
-            <td>29 Dec 2022</td>
+            <td><%= order.orderId %></td>
+            <td><%=  totalQ   %></td>
+
+            <% let date = new Date(order.createdAt) %>
+            <td> <%= `${date.getDate()}/${date.toLocaleString('default', { month: 'short' })} / ${date.getFullYear() }` %></td>
             <td><%= order.userId.username %></td>
-            <td>₹59000</td>
-            <td>24 Jun 2025</td>
-            <td><span class="badge bg-warning">In Progress</span></td>
+            <td>₹ <%= order.totalPrice  %></td>
+            <td><%= order.paymentStatus %></td>
             <td>
-              <a href="#" class="btn btn-outline-primary btn-sm me-2">Edit</a>
-              <a href="#" class="btn btn-outline-danger btn-sm">Delete</a>
+              <span class="badge 
+                <% if (order.status === 'Pending') { %>bg-warning<% } %>
+                <% if (order.status === 'Processing') { %>bg-info<% } %>
+                <% if (order.status === 'Shipped') { %>bg-primary<% } %>
+                <% if (order.status === 'Delivered') { %>bg-success<% } %>
+                <% if (order.status === 'Cancelled') { %>bg-danger<% } %>
+              ">
+                <%= order.status %>
+              </span>
+            </td>
+            <td>
+              <a href="/admin/order/<%= order._id%>" class="btn btn-outline-primary btn-sm me-2">Edit</a>
+              <!-- <a href="#" class="btn btn-outline-danger btn-sm">Delete</a> -->
             </td>
           </tr>
           <!-- Add more rows as needed -->
-          <% }) %>
-          <% }) %>
+              <% }) %>
+            <%# }) %>
           <% } %>
         </tbody>
       </table>
@@ -73,3 +88,9 @@
   </div>
 </body>
 </html>
+
+
+
+<!-- { productId: new ObjectId('6789e2c9fcdd7454ef65964e'), quantity: 4, price: 990, _id: new ObjectId('6797d73e07da2d19661533a8') },
+{ productId: new ObjectId('678a961739cba380c870e5a6'), quantity: 2, price: 2061.19, _id: new ObjectId('6797d73e07da2d19661533a9') },
+{ productId: new ObjectId('678a96a939cba380c870e5b0'), quantity: 2, price: 20466.99, _id: new ObjectId('6797d73e07da2d19661533aa') } -->

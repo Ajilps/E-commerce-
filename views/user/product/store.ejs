@@ -6,6 +6,8 @@
     <title>Store</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
     <style>
         .color-circle {
             width: 24px;
@@ -464,18 +466,30 @@
                             <a href="/user/product/<%= product._id %>" class="text-decoration-none">
                             <div class="position-relative">
                                 <img src="<%= product.productImageUrls[0] %>" class="card-img-top product-img" alt="iPhone">
-                                <span class="new-badge">NEW</span>
-                                <button class="wishlist-btn">♡</button>
+                                <!-- <span class="new-badge"></span> -->
+                               <a href="#"> <button class="wishlist-btn">♡</button></a>
 
                             </div>
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <h5 class="card-title mb-0">₹<%= product.sellingPrice %></h5>
                                     <del class="card-title mb-0 text-muted ">₹<%= product.regularPrice %></del>
-                                    <span class="rating">★ <%= product.rating %></span>
                                 </div>
+                                <span class="rating">★ <%= product.rating %></span>
                                 <h6 class="card-subtitle mb-2"><%= product.name %></h6>
+
+                               
+                                <span class="badge 
+                                <% if (product.quantity <= 10) { %>bg-warning<% } %>
+                                <% if (product.quantity > 10) { %>bg-success<% } %>
+                               
+                                <% if (product.quantity <= 0) { %>bg-danger<% } %>
+                              ">
+                                <%= (product.quantity) <= 0? ' Out Of ' : product.quantity %> Stock</span>
+
                                 <p class="card-text text-muted small"><%= product.description %></p>
+                                <p class="card-text text-muted small">Brand: <%= product.brand.name %></p>
+                                <button onclick="addToCart('<%= product._id %>')" class="btn btn-outline-secondary addToCart">Add to cart</button>
                                 <!-- <div class="mt-2">
                                     <span class="color-circle active" style="background: #00FFFF;"></span>
                                     <span class="color-circle" style="background: #FF0000;"></span>
@@ -494,6 +508,7 @@
     </div>
 <%- include('../userFooter.ejs') %>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
        // request a search result 
        window.onload = function() {
@@ -561,6 +576,40 @@
             e.preventDefault();
             window.location.href = `/user/store`
         })
+
+        async function addToCart(productId){
+           await fetch(`/user/cart/add/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({quantity : 1, productId })
+            }).then(res => res.json())
+            .then(data => {
+                
+                if(data.success){
+                    // alert('testing')
+                    Toastify({
+                        text: " Product added to cart ",
+                        className: "info",
+                        destination:'/user/cart',
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        }
+                        }).showToast();
+
+                }else{
+                    Toastify({
+                        text: `${data.message}`,
+                        className: "info",
+                        destination:'/user/cart',
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        }
+                        }).showToast();
+                }
+            })
+        }
            
     </script>
 </body>

@@ -54,6 +54,12 @@
             color: #999;
             font-weight: normal;
         }
+        .error{
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+            /* display: none; */
+        }
     </style>
 </head>
 <body>
@@ -81,12 +87,15 @@
                             <label class="form-label"> User Name </label>
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <input type="text" name="firstName" id="firstName" class="form-control" placeholder="name" value="<%=address.name %>">
+                                <div class="error" id="usernameError"> </div>
                             </div>
                            
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Address</label>
                             <textarea class="form-control" name="address" id="address" rows="3" > <%= address.address  %></textarea>
+                            <div class="error" id="addressError"> </div>
+
                         </div>
 
                         <div class="row mb-3">
@@ -116,18 +125,22 @@
                                     <option value="JP">Japan</option>
                                     <option value="JO">Jordan</option>
                                 </select>
+                                <div class="error" id="countryError"> </div>
                             </div>
                             <div class="col-md-3 mb-3 mb-md-0">
                                 <label class="form-label">Region/State</label>
                                 <input type="text" class="form-control" name="state" id="state" value=" <%= address.state %>">
+                                <div class="error" id="stateError"> </div>
                             </div>
                             <div class="col-md-3 mb-3 mb-md-0">
                                 <label class="form-label">City</label>
                                 <input type="text" class="form-control" name="city" id="city" value=" <%= address.city %>">
+                                <div class="error" id="cityError"> </div>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Zip Code</label>
                                 <input type="text" class="form-control" name="zipCode" id="zipCode" value=" <%= address.zipCode %>">
+                                <div class="error" id="zipCodeError"> </div>
                             </div>
                         </div>
 
@@ -135,10 +148,20 @@
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <label class="form-label">Email</label>
                                 <input type="email" class="form-control" name="email" id="email" value=" <%= address.email %>">
+                                <div class="error" id="emailError"> </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Phone Number</label>
                                 <input type="tel" class="form-control" name="phone" id="phone" value=" <%= address.phone %>">
+                                <div class="error" id="phoneError"> </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Default Address</label>
+                            <div class="form-check">
+                                <input style="display: none;" readonly class="form-check-input" type="checkbox" id="defaultAddress" name="defaultAddress" value= '<%= address.isDefault  %>'  >
+                                <!-- <label class="form-check-label" for="defaultAddress">Make this address my default address</label> -->
                             </div>
                         </div>
 
@@ -171,61 +194,12 @@
     const zipCode = document.getElementById('zipCode').value.trim();
     const email = document.getElementById('email').value.trim();
     const phone = document.getElementById('phone').value.trim();
+    const defaultAddress = document.getElementById('defaultAddress').value;
+    // const defaultAddress = 
+            if(validate()){
 
-    // Validation rules
-    const errors = [];
-
-    // Name validation
-    if (firstName === '') errors.push('First name is required');
+            
    
-
-    // Address validation
-    if (address === '') errors.push('Address is required');
-
-    // Location validation
-    if (country === '') errors.push('Please select a country');
-    if (state === '') errors.push('State/Region is required');
-    if (city === '') errors.push('City is required');
-    if (zipCode === '') errors.push('Zip code is required');
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (email === '') {
-        errors.push('Email is required');
-    } else if (!emailRegex.test(email)) {
-        errors.push('Please enter a valid email address');
-    }
-
-    // Phone validation
-    const phoneRegex = /^\+?[\d\s-]{10,}$/;
-    if (phone === '') {
-        errors.push('Phone number is required');
-    } else if (!phoneRegex.test(phone)) {
-        errors.push('Please enter a valid phone number');
-    }
-
-    // If there are validation errors, show them using SweetAlert2
-    if (errors.length > 0) {
-        await Swal.fire({
-            title: 'Validation Error',
-            html: `Please correct the following errors:<br><br>${errors.join('<br>')}`,
-            icon: 'error',
-            confirmButtonText: 'OK'
-        });
-        return;
-    }
-
-    // Show loading state
-    Swal.fire({
-        title: 'Submitting...',
-        html: 'Please wait while we process your information',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
-
     // If validation passes, prepare the data for submission
     const formData = {
         firstName,
@@ -236,7 +210,8 @@
         city,
         zipCode,
         email,
-        phone
+        phone,
+        isDefault: defaultAddress,
     };
 
     try {
@@ -277,7 +252,53 @@
             confirmButtonText: 'OK'
         });
     }
+}
 });
+
+// validate address function
+function validate(){
+    const firstName = document.getElementById('firstName').value.trim();
+    
+    const address = document.getElementById('address').value.trim();
+    const country = document.getElementById('country').value;
+    const state = document.getElementById('state').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const zipCode = document.getElementById('zipCode').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+
+    if(firstName.trim() === ""){
+        document.getElementById('usernameError').textContent = "First name is required";
+        return false;
+    }
+    if(country.trim() === ""){
+        document.getElementById('usernameError').textContent = "First name is required";
+        return false;
+    }
+    if(state.trim() === ""){
+        document.getElementById('stateError').textContent = "State is required";
+        return false;
+    }
+    if(city.trim() === ""){
+        document.getElementById('cityError').textContent = "City is required";
+        return false;
+    }
+    if(zipCode.trim() === ""){
+        document.getElementById('zipCodeError').textContent = "Zip code is required";
+        return false;
+    }
+    if(email.trim() === ""){
+        document.getElementById('emailError').textContent = "Email is required";
+        return false;
+    }
+    if(phone.trim() === "" || phone.trim().length < 10 ||phone.trim().length > 10 ){
+        document.getElementById('phoneError').textContent = "Enter a valid Phone number. Eg.(9987917492)  ";
+        return false;
+    }
+
+
+    return true;
+}
     </script>
 </body>
 </html>

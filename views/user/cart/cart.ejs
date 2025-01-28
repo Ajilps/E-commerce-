@@ -53,25 +53,28 @@
                                 <p class="text-muted mb-0"></p>
                                     
                                <% if(product.productId.quantity == 0){ %> 
-                                <span class="badge bg-danger">Out of Stock</span>
+                                <span class="badge bg-danger">Out of Stock </span> <span  class="badge bg-danger stockQ"> <%= product.productId.quantity %></span>
                                 <% }else{ %>
                                      <% if(product.productId.quantity <= 5){ %> 
-                                <span class="badge bg-warning">Low Stock</span>
+                                <span class="badge bg-warning">Low Stock</span><span class="badge bg-warning stockQ"> <%= product.productId.quantity %></span>
                                 <% }else{ %>
-                                    <span class="badge bg-success">In Stock</span>
+                                    <span class="badge bg-success">In Stock</span><span class="badge bg-success stockQ"> <%= product.productId.quantity %></span>
                                      <% } %>
                                      <% } %>
                             </div>
                             <div class="col-md-3">
                                 <div class="input-group">
-                                    
+                                   
                                     <input type="number" name="itemQuantity" class="form-control quantity-input "
                                      stock="<%= product.productId.quantity %>"
                                        data-id="<%= product._id %>" 
                                         min="1" 
                                         value="<%= (product.productId.quantity < product.quantity)? product.productId.quantity :product.quantity %>"
-                                         max="5" >
-                                    
+                                         max="5" 
+                                         <% if(product.productId.quantity === 0){ %> 
+                                             disabled
+                                             <% } %>
+                                         >
                                 </div>
                             </div>
                             <div class="col-md-2 text-end">
@@ -116,14 +119,9 @@
                         <strong id="total"></strong>
                     </div>
 
-                    <div class="mb-3">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Coupon Code">
-                            <button class="btn btn-outline-dark">Apply</button>
-                        </div>
-                    </div>
+                   
 
-                    <button class="btn btn-dark w-100"><a href="/user/cart/checkout">Proceed to Checkout</a></button>
+                    <button onclick="checkOut()" class="btn btn-dark w-100">Proceed to Checkout </button>
                     
                     <div class="text-muted text-center mt-3">
                        
@@ -143,7 +141,7 @@
             let Total = 0;
             let Discount = 0;
             let Shipping = 0;
-            let Coupon = 0;
+          
             let price = 0;
             let itemQuantity = 0;
             const Items = document.querySelectorAll('.cart-item');
@@ -272,6 +270,24 @@
         
         });
         });
+
+        function checkOut(){
+            // if(){}
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You will be redirected to checkout page!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, proceed to checkout!'
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/user/cart/checkout';
+                    }
+                });
+        }
 
     </script>
 

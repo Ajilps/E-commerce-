@@ -45,7 +45,7 @@
                         </div>
                         <% user.addresses.forEach(address => { %> 
                             <% if(address.isDefault){ %>
-                            <div class="mb-3">
+                            <div id="address" class="mb-3">
                                 <strong><%= address.name %></strong><br>
                                 <%= address.address %>, <%= address.city %>, <%= address.state %> <%= address.zip %>, <%= address.country %><br>
                                 Phone Number: <%= address.phone %>
@@ -102,7 +102,7 @@
                         <h5 class="mb-3">Additional Information</h5>
                         <div class="mb-3">
                             <label class="form-label text-muted">Order Notes (Optional)</label>
-                            <textarea class="form-control" rows="3" placeholder="Notes about your order, e.g. special notes for delivery"></textarea>
+                            <textarea id="notes" class="form-control" rows="3" placeholder="Notes about your order, e.g. special notes for delivery"></textarea>
                         </div>
                     </div>
                 </div>
@@ -153,17 +153,28 @@
                         </div>
                         <div class="mb-2 d-flex justify-content-between">
                             <span>Discount</span>
-                            <span>₹<%=Math.ceil(  discount) %></span>
+                            <span>₹ -<%=Math.ceil(  discount) %></span>
                         </div>
                         <div class="mb-4 d-flex justify-content-between">
                             <span>Tax</span>
-                            <span>₹<%= Math.ceil( total *.18)%></span>
+                            <span>₹ <%= Math.ceil( total *.18)%></span>
+                        </div>
+                        <div class="mb-4 d-flex justify-content-between">
+                            <span>Coupon</span>
+                            <span>₹- <%= 0%></span>
                         </div>
 
                         <div class="d-flex justify-content-between mb-4">
                             <strong>Total</strong>
                             <strong>₹ <%=    Math.ceil( (total *.18) + total)%></strong>
                         </div>
+                        <div class="d-flex justify-content-between mb-4">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Coupon Code">
+                                <button class="btn btn-outline-dark">Apply</button>
+                            </div>
+                        </div>
+    
 
                         <button id="placeOrderBtn" class="btn btn-dark w-100">Place Order</button>
                     </div>
@@ -186,6 +197,9 @@
             // payment option
             // additional information
             // submit form
+            const notes = document.getElementById('notes').value;
+            const address = document.getElementById("address").innerText;
+            console.log(notes)
 
             fetch('/user/order/placeOrder', {
                 method: 'POST',
@@ -199,18 +213,32 @@
                     tax: `<%= Math.ceil( total *.18) %>`,
                     shipping: 0,
                     payment: 'Cash on Delivery',
-                    notes: 'Notes about your order, e.g. special notes for delivery',
-                    address: `<%= JSON.stringify(user.addresses.filter(address => address.isDefault)[0]) %>`
+                    notes,
+                    address: address,
                 })
+            }).then(response => response.json())
+            .then(data => {
+                if(data.success){
+                            Swal.fire({
+                        title: 'Sweet!',
+                        text: 'Order placed successfully !',
+                        icon: 'success',
+                        confirmButtonText: 'Cool'
+                    }).then(() => {
+                        window.location.href = '/user/orders';
+                    });
+                }else{
+                    Swal.fire({
+                        title: 'Oops...',
+                        text: data.message,
+                        icon: 'error',
+                        confirmButtonText: 'Cool'
+                    }).then(() => {
+                        window.location.href = '/user/cart';
+                    });;
+                }
             })
-              Swal.fire({
-                title: 'Sweet!',
-                text: 'Order placed successfully !',
-                icon: 'success',
-                confirmButtonText: 'Cool'
-            }).then(() => {
-                window.location.href = '/user/orders';
-            });
+             
 
         });
         

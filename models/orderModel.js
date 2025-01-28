@@ -28,6 +28,38 @@ const orderSchema = mongoose.Schema(
             type: Number,
             required: true,
         },
+        orderId:{
+            type:String,
+            required: true,
+        },
+        discount:{
+            type: Number,
+            required: false,
+        },tax:{
+            type: Number,
+            required: false,
+        },
+        shippingAddress:{
+            type: String,
+            required: true,
+        },
+        billingAddress:{
+            type: String,
+            required: true,
+        },
+        paymentMethod: {
+            type: String,
+            required: true,
+        },
+        paymentStatus:{
+            type: String,
+            enum: ["Pending", "Processing", "Completed"],
+            default: "Pending",
+        },
+        orderNotes:{
+            type: String,
+            required: false,
+        },
         status: {
             type: String,
             enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],

@@ -70,6 +70,17 @@
             text-decoration: underline;
             padding: 0;
         }
+        .error {
+            color: #e53e3e;
+            font-size: 0.875rem;
+            margin-top: 6px;
+            display: none;
+        }
+        input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
     </style>
 </head>
 <body>
@@ -99,12 +110,13 @@
                         </div> -->
                         
                         <div class="col-md-9">
-                            <form>
+                            <form id="account-form">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label"><First Name>First Name </label>
-                                            <input type="text" class="form-control" value="<%= user.username%>">
+                                            <label class="form-label"><First Name>User name </label>
+                                            <input id="username" name="username" type="text" class="form-control" value="<%= user.username%>">
+                                            <div id="usernameError" class="error">enter a valid username</div>
                                         </div>
                                     </div>
                                    
@@ -114,7 +126,8 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Email</label>
-                                            <input type="email" class="form-control" value="<%= user.email%>">
+                                            <input type="email" id="email" name="email" class="form-control" value="<%= user.email%>" readonly>
+                                            
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -137,7 +150,8 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Phone Number</label>
-                                            <input type="tel" class="form-control" value="<%= user.phone  %>">
+                                            <input id="phone" name="phone" type="number" class="form-control" value="<%= user.phone  %>">
+                                            <div class="error" id="phoneError"> Enter a valid mobil number</div>
                                         </div>
                                     </div>
                                 </div>
@@ -156,5 +170,76 @@
     </div>
 <%- include('../userFooter.ejs')%>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // update user profile 
+        const accountForm = document.getElementById('account-form');
+        accountForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(accountForm);
+            const username = formData.get('username');
+            const email = formData.get('email');
+            const phone = formData.get('phone');
+
+            if(validate()){
+
+                const res = await fetch('/user/updateProfile', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, email, phone })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Profile Updated',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(()=>{
+                        window.location.href = '';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error updating profile',
+                        text: data.message
+                    });
+                }
+            }
+
+        });
+
+        function validate(){
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+
+            // if(username.trim() === '' || email.trim() === '' || phone.trim() === ''){
+            //    document.getElementById('email').style.display = 'block';
+            //    document.getElementById('usernameError').style.display = 'block';
+            //    document.getElementById('phoneError').style.display = 'block';
+            //     return false;
+            // }
+            // email validation
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+            if(!emailPattern.test(email)){
+               document.getElementById('emailError').style.display = 'block'
+                return false;
+            }
+            if(username.trim() === ''|| username.trim().length < 4){
+                document.getElementById('usernameError').style.display = 'block';
+                return false;
+            }
+            if(phone.trim() === '' || phone.trim().length < 10){
+                document.getElementById('phoneError').style.display = 'block';
+                return false;
+
+            }
+            return true;
+        }
+
+    </script>
 </body>
 </html>

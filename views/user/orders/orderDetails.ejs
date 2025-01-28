@@ -13,19 +13,25 @@
   <div class="container my-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h1>Order Details</h1>
-      <!-- <div>
-        <button class="btn btn-primary me-2">+ Add Order</button>
-        <button class="btn btn-outline-secondary">Export</button>
-      </div> -->
+      <div>
+        <!-- <button class="btn btn-primary me-2">+ Add Order</button> -->
+        <button id="cancelOrder" onclick="cancelOrder( '<%= order._id %>')" orderId="<%= order._id %>" class="btn btn-outline-danger">Cancel</button>
+      </div>
     </div>
 
     <div class="row">
       <div class="col-md-6">
         <div class="card mb-4">
           <div class="card-body">
-            <h5 class="card-title">Order: <%= order._id %></h5>
-            <p class="card-text">Order Placed: <%= order.createdAt %></p>
+            <h5 class="card-title">Order: <%= order.orderId %></h5>
+
+            <% let date = new Date(order.createdAt) %>
+            <p> <%= `${date.getDate()}/${date.toLocaleString('default', { month: 'short' })} / ${date.getFullYear() }` %></p>
+
+            <!-- <p class="card-text">Order Placed: <%#= order.createdAt %></p> -->
+
             <p class="card-text">Expected Arrival: 23 Jan, 2023</p>
+            <span> including 18% tax</span>
             <p class="card-text">Total: ₹<%= order.totalPrice %></p>
           </div>
         </div>
@@ -51,9 +57,9 @@
                   
                   <tr>
                     <td><%= product.productId.name %></td>
-                    <td>₹<%= product.productId.sellingPrice %>/-</td>
-                    <td>1</td>
-                    <td>₹<%= product.productId.sellingPrice %>/-</td>
+                    <td>₹<%= product.price %>/-</td>
+                    <td><%= product.quantity  %></td>
+                    <td>₹<%= Math.ceil( product.price * product.quantity) %>/-</td>
                   </tr>
                   <!-- <tr>
                     <td>Google Pixel 6 Pro - Crystal Clear Phone Case with 12ft Anti Drop</td>
@@ -86,37 +92,29 @@
     <div class="card mb-4">
       <div class="card-body">
         <h5 class="card-title">Billing Address</h5>
-        <% user.addresses.forEach(address => { %> 
-          <% if(address.isDefault){ %>
+        
+          
           <div class="mb-3">
-              <strong><%= address.name %></strong><br>
-              <%= address.address %>, <%= address.city %>, <%= address.state %> <%= address.zip %>, <%= address.country %><br>
-              Phone Number: <%= address.phone %>
+              <strong><%=  %></strong><br>
+              <%= order.billingAddress%>, <br>
+              
           </div>
 
-    <% } }) %>
+   
       </div>
     </div>
 
     <div class="card mb-4">
       <div class="card-body">
         <h5 class="card-title">Shipping Address</h5>
-        <% user.addresses.forEach(address => { %> 
-          <% if(address.isDefault){ %>
-          <div class="mb-3">
-              <strong><%= address.name %></strong><br>
-              <%= address.address %>, <%= address.city %>, <%= address.state %> <%= address.zip %>, <%= address.country %><br>
-              Phone Number: <%= address.phone %>
-          </div>
-
-    <% } }) %>
+        <span><%= order.shippingAddress%>,</span> <br>
       </div>
     </div>
 
     <div class="card mb-4">
       <div class="card-body">
         <h5 class="card-title">Order Notes</h5>
-        <p>Deliver on weekends if possible. Ensure signature upon delivery.</p>
+        <p> <%= (order.orderNotes)? order.orderNotes : " No instructions " %></p>
       </div>
     </div>
   </div>
@@ -124,5 +122,43 @@
   <%- include('../userFooter.ejs') %>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    // cancel order function 
+    function cancelOrder(orderId){
+     Swal.fire( {
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, cancel it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/user/orders/cancel/${orderId}`, {
+            method: 'DELETE'
+          })
+         .then(data => {
+           if(data.ok){
+            console.log(data)
+             Swal.fire('Order Cancelled!', 'Your order has been cancelled.', 'success');
+             window.location.href = '/user/orders';
+           }else{
+             Swal.fire('Error!', 'Something went wrong.', 'error');
+           }
+         })
+         .catch(error => {
+            console.log(error);
+          });
+          // Swal.fire('Deleted!', 'Your file has been deleted.','success');
+          window.location.href = '/user/orders';
+        }
+        // else if (result.dismiss === Swal.DismissReason.cancel) {
+        //   Swal.fire('Cancelled', 'Your order is safe.', 'error');
+        // }
+      });
+    }
+  </script>
 </body>
 </html>

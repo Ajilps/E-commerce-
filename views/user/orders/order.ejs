@@ -33,7 +33,7 @@
         <thead>
           <tr>
             <!-- <th>Order ID</th> -->
-            <th>Product</th>
+            <th>Order Id</th>
             <th>Total</th>
             <th>Status</th>
             <th>Date</th>
@@ -46,26 +46,26 @@
               <!-- <td>#302012</td> -->
               <% orders.forEach(order=>{ %>
                 <p>
-                  <%#= order._id %>
+                  <%#=  %>
                 </p>
-                <% order.products.forEach(product=>{ %>
+                <%# order.products.forEach(product=>{ %>
                   <td>
-                    <%= product.productId.name %>
+                    <%= order.orderId %>
                   </td>
-                  <td>₹<%= product.productId.sellingPrice %>/-</td>
+                  <td>₹<%=  order.totalPrice %>/-</td>
                   <td><span class="badge bg-success">
                       <%= order.status %>
                     </span></td>
-                  <% const date=order.createdAt.toISOString().split('T')[0]; %>
-                    <td>
-                      <%= date %>
-                    </td>
-                    <td><a href="/user/orders/orderDetails/<%= order._id %>" class="btn btn-outline-primary btn-sm">View</a>
+                    <% let date = new Date(order.createdAt) %>
+            <td> <%= `${date.getDate()}/ ${date.toLocaleString('default', { month: 'short' })} /${date.getFullYear() }` %></td>
+
+                 
+                    <td><a href="/user/orders/orderDetails/<%= order._id %>" class="btn btn-outline-primary btn-sm">Manage</a>
                     </td>
             </tr>
         
           </tbody>
-              <% }) %>
+              <%# }) %>
             <% }) %>
           <% } %>
       </table>

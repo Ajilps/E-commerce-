@@ -232,7 +232,7 @@
                     </div>
                 </div> -->
                 <div class="mb-4"> 
-                    <% if(product.quantity == 0 ){ %>
+                    <% if(product.quantity < 0 ){ %>
                         <span class="text-danger">Out of Stock</span>
                     <% } %>
 
@@ -408,7 +408,7 @@
             // if the quantity is grater than the stock then show a error message and return
             const stock = `<%=product.quantity%>`;
             let status = true;
-            if(quantity > Number(stock)){
+            if(quantity > Number(stock) && quantity > 0){
                 status = false;
                 if(stock == 0){
                     Toastify({
@@ -447,7 +447,7 @@
                     Toastify({
                         text: `${data.message}`,
                         duration: 3000,
-                        destination: "https://github.com/apvarun/toastify-js",
+                        destination: "/user/cart",
                         newWindow: true,
                         close: true,
                         gravity: "top", // `top` or `bottom`
@@ -464,7 +464,6 @@
                     Toastify({
                         text: `${data.message}`,
                         duration: 3000,
-                        destination: "https://github.com/apvarun/toastify-js",
                         newWindow: true,
                         close: true,
                         gravity: "top", // `top` or `bottom`
