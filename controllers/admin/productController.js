@@ -9,7 +9,7 @@ const displayAddProducts = async (req, res) => {
   const brand = await Brand.find({});
   const category = await Category.find({});
 
-  res.status(200).render("admin/products/addProduct.ejs", { brand, category });
+  res.status(200).render("admin/products/addProduct.ejs", { brand, category, user: req.user });
 };
 
 // list products function
@@ -56,6 +56,7 @@ const listProducts = async (req, res) => {
     products,
     totalPages: Math.ceil(count / limit),
     currentPage: page,
+    user: req.user,
   });
 };
 
@@ -242,7 +243,7 @@ const displayEditProduct = async (req, res) => {
 
   res
     .status(200)
-    .render("admin/products/editProduct.ejs", { product, brand, category });
+    .render("admin/products/editProduct.ejs", { product, brand, category, user: req.user });
 };
 
 
@@ -392,14 +393,14 @@ const displayAddVariant = async(req,res)=>{
     if (!parentProduct){
       return res
        .status(404)
-       .render('error.ejs',{ success: false, message: "product not found" });
+       .render('error.ejs',{ success: false, message: "product not found", user: req.user });
     }
-    return res.status(200).render('admin/products/addVariant.ejs',({parentProduct, brand, category}))
+    return res.status(200).render('admin/products/addVariant.ejs',({parentProduct, brand, category , user: req.user}))
   } catch (error) {
     console.error(error);
     return res
     .status(500)
-    .render('error.ejs',{ success: false, message: "product not found" });
+    .render('error.ejs',{ success: false, message: "product not found" , user: req.user });
   }
 }
 

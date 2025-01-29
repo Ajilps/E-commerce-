@@ -18,7 +18,8 @@ const categoryInfo =(async (req,res)=>{
             categories: categoryData,
             currentPage: page,
             totalPages: totalPages,
-            totalCategories: totalCategories
+            totalCategories: totalCategories,
+             user: req.user
         })
 
     } catch (error) {
@@ -139,7 +140,7 @@ const editCategory = async (req,res)=>{
     // const catName =await Catego?ry.findOne({name})
     const category = await Category.findById({_id: categoryId});    
     console.log(category); //test
-    res.render('admin/category/editCategory.ejs',{category})
+    res.render('admin/category/editCategory.ejs',{category, user: req.user})
 }   
 
 const updateCategory = async (req,res)=>{
@@ -178,7 +179,7 @@ const searchCategory = async (req,res)=>{
     const regex = new RegExp(search, 'i');
     try {
         const categories = await Category.find({$or: [{name: regex}, {description: regex}]});
-        res.render('admin/category/category.ejs',{categories, search})
+        res.render('admin/category/category.ejs',{categories, search, user: req.user})
     } catch (error) {
         console.error(`Error searching for category - ${error.message}`);
         res.redirect('/pageerror');

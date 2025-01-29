@@ -22,6 +22,7 @@ const brandInfo = async (req, res) => {
         currentPage: page,
         totalPages: totalPages,
         totalBrands: totalBrands,
+        user: req.user,
       });
     })
     .catch((err) => {
@@ -33,7 +34,7 @@ const brandInfo = async (req, res) => {
 const editBrandDisplay = async (req, res) => {
   const brandId = req.query.id;
   const brand = await Brand.findById(brandId);
-  res.render("admin/brand/editBrand.ejs", { brand });
+  res.render("admin/brand/editBrand.ejs", { brand, user: req.user });
 };
 
 // update brand

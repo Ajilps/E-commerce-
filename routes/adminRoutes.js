@@ -26,7 +26,10 @@ import {
   saveVariantProduct,
 } from "../controllers/admin/productController.js";
 
-import {displayOrders} from '../controllers/admin/orderController.js'
+import {displayOrders, 
+  displayOrderDetails,
+  rejectOrder
+} from '../controllers/admin/orderController.js'
 
 import {
   displayCoupons,
@@ -116,6 +119,8 @@ router.post('/products/addVariant/:parentId',uploads.array("images",5), saveVari
 
 // orders
 router.get('/orders',displayOrders);
+router.get('/orders/:orderId',displayOrderDetails);
+router.put('/orders/reject/:orderId',rejectOrder)
 
 // coupons
 router.get('/coupons',displayCoupons);

@@ -29,7 +29,9 @@ const customerInfo = async (req,res)=>{
        res.render('admin/customer/customer.ejs',{
         data:userData,
         totalPages: Math.ceil(count/limit), 
-        currentPage:page})
+        currentPage:page,
+        user: req.user
+    })
         
     } catch (error) {
         res.redirect('/pageerror')

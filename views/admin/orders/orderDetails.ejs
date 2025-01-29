@@ -4,8 +4,14 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h1>Order Details</h1>
       <div>
-        <button class="btn btn-primary me-2">+ Add Order</button>
-        <button class="btn btn-outline-secondary">Export</button>
+        <% if( order.status == "Processing" || order.status == "Pending") {%> 
+        <button onclick="cancelOrder(`<%= order._id%>`)" class="btn btn-danger me-2">Reject Order</button>
+        <% if( order.status == "Pending"){ %>
+        <button onclick="holdOrder(`<%= order._id%>`)" class="btn btn-warning me-2">Hold Order</button>
+        <%} %>
+        <%} %>
+        <button onclick="exportOrder(`<%= order._id%>`)" class="btn btn-outline-secondary">Export</button>
+        <!-- <button class="btn btn-outline-secondary">Print</button> -->
       </div>
     </div>
 
@@ -13,11 +19,13 @@
       <div class="col-md-6">
         <div class="card mb-4">
           <div class="card-body">
-            <h5 class="card-title">Order #302011</h5>
-            <p class="card-text">Processing</p>
-            <p class="card-text">Added: 12 Dec 2022</p>
-            <p class="card-text">Payment Method: Visa</p>
-            <p class="card-text">Shipping Method: Flat Shipping</p>
+
+            <h5 class="card-title">Order : <%= order.orderId %></h5>
+            <p class="card-text">Status : <%= order.status %></p>
+            <% let date = new Date(order.createdAt) %>
+            <p class="card-text">Added: <%= `${date.getDate()}/ ${date.toLocaleString('default', { month: 'short' })} / ${date.getFullYear() }` %></p>
+            <p class="card-text">Payment Method: <%= order.paymentMethod %></p>
+            <!-- <p class="card-text">Shipping Method: Flat Shipping</p> -->
           </div>
         </div>
       </div>
@@ -25,67 +33,159 @@
         <div class="card mb-4">
           <div class="card-body">
             <h5 class="card-title">Customer</h5>
-            <p class="card-text">Josh Adam</p>
-            <p class="card-text">joshadam@mail.com</p>
-            <p class="card-text">909 427 2910</p>
+            <p class="card-text"><%= user.username %></p>
+            <p class="card-text"><%= user.email %></p>
+            <p class="card-text"><%= user.phone %></p>
           </div>
         </div>
-        <div class="card mb-4">
+        <!-- <div class="card mb-4">
           <div class="card-body">
             <h5 class="card-title">Document</h5>
             <p class="card-text">Invoice: INV-32011</p>
             <p class="card-text">Shipping: SHP-2011REQ</p>
             <p class="card-text">Rewards: 480 point</p>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
+    <p><%#=  order %></p>
 
     <div class="card mb-4">
       <div class="card-body">
-        <h5 class="card-title">Order List (+2 Orders)</h5>
+        <h5 class="card-title">Order List (+<%= order.products.length %> Orders)</h5>
         <div class="table-responsive">
           <table class="table table-hover">
             <thead>
               <tr>
                 <th>Product</th>
-                <th>SKU</th>
-                <th>Total</th>
+                <th>Quantity</th>
                 <th>Price</th>
+                <th>Total</th>
               </tr>
             </thead>
             <tbody>
+              <% let total = 0; %>
+              <% order.products.forEach(product => { %> 
               <tr>
-                <td>Logic+ Wireless Mouse</td>
-                <td>302011</td>
-                <td>$121.00</td>
-                <td>$121.00</td>
+                <td><%= product.productId.name %></td>
+                <td><%= product.quantity %></td>
+                <td>₹ <%= product.price %></td>
+                <td>₹ <%= product.price * product.quantity %></td>
+                <% total += product.price * product.quantity %>
               </tr>
-              <tr>
+              <% }) %>
+              <!-- <tr>
                 <td>Smartwatch E2</td>
                 <td>302011</td>
                 <td>$590.00</td>
                 <td>$590.00</td>
-              </tr>
+              </tr> -->
             </tbody>
           </table>
         </div>
-        <p>Subtotal: $711.00</p>
-        <p>VAT(0%): $0.00</p>
-        <p>Shipping Rate: $20.00</p>
-        <p>Total: $731.00</p>
+        <p>Subtotal: ₹ <%= total %></p>
+        <p>Discount:₹ <%= order.discount  %></p>
+        <p>Tax(18%): ₹ <%= order.tax || Math.floor(order.totalPrice*.18) %></p>
+        <p>Shipping Rate: <%= order.shippingFee || 0 %></p>
+        <p>Total:₹ <%= order.totalPrice %></p>
       </div>
     </div>
-
+    <!-- <button class="btn btn-outline-secondary mb-3">Print Address</button> -->
     <div class="card mb-4">
       <div class="card-body">
-        <h5 class="card-title">Address</h5>
+        <h5 class="card-title">Address  </h5>
+       
         <p>Billing Address:<br>
-        1833 Bel Meadow Drive, Fontana, California 92335, USA</p>
-        <p>Shipping Address:<br>
-        1833 Bel Meadow Drive, Fontana, California 92335, USA</p>
-      </div>
-    </div>
+          <%= order.billingAddress %> </p>
+          <p>Shipping Address:<br>
+            <%= order.billingAddress %> </p>
+          </div>
+        </div>
   </div>
+
+
+  <%- include('../adminFoot.ejs')  %>
+
+  <script>
+    // reject order 
+    function cancelOrder(orderId) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You want to reject this order ?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, reject it!'
+      }).then((data)=> {  
+        if(data.isConfirmed){
+        
+        fetch('/admin/orders/reject/' + orderId, {
+          method: 'PUT',
+        })
+         .then((response) => response.json())
+         .then((data) => {
+            if (data.success) {
+              Swal.fire({
+                title: 'Order Rejected!',
+                text: 'Your order has been rejected.',
+                icon:'success',
+              })
+              window.location.href = "/admin/orders";
+            } else {
+              Swal.fire({
+                title: 'Failed to reject order!',
+                text: data.message,
+                icon: 'error',
+              })
+            }
+          });
+        }})
+    }
+    
+    // accept order 
+    function holdOrder(orderId) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You want to HOLD this order ?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, reject it!'
+      }).then((data)=> {  
+        if(data.isConfirmed){
+        fetch('/admin/orders/accept/' + orderId, {
+          method: 'PUT',
+        })
+         .then((response) => response.json())
+         .then((data) => {
+            if (data.success) {
+              alert("Order accepted successfully!");
+              window.location.href = "/admin/orders";
+            } else {
+              alert("Failed to accept order!");
+            }
+          });
+      }})
+    }
+    
+    function exportOrder(orderId) {
+      fetch('/admin/orders/export/' + orderId, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+       .then((response) => response.blob())
+       .then((data) => {
+          const url = window.URL.createObjectURL(data);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'order-' + orderId + '.pdf';
+          link.click();
+        });
+    }
+    </script>
 </body>
 </html>

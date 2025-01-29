@@ -56,7 +56,8 @@ const placeOrder = async (req, res) => {
     }
 
     let products = [];
-    let totalPrice = 0;
+    let subtotal = 0;
+    let totalRegularPrice = 0;
 
     // Process each product in the cart
     for (const product of cart.products) {
@@ -81,19 +82,32 @@ const placeOrder = async (req, res) => {
       });
 
       // Calculate total price
-      totalPrice += Math.ceil(
-        product.productId.sellingPrice * product.quantity
+      subtotal += Math.ceil(product.productId.sellingPrice * product.quantity);
+      // Calculate total totalSellingPrice
+      totalRegularPrice += Math.ceil(
+        product.productId.regularPrice * product.quantity
       );
     }
 
     // Add 18% tax to the total price
-    totalPrice += Math.ceil(totalPrice * 0.18);
-
+    let tax = Math.ceil(subtotal * 0.18);
+    let totalPrice = Math.ceil(subtotal * 0.18 + subtotal);
+    let shippingFee = 0;
+    let discount = totalRegularPrice - subtotal;
+    // if(coupon){
+    //   discount = coupon.discount;
+    //   totalPrice = totalPrice - (totalPrice * (coupon.discount / 100));
+    //   shippingFee = 10;
+    // }
     // Create the order
     const order = new Order({
       userId,
       products,
       totalPrice,
+      subtotal,
+      tax,
+      discount,
+      shippingFee,
       shippingAddress: req.body.address,
       billingAddress: req.body.address,
       paymentMethod: req.body.payment,
