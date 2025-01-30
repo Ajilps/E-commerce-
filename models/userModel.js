@@ -155,9 +155,12 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
         default: null 
-    }
+    },
+    redeemedCoupon:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Coupon'
+    }]
     
-
 },{timestamps: true});
 
 //checking the password is modified or not

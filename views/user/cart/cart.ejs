@@ -36,7 +36,7 @@
             <!-- Cart Items -->
             <div class="col-lg-8">
                 <div class="bg-white rounded shadow-sm p-4">
-                    <h2 class="mb-4">Shopping Cart</h2>
+                    <h2 class="mb-4">Shopping Cart (<span id="productCount"><%= cart.products.length %></span>)</h2>
                     <% if(cart){ %>
                     <% cart.products[1]  %>
 
@@ -109,10 +109,7 @@
                         <span>Shipping</span>
                         <span id="shipping" class="text-success">Free</span>
                     </div>
-                    <div class="d-flex justify-content-between mb-3">
-                        <span>Coupon Applied</span>
-                        <span id="coupon">0.00</span>
-                    </div>
+                   
                     <hr>
                     <div class="d-flex justify-content-between mb-4">
                         <strong>Total</strong>
@@ -272,15 +269,23 @@
         });
 
         function checkOut(){
-            // if(){}
+            // if the cart is empty then show a message that the cart is empty 
+            const cart = document.getElementById('productCount').innerText
+        
+            if( cart <= 0 ){
+                console.log('cart is empty ')
+                Swal.fire('Cart is Empty', 'No items in your cart', 'info')
+                return;
+            }
+            
 
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You will be redirected to checkout page!",
-                icon: 'warning',
+                icon: 'success',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
+                confirmButtonColor: '#d3',
+                cancelButtonColor: '#3085d',
                 confirmButtonText: 'Yes, proceed to checkout!'
                 }).then(async (result) => {
                     if (result.isConfirmed) {

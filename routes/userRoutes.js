@@ -42,6 +42,7 @@ import {
 } from "../controllers/user/userOrderController.js"; //checkout controller
 import { verifyJWT } from "../middlewares/authMiddleware.js";
 
+import { validateCoupon } from "../controllers/user/userCoupon.js"; // importing validate coupon from user coupon validation
 //importing user side product controllers
 import {
   displayProductUser,
@@ -134,10 +135,12 @@ router.put("/cart/update/:productId", updateCart); // update cart item quantity
 router.delete("/cart/remove/:productId", removeFromCart); // remove item from cart
 
 router.get("/cart/checkout", displayCheckout);
+//checking the coupon is valid or not
+router.post("/coupon/validateCoupon", validateCoupon);
 
 router.get("/orders", displayOrders);
 router.get("/orders/orderDetails/:orderId", displayOrdersDetails);
 router.post("/order/placeOrder", placeOrder);
-router.delete('/orders/cancel/:orderId',cancelOrder)
+router.delete("/orders/cancel/:orderId", cancelOrder);
 
 export default router;

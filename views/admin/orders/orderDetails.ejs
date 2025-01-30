@@ -6,7 +6,7 @@
       <div>
         <% if( order.status == "Processing" || order.status == "Pending") {%> 
         <button onclick="cancelOrder(`<%= order._id%>`)" class="btn btn-danger me-2">Reject Order</button>
-        <% if( order.status == "Pending"){ %>
+        <% if( order.status == "Processing"){ %>
         <button onclick="holdOrder(`<%= order._id%>`)" class="btn btn-warning me-2">Hold Order</button>
         <%} %>
         <%} %>

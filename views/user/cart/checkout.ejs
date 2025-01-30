@@ -57,12 +57,12 @@
                             Micro Grafix, Theriveed, Road, Kozhikode, KERALA 673032, India<br>
                             Phone Number: 7558663319
                         </div> -->
-                        <div class="form-check">
+                        <!-- <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="sameAddress" checked>
                             <label class="form-check-label" for="sameAddress" >
                                 Billing Address is same as shipping address
                             </label>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
@@ -145,33 +145,33 @@
                         <div class="mb-2 d-flex justify-content-between">
                             <span>Sub-total</span>
                           
-                            <span>₹ <%=Math.ceil( total) %> </span>
+                            <span>₹<span class="text-danger" id="subTotal"> <%=Math.ceil( total) %> </span></span>
                         </div>
                         <div class="mb-2 d-flex justify-content-between">
                             <span>Shipping</span>
-                            <span class="text-success">Free</span>
+                            <span>₹  <span class="text-success">Free</span></span>
                         </div>
                         <div class="mb-2 d-flex justify-content-between">
                             <span>Discount</span>
-                            <span>₹ -<%=Math.ceil(  discount) %></span>
+                            <span>₹ -<span class=" text-success"><%=Math.ceil(  discount) %></span></span> 
                         </div>
                         <div class="mb-4 d-flex justify-content-between">
                             <span>Tax</span>
-                            <span>₹ <%= Math.ceil( total *.18)%></span>
+                            <span>₹  <span> <%= Math.ceil( total *.18)%></span></span>
                         </div>
                         <div class="mb-4 d-flex justify-content-between">
                             <span>Coupon</span>
-                            <span>₹- <%= 0%></span>
+                            <span>₹ -<span class="text-success" id="couponDiscount"> <%= 0%></span></span>
                         </div>
 
                         <div class="d-flex justify-content-between mb-4">
                             <strong>Total</strong>
-                            <strong>₹ <%=    Math.ceil( (total *.18) + total)%></strong>
+                          <span>₹  <strong id="totalCost" > <%=    Math.ceil( (total *.18) + total)%></strong></span>
                         </div>
                         <div class="d-flex justify-content-between mb-4">
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Coupon Code">
-                                <button class="btn btn-outline-dark">Apply</button>
+                                <input name="coupon" id="couponCode" type="text" class="form-control" placeholder="Coupon Code">
+                                <button onclick="checkCoupon()" class="btn btn-outline-dark">Apply</button>
                             </div>
                         </div>
     
@@ -188,6 +188,61 @@
 
 
     <script>
+        let validatedCoupon = "";
+        let couponRedeemed = false;
+     
+function checkCoupon(){
+    const couponCode = document.getElementById('couponCode').value;
+    console.log(couponCode)
+    if(couponRedeemed !=  couponCode ){
+        validateCoupon(couponCode);
+    }
+    else{
+        Swal.fire({
+            title: 'Coupon Already Redeemed',
+            text: 'You have already redeemed this coupon.',
+            icon: 'error',
+            confirmButtonText: 'Okay'
+        });
+        
+    }
+}
+// function for checking the coupon validation and applying 
+let couponDiscount = document.getElementById('couponDiscount');
+const totalCost = document.getElementById('totalCost');
+async function validateCoupon(couponCode){
+   
+    
+ console.log(couponDiscount.innerText)
+    await fetch('/user/coupon/validateCoupon', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ couponCode })
+    }).then(response => response.json()).then(data => {
+        if(data.success){
+    console.log(data.data._id); //  testing 
+
+    couponDiscount.innerText = ( ( Number(totalCost.innerText) * Number(data.data.discountValue ) /100) ) 
+    totalCost.innerText = Math.ceil( Number(totalCost.innerText) - Number(couponDiscount.innerText) ) ;
+    validatedCoupon = data.data._id;
+    couponRedeemed = data.data.code;
+        }else{
+            Swal.fire({
+                title: 'Coupon Validation Failed',
+                text: data.message,
+                icon: 'error',
+                confirmButtonText: 'Try Again'
+            });
+            document.getElementById('couponCode').value = ""
+        }
+    });
+
+   return null;
+
+}
+
         // place order
         const placeOrderBtn = document.querySelector('#placeOrderBtn');
         placeOrderBtn.addEventListener('click', () => {
@@ -199,6 +254,8 @@
             // submit form
             const notes = document.getElementById('notes').value;
             const address = document.getElementById("address").innerText;
+            const subTotal = document.getElementById("subTotal").innerText;
+            // const coupon = document.getElementById("coupon").value
             console.log(notes)
 
             fetch('/user/order/placeOrder', {
@@ -208,13 +265,16 @@
                 },
                 body: JSON.stringify({
                     products: `<%= JSON.stringify(cart.products) %>`,
-                    total: `<%= Math.ceil( (total *.18) + total) %>`,
+                    subTotal: subTotal,
+                    total: totalCost.innerText ,
                     discount: `<%= Math.ceil(  discount) %>`,
                     tax: `<%= Math.ceil( total *.18) %>`,
                     shipping: 0,
+                    couponDiscount: couponDiscount.innerText ,
                     payment: 'Cash on Delivery',
                     notes,
                     address: address,
+                    coupon : validatedCoupon,
                 })
             }).then(response => response.json())
             .then(data => {

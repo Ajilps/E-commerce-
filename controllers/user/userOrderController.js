@@ -2,6 +2,7 @@ import { Order } from "../../models/orderModel.js";
 import { Wishlist } from "../../models/wishlistModel.js";
 import { Product } from "../../models/productModel.js";
 import { Cart } from "../../models/cartModel.js";
+import { User } from "../../models/userModel.js";
 
 // display displayCheckout (get)
 const displayCheckout = async (req, res) => {
@@ -32,6 +33,8 @@ function generateOrderId() {
 const placeOrder = async (req, res) => {
   try {
     const userId = req.user._id;
+    // testing
+    console.log(req.body);
 
     // Fetch the user's cart and populate product details
     const cart = await Cart.findOne({ user: userId }).populate(
@@ -118,6 +121,15 @@ const placeOrder = async (req, res) => {
     // Save the order
     await order.save();
 
+    // if coupon is there then add the coupon id to user redeemedCoupon
+    if (req.body.coupon) {
+      const user = await User.findByIdAndUpdate(
+        userId,
+        { $push: { redeemedCoupon: req.body.coupon } },
+        { new: true }
+      );
+      console.log("Coupon added to user");
+    }
     // Delete the cart
     await Cart.findOneAndDelete({ user: userId });
 
@@ -128,60 +140,6 @@ const placeOrder = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
-// // placeOrder (post)
-// const placeOrder = async (req, res) => {
-//   try {
-//     // console.log(req.body);
-//     const userId = req.user._id;
-//     let products = [];
-//     const cart = await Cart.findOne({ user: userId }).populate(
-//       "products.productId"
-//     );
-//     let totalPrice = 0;
-//     cart.products.forEach((product) => {
-//       products.push({
-//         productId: product.productId._id,
-//         quantity: product.quantity,
-//         price: product.productId.sellingPrice,
-//       });
-//     });
-//     // console.log(products); //testing
-//     cart.products.forEach(async (product) => {
-//       // decreasing the item stoke by the quantity
-
-//       const pro = await Product.findByIdAndUpdate(
-//         product._id,
-//         { $inc: { quantity: -product.quantity } },
-//         { new: true } // Return the updated document
-//       );
-//       console.log(`pro after stock updation   ${pro}`);
-//     });
-
-//     cart.products.forEach((product) => {
-//       //   console.log(` testing from place order product id's ${product._id}`);
-
-//       totalPrice += Math.ceil(
-//         product.productId.sellingPrice * product.quantity
-//       );
-//       totalPrice += Math.ceil(totalPrice * 0.18);
-//     });
-//     // console.log(req.body);//testing
-//     const order = new Order({
-//       userId,
-//       products,
-//       totalPrice,
-//       shippingAddress: req.body.address,
-//       billingAddress: req.body.address,
-//       paymentMethod: req.body.payment,
-//       orderNotes: req.body?.notes,
-//     });
-//     await order.save();
-//     await Cart.findOneAndDelete({ user: userId });
-//     return res.status(200).json({ success: true, user: req.user, order });
-//   } catch (error) {
-//     console.error(`user order placement failed - ${error.message}`);
-//   }
-// };
 
 // render the order details page
 const displayOrders = async (req, res) => {
