@@ -15,7 +15,9 @@
       <h1>Order Details</h1>
       <div>
         <!-- <button class="btn btn-primary me-2">+ Add Order</button> -->
+         <% if(order.status != "Cancelled" && order.status != "Rejected" ){ %>
         <button id="cancelOrder" onclick="cancelOrder( '<%= order._id %>')" orderId="<%= order._id %>" class="btn btn-outline-danger">Cancel</button>
+      <% } %>
       </div>
     </div>
 
@@ -26,6 +28,7 @@
             <h5 class="card-title">Order: <%= order.orderId %></h5>
 
             <% let date = new Date(order.createdAt) %>
+
             <p> <%= `${date.getDate()}/${date.toLocaleString('default', { month: 'short' })} / ${date.getFullYear() }` %></p>
 
             <!-- <p class="card-text">Order Placed: <%#= order.createdAt %></p> -->

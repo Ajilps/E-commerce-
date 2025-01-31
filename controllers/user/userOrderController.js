@@ -233,7 +233,12 @@ const cancelOrder = async (req, res) => {
       );
     });
 
-    await Order.findByIdAndDelete(orderId);
+    // await Order.findByIdAndDelete(orderId);
+     await Order.findByIdAndUpdate(
+      req.params.orderId,
+      { status : "Cancelled" },
+      { new: true }
+    );
     return res
       .status(204)
       .json({ success: true, message: "Order deleted successfully !!" });

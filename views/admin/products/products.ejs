@@ -76,26 +76,52 @@
                 </a></button>
             </div>
         </div>
-
+      
         <!-- Filters -->
         <div class="table-container p-4">
             <ul class="nav nav-pills mb-4">
                 <li class="nav-item">
-                    <a class="nav-link active" href="#">All Products</a>
-                </li>
-                <!-- <li class="nav-item">
-                    <a class="nav-link" href="#">Published</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Low Stock</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Draft</a>
+                  <a
+                    class="nav-link <%= filter === 'all' ? 'active' : '' %>"
+                    href="products?filter=all"
+                  >
+                    All Products
+                  </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Out of Stock</a>
-                </li> -->
-            </ul>
+                  <a
+                    class="nav-link <%= filter === 'Available' ? 'active' : '' %>"
+                    href="products?filter=Available"
+                  >
+                  Available
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link <%= filter === 'lowStock' ? 'active' : '' %>"
+                    href="products?filter=lowStock"
+                  >
+                    Low Stock
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link <%= filter === 'Discontinued' ? 'active' : '' %>"
+                    href="products?filter=Discontinued"
+                  >
+                  Discontinued
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link <%= filter === 'outOfStock' ? 'active' : '' %>"
+                    href="products?filter=outOfStock"
+                  >
+                    Out of Stock
+                  </a>
+                </li>
+              </ul>
+            
 
             <!-- Table -->
             <table class="table">

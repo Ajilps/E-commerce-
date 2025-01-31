@@ -4,10 +4,12 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h1>Order Details</h1>
       <div>
-        <% if( order.status == "Processing" || order.status == "Pending") {%> 
-        <button onclick="cancelOrder(`<%= order._id%>`)" class="btn btn-danger me-2">Reject Order</button>
-        <% if( order.status == "Processing"){ %>
-        <button onclick="holdOrder(`<%= order._id%>`)" class="btn btn-warning me-2">Hold Order</button>
+        <%# if( order.status == "Processing" || order.status == "Pending") {%> 
+          <% if( order.status != "Rejected" && order.status != "Cancelled"){ %>
+        <button onclick="changeOrder(`<%= order._id%>`, 'Rejected')" class="btn btn-danger me-2">Reject Order</button>
+        <button onclick="changeOrder(`<%= order._id%>`, 'Pending')" class="btn btn-warning me-2">Hold Order</button>
+        <%  if(order.status != "Placed" && order.status != "Rejected"){ %>
+        <button onclick="changeOrder(`<%= order._id%>`, 'Placed')" class="btn btn-success me-2">Accept Order</button>
         <%} %>
         <%} %>
         <button onclick="exportOrder(`<%= order._id%>`)" class="btn btn-outline-secondary">Export</button>
@@ -108,24 +110,32 @@
 
   <script>
     // reject order 
-    function cancelOrder(orderId) {
+    function changeOrder(orderId, status) {
+       
       Swal.fire({
         title: 'Are you sure?',
-        text: "You want to reject this order ?",
+        text: `You want to ${status} this order ?`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, reject it!'
+        confirmButtonText: `Yes, ${status} it!`
       }).then((data)=> {  
         if(data.isConfirmed){
         
-        fetch('/admin/orders/reject/' + orderId, {
+        fetch('/admin/orders/changeStatus/' + orderId, {
           method: 'PUT',
+          headers: {
+          'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify({status : status}),
+          
         })
          .then((response) => response.json())
          .then((data) => {
+          console.log(data);
             if (data.success) {
+
               Swal.fire({
                 title: 'Order Rejected!',
                 text: 'Your order has been rejected.',
@@ -143,32 +153,32 @@
         }})
     }
     
-    // accept order 
-    function holdOrder(orderId) {
-      Swal.fire({
-        title: 'Are you sure?',
-        text: "You want to HOLD this order ?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, reject it!'
-      }).then((data)=> {  
-        if(data.isConfirmed){
-        fetch('/admin/orders/accept/' + orderId, {
-          method: 'PUT',
-        })
-         .then((response) => response.json())
-         .then((data) => {
-            if (data.success) {
-              alert("Order accepted successfully!");
-              window.location.href = "/admin/orders";
-            } else {
-              alert("Failed to accept order!");
-            }
-          });
-      }})
-    }
+    // // hold order 
+    // function holdOrder(orderId) {
+    //   Swal.fire({
+    //     title: 'Are you sure?',
+    //     text: "You want to HOLD this order ?",
+    //     icon: 'warning',
+    //     showCancelButton: true,
+    //     confirmButtonColor: '#3085d6',
+    //     cancelButtonColor: '#d33',
+    //     confirmButtonText: 'Yes, reject it!'
+    //   }).then((data)=> {  
+    //     if(data.isConfirmed){
+    //     fetch('/admin/orders/accept/' + orderId, {
+    //       method: 'PUT',
+    //     })
+    //      .then((response) => response.json())
+    //      .then((data) => {
+    //         if (data.success) {
+    //           alert("Order accepted successfully!");
+    //           window.location.href = "/admin/orders";
+    //         } else {
+    //           alert("Failed to accept order!");
+    //         }
+    //       });
+    //   }})
+    // }
     
     function exportOrder(orderId) {
       fetch('/admin/orders/export/' + orderId, {

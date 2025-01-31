@@ -53,9 +53,19 @@
                     <%= order.orderId %>
                   </td>
                   <td>₹<%=  order.totalPrice %>/-</td>
-                  <td><span class="badge bg-success">
-                      <%= order.status %>
-                    </span></td>
+                  <td>
+                    <span class="badge 
+                    <% if (order.status === 'Pending') { %>bg-warning<% } %>
+                    <% if (order.status === 'Processing') { %>bg-info<% } %>
+                    <% if (order.status === 'Shipped') { %>bg-primary<% } %>
+                    <% if (order.status === 'Delivered') { %>bg-success<% } %>
+                    <% if (order.status === 'Placed') { %>bg-success<% } %>
+                    <% if (order.status === 'Rejected') { %>bg-danger<% } %>
+                    <% if (order.status === 'Cancelled') { %>bg-danger<% } %>
+                  ">
+                    <%= order.status %>
+                  </span>
+                  </td>
                     <% let date = new Date(order.createdAt) %>
             <td> <%= `${date.getDate()}/ ${date.toLocaleString('default', { month: 'short' })} /${date.getFullYear() }` %></td>
 

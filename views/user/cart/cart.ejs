@@ -36,7 +36,7 @@
             <!-- Cart Items -->
             <div class="col-lg-8">
                 <div class="bg-white rounded shadow-sm p-4">
-                    <h2 class="mb-4">Shopping Cart (<span id="productCount"><%= cart.products.length %></span>)</h2>
+                    <h2 class="mb-4">Shopping Cart (<span id="productCount"><%= cart?.products?.length || 0 %></span>)</h2>
                     <% if(cart){ %>
                     <% cart.products[1]  %>
 

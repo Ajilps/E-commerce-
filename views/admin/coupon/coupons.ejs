@@ -7,7 +7,7 @@
         <button type="button" class="btn btn-outline-primary">Active</button>
         <button type="button" class="btn btn-outline-primary">Expired</button>
       </div> -->
-      <a href="/admin/coupons/create" class="btn btn-dark btn-outline-primary">Create Coupon</a> 
+      <a href="/admin/coupons/create" class="btn btn-outline-primary">Create Coupon</a> 
     </div>
     <div class="table-responsive">
       <table class="table table-hover">
@@ -37,7 +37,11 @@
             <td><%= coupon.isActive %></td>
             <% const created = coupon?.createdAt.toISOString().split('T')[0]; %>
             <td><%= created  %></td>
-            <td><button class="btn btn-sm btn-outline-primary"> <a href="/admin/coupons/update/<%= coupon._id %>"> Edit </a>  </button></td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary"> <a href="/admin/coupons/update/<%= coupon._id %>"> Edit </a>  </button>
+              <i onclick="deleteCoupon('<%= coupon._id %>')" class="btn fas fa-trash action-icon"></i>
+              
+            </td>
           </tr>
       <% })} %>
           <!-- Add more rows as needed -->
@@ -59,5 +63,43 @@
 
   
   <%- include('../adminFoot.ejs') %>
+
+  <script>
+    //delete coupon 
+    function deleteCoupon(id) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((data)=> {
+        if(data.isConfirmed){
+        fetch('/admin/coupons/delete/' + id, { method: 'DELETE' })
+         .then(response => response.json())
+         .then(data => {
+            if(data.success) {
+              Swal.fire({
+                title: 'Sweet!',
+                text: `${data.message}`,
+                icon: 'success',
+                confirmButtonText: 'Cool'
+              });
+
+              location.reload();
+            } else {
+              Swal.fire({
+                title: 'Oops...',
+                text: 'Something went wrong!',
+                icon: 'error', confirmButtonText: 'Try Again'
+                });
+
+            }
+          });
+      }})
+    }
+  </script>
 </body>
 </html>

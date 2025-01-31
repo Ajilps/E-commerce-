@@ -138,10 +138,23 @@ const productSchema = new Schema({
         type: String,
         required: true,
         default: 'Available',
-        enum: ['Available', 'Out of stock', 'Discontinued']
+        enum: ['Available', 'Out Of Stock', 'Discontinued']
      },
 
 },{timestamps:true});
+
+// Middleware to check quantity and update status after a product is updated
+productSchema.post('findOneAndUpdate', async function (doc) {
+    if (doc) {
+        if (doc.quantity <= 0 && doc.status !== 'Out Of Stock') {
+            doc.status = 'Out Of Stock';
+            await doc.save();
+        } else if (doc.quantity > 0 && doc.status === 'Out Of Stock') {
+            doc.status = 'Available';
+            await doc.save();
+        }
+    }
+});
 
 const Product = mongoose.model('Product', productSchema);
 
