@@ -28,6 +28,94 @@
             background-color: #0d6efd;
             border-color: #0d6efd;
         }
+
+        .payment-option {
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .payment-option:hover {
+            border-color: #adb5bd;
+        }
+        .payment-option.selected {
+            border-color: #0d6efd;
+            background-color: #f8f9ff;
+        }
+        .custom-radio {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #dee2e6;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+        }
+        .custom-radio.selected {
+            border-color: #0d6efd;
+            background-color: #0d6efd;
+        }
+        .custom-radio.selected::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border-radius: 50%;
+        }
+        .address-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .address-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .error {
+            color: red;
+            font-size: 0.875rem;
+            display: none;
+        }
+    </style>
+    <style>
+        .address-details {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+    
+        .form-group {
+            margin-bottom: 1rem;
+        }
+    
+        .form-control {
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            padding: 8px;
+            font-size: 14px;
+        }
+    
+        .font-weight-bold {
+            font-weight: 600;
+        }
+    
+        .card {
+            border: none;
+        }
+    
+        .card-body {
+            padding: 20px;
+        }
+    
+        .shadow-sm {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+    
+        .alert {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -37,60 +125,158 @@
             <!-- Checkout Form -->
             <div class="col-lg-8">
                 <!-- Shipping Address -->
-                <div class="card mb-4">
-                    <div class="card-body">
+                <div class="container py-5">
+                    <!-- Current Address Display -->
+                    <div class="address-card p-4 mb-4 bg-white">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0" >Shipping Address</h5>
-                            <a href="/user/shippingAddress" class="btn btn-outline-primary btn-sm">Edit</a>
+                            <h4 class="mb-0">Shipping Address</h4>
+                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addressModal">
+                                <i class="bi bi-pencil"></i> Edit Address
+                            </button>
                         </div>
-                        <% user.addresses.forEach(address => { %> 
-                            <% if(address.isDefault){ %>
-                            <div id="address" class="mb-3">
-                                <strong><%= address.name %></strong><br>
-                                <%= address.address %>, <%= address.city %>, <%= address.state %> <%= address.zip %>, <%= address.country %><br>
-                                Phone Number: <%= address.phone %>
+                        <form id="addressForm">
+                            <div id="currentAddress">
+                                <% if(user.addresses && user.addresses.length > 0) { %>
+                                    <% user.addresses.forEach(address => { %>
+                                        <% if(address.isDefault) { %>
+                                            <div class="address-details card mb-4 shadow-sm">
+                                                <div class="card-body">
+                                                    <div class="form-group">
+                                                        <label for="name" class="font-weight-bold">Name</label>
+                                                        <input class="form-control" type="text" name="name" value="<%= address.name %>" readonly>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="address" class="font-weight-bold">Address</label>
+                                                        <input class="form-control" type="text" name="address" value="<%= address.address %>" readonly>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="city" class="font-weight-bold">City</label>
+                                                        <input class="form-control" type="text" name="city" value="<%= address.city %>" readonly>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="state" class="font-weight-bold">State</label>
+                                                        <input class="form-control" type="text" name="state" value="<%= address.state %>" readonly>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="country" class="font-weight-bold">Country</label>
+                                                        <input class="form-control" type="text" name="country" value="<%= address.country %>" readonly>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="phone" class="font-weight-bold">Phone</label>
+                                                        <input class="form-control" type="text" name="phone" value="<%= address.phone %>" readonly>
+                                                    </div>
+                                                   
+                                                </div>
+                                            </div>
+                                        <% } %>
+                                    <% }) %>
+                                <% } else { %>
+                                    <div class="alert alert-warning" role="alert">
+                                        No address found. Please add a new address.
+                                    </div>
+                                <% } %>
                             </div>
-
-                      <% } }) %>
-                        <!-- <div class="mb-3">
-                            <strong>Muhammed Nabeel C</strong><br>
-                            Micro Grafix, Theriveed, Road, Kozhikode, KERALA 673032, India<br>
-                            Phone Number: 7558663319
-                        </div> -->
-                        <!-- <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="sameAddress" checked>
-                            <label class="form-check-label" for="sameAddress" >
-                                Billing Address is same as shipping address
-                            </label>
-                        </div> -->
+                        </form>
+            
+                    <!-- Address Edit Modal -->
+                    <div class="modal fade" id="addressModal" tabindex="-1">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Edit Shipping Address</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="addressForm" class="needs-validation" novalidate>
+                                        <div class="row g-3">
+                                            <div class="col-12">
+                                                <label class="form-label">Full Name</label>
+                                                <input type="text" class="form-control" name="name" id="name" required>
+                                                <span class="error" id="nameError">Please enter your full name</span>
+                                            </div>
+            
+                                            <div class="col-12">
+                                                <label class="form-label">Address</label>
+                                                <textarea class="form-control" name="address" id="address" rows="3" required></textarea>
+                                                <span class="error" id="addressError">Please enter your address</span>
+                                            </div>
+            
+                                            <div class="col-md-6">
+                                                <label class="form-label">Country</label>
+                                                <select class="form-select" name="country" id="country" required>
+                                                    <option value="">Select Country...</option>
+                                                    <option value="HN">Honduras</option>
+                                                    <option value="HU">Hungary</option>
+                                                    <option value="IS">Iceland</option>
+                                                    <option value="IN">India</option>
+                                                    <option value="ID">Indonesia</option>
+                                                    <option value="IR">Iran</option>
+                                                    <!-- Include your country options here -->
+                                                </select>
+                                                <span class="error" id="countryError">Please select a country</span>
+                                            </div>
+            
+                                            <div class="col-md-6">
+                                                <label class="form-label">State/Region</label>
+                                                <input type="text" class="form-control" name="state" id="state" required>
+                                                <span class="error" id="stateError">Please enter your state/region</span>
+                                            </div>
+            
+                                            <div class="col-md-6">
+                                                <label class="form-label">City</label>
+                                                <input type="text" class="form-control" name="city" id="city" required>
+                                                <span class="error" id="cityError">Please enter your city</span>
+                                            </div>
+            
+                                            <div class="col-md-6">
+                                                <label class="form-label">ZIP Code</label>
+                                                <input type="text" class="form-control" name="zipCode" id="zipCode" required>
+                                                <span class="error" id="zipCodeError">Please enter a valid ZIP code</span>
+                                            </div>
+            
+                                            <div class="col-md-6">
+                                                <label class="form-label">Email</label>
+                                                <input type="email" class="form-control" name="email" id="email" required>
+                                                <span class="error" id="emailError">Please enter a valid email address</span>
+                                            </div>
+            
+                                            <div class="col-md-6">
+                                                <label class="form-label">Phone Number</label>
+                                                <input type="tel" class="form-control" name="phone" id="phone" required>
+                                                <span class="error" id="phoneError">Please enter a valid phone number</span>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-primary" onclick="saveAddress()">Use This Address</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Payment Options -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="mb-4">Payment Option</h5>
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <div class="payment-option selected text-center">
-                                    <!-- <img src="/api/placeholder/40/40" alt="Cash" class="mb-2"> -->
-                                    <div>Cash on Delivery</div>
-                                    <input type="radio" name="payment" checked class="visually-hidden">
-                                </div>
+                <div class="container py-5">
+                    <h2 class="mb-4">Payment Option</h2>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="payment-option selected p-3 d-flex align-items-center justify-content-between" onclick="selectPayment('cod')">
+                                <span class="fw-medium">Cash on Delivery</span>
+                                <div class="custom-radio selected"></div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="payment-option text-center">
-                                    <!-- <img src="/api/placeholder/40/40" alt="Razorpay" class="mb-2"> -->
-                                    <div>Razorpay</div>
-                                    <input type="radio" name="payment" class="visually-hidden">
-                                </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="payment-option p-3 d-flex align-items-center justify-content-between" onclick="selectPayment('razorpay')">
+                                <span class="fw-medium">Razorpay</span>
+                                <div class="custom-radio"></div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="payment-option text-center">
-                                    <!-- <img src="/api/placeholder/40/40" alt="Wallet" class="mb-2"> -->
-                                    <div>My Wallet</div>
-                                    <input type="radio" name="payment" class="visually-hidden">
-                                </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="payment-option p-3 d-flex align-items-center justify-content-between" onclick="selectPayment('wallet')">
+                                <span class="fw-medium">My Wallet</span>
+                                <div class="custom-radio"></div>
                             </div>
                         </div>
                     </div>
@@ -176,9 +362,28 @@
         </div>
     </div>
 <%- include('../userFooter.ejs') %>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    let paymentMethod = 'COD';
+    //payment option selection function 
+    function selectPayment(option) {
+            // Remove selected class from all options
+            document.querySelectorAll('.payment-option').forEach(el => {
+                el.classList.remove('selected');
+                el.querySelector('.custom-radio').classList.remove('selected');
+            });
 
+            // Add selected class to clicked option
+            const selectedOption = document.querySelector(`[onclick="selectPayment('${option}')"]`);
+            selectedOption.classList.add('selected');
+            selectedOption.querySelector('.custom-radio').classList.add('selected');
+
+            // setting the payment method to selected one 
+            paymentMethod = (option);
+        }
+</script>
 
     <script>
         let validatedCoupon = "";
@@ -235,8 +440,36 @@ async function validateCoupon(couponCode){
    return null;
 
 }
+// address collection 
+function saveAddress() {
+            const form = document.getElementById('addressForm');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
 
-        // place order
+            // Validate form
+            if (!validateForm()) {
+                return;
+            }
+
+            // Update the current address display
+            const currentAddress = document.getElementById('currentAddress');
+            currentAddress.innerHTML = `
+                <div class="address-details">
+                    <h5 class="mb-2">${data.name}</h5>
+                    <p class="mb-1">${data.address}</p>
+                    <p class="mb-1">${data.city}, ${data.state} ${data.zipCode}</p>
+                    <p class="mb-1">${data.country}</p>
+                    <p class="mb-0"><strong>Phone:</strong> ${data.phone}</p>
+                </div>
+            `;
+
+            // Close the modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addressModal'));
+            modal.hide();
+        
+        }
+
+// place order
         const placeOrderBtn = document.querySelector('#placeOrderBtn');
         placeOrderBtn.addEventListener('click', () => {
             // validate form
@@ -245,11 +478,23 @@ async function validateCoupon(couponCode){
             // payment option
             // additional information
             // submit form
+
+
+
             const notes = document.getElementById('notes').value;
-            const address = document.getElementById("address").innerText;
+           
             const subTotal = document.getElementById("subTotal").innerText;
+
+            const form = document.getElementById('addressForm');
+            const formData = new FormData(form);
+            const AddressData = Object.fromEntries(formData);
+            console.log(AddressData)
+            // const paymentMethod = document.querySelectorAll("")
             // const coupon = document.getElementById("coupon").value
-            console.log(notes)
+            // const addressForm = document.getElementById('addressForm');
+            // addressForm.reset();
+            // const formDAta = new FormData(addressForm)
+            // console.log(notes)
 
             fetch('/user/order/placeOrder', {
                 method: 'POST',
@@ -264,14 +509,129 @@ async function validateCoupon(couponCode){
                     tax: `<%= Math.ceil( total *.18) %>`,
                     shipping: 0,
                     couponDiscount: couponDiscount.innerText ,
-                    payment: 'Cash on Delivery',
+                    paymentMethod: paymentMethod ,
                     notes,
-                    address: address,
+                    address: AddressData,
                     coupon : validatedCoupon,
                 })
             }).then(response => response.json())
-            .then(data => {
-                if(data.success){
+            .then(async response => {
+                if(paymentMethod == 'razorpay'){
+                    if(response.success){
+                        console.log(response)
+                        console.log(response.razorpayOrder.id)// testing 
+                        let paymentStatus = false;
+                        const options = {
+                        key: '<%= process.env.RAZORPAY_KEY_ID %>',
+                        amount: response.razorpayOrder.amount,
+                        currency: response.currency,
+                        name: 'Bytez',
+                        order_id: response.razorpayOrder.id,
+                        handler: function (paymentResponse) {
+                            paymentStatus = true;
+                          console.log('Payment Response:', paymentResponse);
+                            // Place order after successful payment
+                            fetch('/user/orders/confirm-payment',{
+                                method: "POST",
+                                headers:{
+                                    
+                                    "Content-Type": "application/json",
+                                },
+                                body : JSON.stringify({
+                                   
+                                    paymentMethod: 'razorpay',
+                                    razorpayPaymentId: paymentResponse.razorpay_payment_id,
+                                    razorpayOrderId: paymentResponse.razorpay_order_id,
+                                    razorpaySignature: paymentResponse.razorpay_signature,
+                                    paymentStatus : true,
+                                })
+                            }).then(res=>res.json())
+                            .then(res=>{
+                                 console.log(res);
+                                 if(res.success){
+                                     Swal.fire({
+                                        title: 'Order Confirmed',
+                                        text: res.message,
+                                        icon:'success',
+                                        confirmButtonText: 'Okay'
+                                    }).then(() => {
+                                        window.location.href = '/user/orders';
+                                    });
+                                 }else{
+                                     Swal.fire({
+                                        title: 'Failed to Confirm Order',
+                                        text: res.message,
+                                        icon: 'error',
+                                        confirmButtonText: 'Okay'
+                                    });
+                                 }
+                             }).catch(err =>{
+                                console.log(err)
+                                 Swal.fire({
+                                     title: 'Failed to Place Order',
+                                     text: err.message,
+                                     icon: 'error',
+                                     confirmButtonText: 'Okay'
+                                    }).then(()=>{
+                                        window.location.href = '/user/cart';
+                                    })
+
+                             })
+                           
+                            
+                        },
+                        theme: {
+                            color: '#000000'
+                        },
+                        modal: {
+                                ondismiss: function () {
+                                console.log('Payment canceled');
+                                Swal.fire({
+                                    title: 'Payment Canceled',
+                                    text: 'Your payment was canceled. Would you like to retry?',
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#3085d6',
+                                    cancelButtonColor: '#d33',
+                                    confirmButtonText: 'Retry',
+                                    cancelButtonText: 'Cancel'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                    // Retry the payment
+                                    const razorpay = new Razorpay(options);
+                                    razorpay.open();
+                                    } else {
+                                    // Cancel the order or redirect to a different page
+                                    Swal.fire({
+                                        title: 'Order Placed ',
+                                        text: 'Your order has been placed payment is pending !!',
+                                        icon: 'info',
+                                        confirmButtonText: 'Okay'
+                                    }).then(() => {
+                                        window.location.href = '/user/orders'; // Redirect to cart or another page
+                                    });
+                                    }
+                                });
+                                }
+                            }
+                    };
+
+                    const razorpay = new Razorpay(options);
+                   let paymentResult = await razorpay.open()
+                  
+                    
+                }else{
+                    Swal.fire({
+                        title: 'Oops...',
+                        text: `${data.message}`,
+                        icon: 'error',
+                        confirmButtonText: 'Cool'
+                    }).then(() => {
+                        window.location.href = '/user/cart';
+                    });
+                }
+            }
+                else if(data.success){
                             Swal.fire({
                         title: 'Sweet!',
                         text: 'Order placed successfully !',
@@ -291,10 +651,48 @@ async function validateCoupon(couponCode){
                     });;
                 }
             })
-             
+           
 
         });
         
+
+        //form validation form 
+        function validateForm() {
+            const form = document.getElementById('addressForm');
+            const inputs = form.querySelectorAll('input, select, textarea');
+            let isValid = true;
+
+            inputs.forEach(input => {
+                if (!input.value) {
+                    isValid = false;
+                    const errorSpan = document.getElementById(`${input.id}Error`);
+                    if (errorSpan) {
+                        errorSpan.style.display = 'block';
+                    }
+                } else {
+                    const errorSpan = document.getElementById(`${input.id}Error`);
+                    if (errorSpan) {
+                        errorSpan.style.display = 'none';
+                    }
+                }
+            });
+
+            return isValid;
+        }
+
+        // Add event listeners for form validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    const errorSpan = document.getElementById(`${this.id}Error`);
+                    if (errorSpan) {
+                        errorSpan.style.display = this.value ? 'none' : 'block';
+                    }
+                });
+            });
+        }); 
+
     </script>
 </body>
 </html>

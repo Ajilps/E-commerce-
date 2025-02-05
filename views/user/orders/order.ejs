@@ -36,6 +36,7 @@
             <th>Order Id</th>
             <th>Total</th>
             <th>Status</th>
+            <th>Payment</th>
             <th>Date</th>
             <th>Action</th>
           </tr>
@@ -65,6 +66,19 @@
                   ">
                     <%= order.status %>
                   </span>
+                  <td>
+                    <span class="badge 
+                    <% if (order.paymentStatus === 'Pending') { %>bg-warning<% } %>
+                    <% if (order.paymentStatus === 'Processing') { %>bg-info<% } %>
+                    <% if (order.paymentStatus === 'Shipped') { %>bg-primary<% } %>
+                    <% if (order.paymentStatus === 'Paid') { %>bg-success<% } %>
+                    <% if (order.paymentStatus === 'Placed') { %>bg-success<% } %>
+                    <% if (order.paymentStatus === 'Pending') { %>bg-danger<% } %>
+                    <% if (order.paymentStatus === 'Cancelled') { %>bg-danger<% } %>
+                  ">
+                    <%= order.paymentStatus %>
+                  </span>
+                  </td>
                   </td>
                     <% let date = new Date(order.createdAt) %>
             <td> <%= `${date.getDate()}/ ${date.toLocaleString('default', { month: 'short' })} /${date.getFullYear() }` %></td>

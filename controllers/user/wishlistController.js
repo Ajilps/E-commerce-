@@ -1,102 +1,106 @@
-import {User} from '../../models/userModel.js';
-import {Product} from '../../models/productModel.js';
-import {Order} from '../../models/orderModel.js';
-import {Wishlist} from '../../models/wishlistModel.js'
+import { User } from "../../models/userModel.js";
+import { Product } from "../../models/productModel.js";
+import { Order } from "../../models/orderModel.js";
+import { Wishlist } from "../../models/wishlistModel.js";
+import mongoose from "mongoose";
 
 const displayWishlist = async (req, res) => {
-    try {
-        const user = req.user;
-        const wishlistProducts = await Product.find({ _id: { $in: user.wishList } });
-        return res.status(200).render('user/wishlist.ejs', { success: true, user: req.user, wishlistProducts });
-        
-    } catch (error) {
-        console.error(`Failed to display wishlist - ${error.message}`);
-    }
-}
+  try {
+    const user = req.user;
+    const wishlistProducts = await Wishlist.findOne({
+      user: user._id,
+    }).populate("products.productId");
+
+    // console.log(wishlistProducts);
+    return res.status(200).render("user/wishlist/wishlist.ejs", {
+      success: true,
+      user: req.user,
+      wishlistProducts,
+    });
+  } catch (error) {
+    console.error(`Failed to display wishlist - ${error.message}`);
+  }
+};
 
 const addToWishlist = async (req, res) => {
-    try {
-        const productId = req.params.productId;
-        const user = req.user;
-        if (!productId) {
-            return res.status(400).json({ success: false, message: "Product ID required" });
-        }
-        if (user.wishList.includes(productId)) {
-            return res.status(400).json({ success: false, message: "Product already in wishlist" });
-        }
-        await User.findByIdAndUpdate(user._id, { $push: { wishList: productId } });
-        return res.status(200).json({ success: true, message: "Product added to wishlist" });
-    } catch (error) {
-        console.error(`Failed to add product to wishlist - ${error.message}`);
+  try {
+    const productId = req.params.productId;
+    const user = req.user;
+
+    if (!productId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Product ID required" });
     }
-}
+
+    // Find the user's wishlist
+    let wishlist = await Wishlist.findOne({ user: user._id });
+
+    // If the wishlist doesn't exist, create one
+    if (!wishlist) {
+      wishlist = await Wishlist.create({ user: user._id, products: [] });
+    }
+
+    // Check if the product is already in the wishlist
+    const productExists = wishlist.products.some((product) =>
+      product.productId.equals(productId)
+    );
+    if (productExists) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Product already in wishlist" });
+    }
+
+    // Add the product to the wishlist
+    await Wishlist.findOneAndUpdate(
+      { user: user._id },
+      { $push: { products: { productId: productId, addedOn: Date.now() } } },
+      { new: true }
+    );
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Product added to wishlist" });
+  } catch (error) {
+    console.error(`Failed to add product to wishlist - ${error.message}`);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
 
 const removeFromWishlist = async (req, res) => {
-    try {
-        const productId = req.params.productId;
-        const user = req.user;
-        if (!productId) {
-            return res.status(400).json({ success: false, message: "Product ID required" });
-        }
-        if (!user.wishList.includes(productId)) {
-            return res.status(400).json({ success: false, message: "Product not in wishlist" });
-        }
-        await User.findByIdAndUpdate(user._id, { $pull: { wishList: productId } });
-        return res.status(200).json({ success: true, message: "Product removed from wishlist" });
-    } catch (error) {
-        console.error(`Failed to remove product from wishlist - ${error.message}`);
+  try {
+    const productId = req.params.productId;
+    const user = req.user;
+    if (!productId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Product ID required" });
     }
-}
-
-const displayCompare = async (req, res) => {
-    try {
-        const user = req.user;
-        const compareProducts = await Product.find({ _id: { $in: user.compareList } });
-        return res.status(200).render('user/compare.ejs', { success: true, user: req.user, compareProducts });
-    } catch (error) {
-        console.error(`Failed to display compare products - ${error.message}`);
+    // Find the user's wishlist and remove the product
+    const updatedWishlist = await Wishlist.findOneAndUpdate(
+      { user: user._id }, // Find the wishlist by user ID
+      {
+        $pull: {
+          products: { productId: new mongoose.Types.ObjectId(`${productId}`) },
+        },
+      }, // Remove the product
+      { new: true } // Return the updated document
+    );
+    if (!updatedWishlist) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Wishlist not found" });
     }
-}
-
-const addToCompare = async (req, res) => {
-    try {
-        const productId = req.params.productId;
-        const user = req.user;
-        if (!productId) {
-            return res.status(400).json({ success: false, message: "Product ID required" });
-        }
-        if (user.compareList.includes(productId)) {
-            return res.status(400).json({ success: false, message: "Product already in compare list" });
-        }
-        await User.findByIdAndUpdate(user._id, { $push: { compareList: productId } });
-        return res.status(200).json({ success: true, message: "Product added to compare list" });
-    } catch (error) {
-        console.error(`Failed to add product to compare list - ${error.message}`);
-    }
-}
-
-const removeFromCompare = async (req, res) => {
-    try {
-        const productId = req.params.productId;
-        const user = req.user;
-        if (!productId) {
-            return res.status(400).json({ success: false, message: "Product ID required" });
-        }
-        if (!user.compareList.includes(productId)) {
-            return res.status(400).json({ success: false, message: "Product not in compare list" });
-        }
-        await User.findByIdAndUpdate(user._id, { $pull: { compareList: productId } });
-        return res.status(200).json({ success: true, message: "Product removed from compare list" });
-    } catch (error) {
-        console.error(`Failed to remove product from compare list - ${error.message}`);
-    }
-}
-
-export  {
-    displayWishlist,
-    addToWishlist,
-    removeFromWishlist,
-    displayCompare,
-    addToCompare,
-    removeFromCompare,
+    return res.status(200).json({
+      success: true,
+      message: "Product removed from wishlist",
+      data: updatedWishlist,
+    });
+  } catch (error) {
+    console.error(`Failed to remove product from wishlist - ${error.message}`);
+  }
 };
+
+export { displayWishlist, addToWishlist, removeFromWishlist };

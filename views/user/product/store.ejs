@@ -467,7 +467,7 @@
                             <div class="position-relative">
                                 <img src="<%= product.productImageUrls[0] %>" class="card-img-top product-img" alt="iPhone">
                                 <!-- <span class="new-badge"></span> -->
-                               <a href="#"> <button class="wishlist-btn">♡</button></a>
+                               <a href="#"> <button onclick="addToWishlist(`<%= product._id %>`)" class="wishlist-btn">♡</button></a>
 
                             </div>
                             <div class="card-body">
@@ -509,6 +509,37 @@
 <%- include('../userFooter.ejs') %>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        // add to wishlist
+        async function addToWishlist( productId){
+            fetch(`/user/wishlist/add/${productId}`,{
+                method: 'POST',
+            })
+            .then(res=> res.json())
+            .then(data =>{
+                if(data.success){
+                    Toastify({
+                        text: `${data.message}`,
+                        duration: 3000,
+                        close: true,
+                        gravity: "top-right",
+                        position: "top-right",
+                        backgroundColor: "#007bf"
+                    }).showToast();
+                }else{
+                    Toastify({
+                        text: `${data.message}`,
+                        duration: 3000,
+                        close: true,
+                        gravity: "top-right",
+                        position: "top-right",
+                        backgroundColor: "#ff0000"
+                    }).showToast();
+                }
+            })
+        }
+
+    </script>
     <script>
        // request a search result 
        window.onload = function() {

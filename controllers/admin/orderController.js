@@ -57,9 +57,9 @@ const displayOrders = async (req, res) => {
 
 const displayOrderDetails = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.orderId).populate(
-      "products.productId"
-    );
+    const order = await Order.findById(req.params.orderId)
+      .populate("products.productId")
+      .populate("userId");
     return res.status(200).render("admin/orders/orderDetails.ejs", {
       success: true,
       user: req.user,

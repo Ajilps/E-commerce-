@@ -258,16 +258,27 @@
         }
 
         // Start countdown timer (2 minutes)
-        startTimer(120);
+        startTimer(30);
 
         // Resend OTP handler
         document.getElementById('resendLink').addEventListener('click', function(e) {
             e.preventDefault();
-            
+            const email = document.getElementById('email').innerHTML
+            fetch(`/user/resentOtp/${email}`).then(res=>res.json())
+            .then(data=>{
+                if(data.success){
+                    console.log(`${data.success} , ${data.message}`)
+                }
+                else{
+                    alert(data.message || `Failed to resend OTP `);
+                }
+            })
+
+                
             // Here you would typically make an API call to resend OTP
             this.style.display = 'none';
             document.querySelector('.timer').style.display = 'inline';
-            startTimer(120);
+            startTimer(30);
             alert('New OTP has been sent!');
         });
     </script>

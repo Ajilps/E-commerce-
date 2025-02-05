@@ -24,9 +24,9 @@ const orderSchema = mongoose.Schema(
         },
       },
     ],
-    subtotal:{
-        type: Number,
-        required: true,
+    subtotal: {
+      type: Number,
+      required: true,
     },
     tax: {
       type: Number,
@@ -50,20 +50,23 @@ const orderSchema = mongoose.Schema(
       required: true,
     },
     shippingAddress: {
-      type: String,
+      type: Object,
       required: true,
     },
     billingAddress: {
-      type: String,
+      type: Object,
       required: true,
     },
     paymentMethod: {
       type: String,
       required: true,
     },
+    razorpayOrderId: { type: String },
+    razorpayPaymentId: { type: String },
+    razorpaySignature: { type: String },
     paymentStatus: {
       type: String,
-      enum: ["Pending", "Processing", "Completed"],
+      enum: ["Pending", "Processing", "Completed","Paid"],
       default: "Pending",
     },
     orderNotes: {
@@ -72,7 +75,14 @@ const orderSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Pending", "Shipped", "Delivered", "Cancelled", "Rejected", "Placed"],
+      enum: [
+        "Pending",
+        "Shipped",
+        "Delivered",
+        "Cancelled",
+        "Rejected",
+        "Placed",
+      ],
       default: "Placed",
     },
     trackingNumber: {

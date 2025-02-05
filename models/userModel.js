@@ -98,12 +98,12 @@ const userSchema = new Schema({
     //     ref: 'addresses',
     //     required: true
     // },
-    wishlist:
-         [{
-        type: Schema.Types.ObjectId,
-        ref: 'Product',
+    // wishlist:
+    //      [{
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'Product',
  
-    }],
+    // }],
     orders: [{
         type: Schema.Types.ObjectId,
         ref: 'Order'

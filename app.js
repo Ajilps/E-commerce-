@@ -74,6 +74,7 @@ app.get("/passotp", (req, res) => {
   res.render("passOtp.ejs");
 });
 
+
 //using google auth route
 
 app.use("/auth", googleAuth);

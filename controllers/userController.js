@@ -31,7 +31,17 @@ const transporter = nodemailer.createTransport({
 // Store OTPs temporarily in memory (use a database in production)
 const otpStore = {};
 // Generate OTP
-const generateOtp = () => crypto.randomInt(1000, 9999).toString();
+function generateOtp() {
+  // Declare a digits variable
+  // which stores all digits
+  let digits = "0123456789";
+  let OTP = "";
+  let len = digits.length;
+  for (let i = 0; i < 6; i++) {
+    OTP += digits[Math.floor(Math.random() * len)];
+  }
+  return OTP;
+}
 
 // check whether the user is already exists or not if not sent a success message
 const registerUser = async (req, res) => {
@@ -75,7 +85,7 @@ const sentOtp = async (req, res) => {
 
   const otp = generateOtp();
   otpStore[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000 }; // OTP valid for 5 minutes
-  console.log(otp); // test
+  console.log(`otp for resetting password : ${otp}`); // test
   try {
     transporter.sendMail({
       from: process.env.EMAIL_USER,
@@ -439,8 +449,6 @@ const updateCurrentUserDetails = async (req, res) => {
 // getCurrentUserShippingDetails (get)
 const getCurrentUserShippingDetails = async (req, res) => {
   try {
-    
-
     return res.status(200).render("user/userInfo/userShipping.ejs", {
       success: true,
       user: req.user,
@@ -647,7 +655,6 @@ const updateShippingAddress = async (req, res) => {
     });
   }
 };
-
 
 // set default shipping address (get)
 const setDefaultAddress = async (req, res) => {

@@ -24,7 +24,7 @@ import {
   setDefaultAddress,
 } from "../controllers/userController.js";
 
-import { displayWishlist } from "../controllers/user/wishlistController.js"; //wishlist controller
+// import { displayWishlist } from "../controllers/user/wishlistController.js"; //wishlist controller
 
 import {
   displayCart,
@@ -39,6 +39,7 @@ import {
   displayOrders,
   displayOrdersDetails,
   cancelOrder,
+  confirmPayment,
 } from "../controllers/user/userOrderController.js"; //checkout controller
 import { verifyJWT } from "../middlewares/authMiddleware.js";
 
@@ -50,6 +51,20 @@ import {
   displayStore,
 } from "../controllers/user/productController.js";
 // import {sentOtp,verifyOpt,resentOpt} from '../controllers/verifyEmail.js'
+//reset password
+import {
+  passSendOtp,
+  resentOpt,
+  resetPassword,
+  validateOtpForPassword,
+} from "../controllers/verifyEmail.js";
+
+//wishlist
+import {
+  displayWishlist,
+  addToWishlist,
+  removeFromWishlist,
+} from "../controllers/user/wishlistController.js";
 
 const router = express.Router();
 
@@ -65,17 +80,13 @@ router.get("/verify-email/:email", sentOtp);
 // router.get('/resentOtp/:email',resentOpt)
 router.post("/verify-email/", verifyOpt);
 
-//reset password
-import {
-  passSendOtp,
-  resetPassword,
-  validateOtpForPassword,
-} from "../controllers/verifyEmail.js";
 router.get("/forgotPassword", (req, res) => {
   res.render("resetPass/emailValidation.ejs");
 });
 
 router.get("/verifyPassEmail/:email", passSendOtp);
+// resent otp
+router.get("/resentOtp/:email", resentOpt);
 // verify otp
 router.post("/verifyPassEmail", validateOtpForPassword);
 
@@ -129,6 +140,7 @@ router.get("/home", displayUserHome);
 router.get("/product/:productId", displayProductUser);
 router.get("/store", displayStore); //store route
 router.get("/wishlist", displayWishlist); //wishlist route
+//cart
 router.get("/cart", displayCart);
 router.post("/cart/add/:productId", addToCart);
 router.put("/cart/update/:productId", updateCart); // update cart item quantity
@@ -142,5 +154,11 @@ router.get("/orders", displayOrders);
 router.get("/orders/orderDetails/:orderId", displayOrdersDetails);
 router.post("/order/placeOrder", placeOrder);
 router.delete("/orders/cancel/:orderId", cancelOrder);
+router.post("/orders/confirm-payment", confirmPayment);
+
+//wishlist
+router.get("/wishlist", displayWishlist);
+router.post("/wishlist/add/:productId", addToWishlist);
+router.delete("/wishlist/remove/:productId", removeFromWishlist);
 
 export default router;
