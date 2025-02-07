@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Report</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container-fluid py-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col">
+                <h2 class="mb-0">
+                    <i class="fas fa-chart-line text-primary me-2"></i>
+                    Sales Report
+                </h2>
+            </div>
+        </div>
+
+        <!-- Filters Card -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Filters</h5>
+            </div>
+            <div class="card-body">
+                <form id="reportFilters">
+                    <div class="row g-3">
+                        <!-- Date Range Type -->
+                        <div class="col-md-3">
+                            <label class="form-label">Report Type</label>
+                            <select class="form-select" id="reportType">
+                                <option value="daily">Daily Report</option>
+                                <option value="weekly">Weekly Report</option>
+                                <option value="monthly">Monthly Report</option>
+                                <option value="yearly">Yearly Report</option>
+                                <option value="custom">Custom Date Range</option>
+                            </select>
+                        </div>
+
+                        <!-- Custom Date Range (initially hidden) -->
+                        <div class="col-md-3 custom-date-range" style="display: none;">
+                            <label class="form-label">Start Date</label>
+                            <input type="text" class="form-control datepicker" id="startDate">
+                        </div>
+                        <div class="col-md-3 custom-date-range" style="display: none;">
+                            <label class="form-label">End Date</label>
+                            <input type="text" class="form-control datepicker" id="endDate">
+                        </div>
+
+                        <!-- Quick Date Selector -->
+                        <div class="col-md-3 quick-date">
+                            <label class="form-label">Select Date</label>
+                            <input type="text" class="form-control datepicker" id="quickDate">
+                        </div>
+
+                        <!-- Apply Filters Button -->
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-filter me-2"></i>Apply Filters
+                            </button>
+                            <button type="reset" class="btn btn-outline-secondary ms-2">
+                                <i class="fas fa-undo me-2"></i>Reset
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row g-4 mb-4">
+            <!-- Total Sales -->
+            <div class="col-md-3">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Total Sales</h6>
+                        <h3 class="card-title mb-0">₹45,678</h3>
+                        <div class="small text-success mt-2">
+                            <i class="fas fa-arrow-up me-1"></i>
+                            12.5% vs previous period
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Count -->
+            <div class="col-md-3">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Total Orders</h6>
+                        <h3 class="card-title mb-0">234</h3>
+                        <div class="small text-success mt-2">
+                            <i class="fas fa-arrow-up me-1"></i>
+                            8.3% vs previous period
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Discounts -->
+            <div class="col-md-3">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Total Discounts</h6>
+                        <h3 class="card-title mb-0">₹3,456</h3>
+                        <div class="small text-danger mt-2">
+                            <i class="fas fa-arrow-down me-1"></i>
+                            5.2% vs previous period
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Average Order Value -->
+            <div class="col-md-3">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Avg. Order Value</h6>
+                        <h3 class="card-title mb-0">₹195</h3>
+                        <div class="small text-success mt-2">
+                            <i class="fas fa-arrow-up me-1"></i>
+                            3.8% vs previous period
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Report Card -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Detailed Sales Report</h5>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-primary" onclick="downloadPDF()">
+                        <i class="far fa-file-pdf me-2"></i>Download PDF
+                    </button>
+                    <button type="button" class="btn btn-outline-success" onclick="downloadExcel()">
+                        <i class="far fa-file-excel me-2"></i>Download Excel
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Order ID</th>
+                                <th>Items</th>
+                                <th>Subtotal</th>
+                                <th>Discount</th>
+                                <th>Coupon</th>
+                                <th>Final Amount</th>
+                                <th>Payment Method</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024-02-06</td>
+                                <td>#ORD-001</td>
+                                <td>3</td>
+                                <td>₹1,200</td>
+                                <td>₹100</td>
+                                <td>SAVE10</td>
+                                <td>₹1,080</td>
+                                <td>Credit Card</td>
+                                <td><span class="badge bg-success">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>2024-02-06</td>
+                                <td>#ORD-002</td>
+                                <td>2</td>
+                                <td>₹800</td>
+                                <td>₹0</td>
+                                <td>-</td>
+                                <td>₹800</td>
+                                <td>UPI</td>
+                                <td><span class="badge bg-success">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>2024-02-06</td>
+                                <td>#ORD-003</td>
+                                <td>1</td>
+                                <td>₹500</td>
+                                <td>₹50</td>
+                                <td>FIRST50</td>
+                                <td>₹450</td>
+                                <td>Net Banking</td>
+                                <td><span class="badge bg-warning">Pending</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script>
+        // Initialize datepickers
+        $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true
+        });
+
+        // Handle report type change
+        $('#reportType').change(function() {
+            const selectedType = $(this).val();
+            if (selectedType === 'custom') {
+                $('.custom-date-range').show();
+                $('.quick-date').hide();
+            } else {
+                $('.custom-date-range').hide();
+                $('.quick-date').show();
+            }
+        });
+
+        // Download functions (placeholder implementations)
+        function downloadPDF() {
+            alert('Downloading PDF...');
+            // Implement PDF generation and download
+        }
+
+        function downloadExcel() {
+            alert('Downloading Excel...');
+            // Implement Excel generation and download
+        }
+    </script>
+</body>
+</html>

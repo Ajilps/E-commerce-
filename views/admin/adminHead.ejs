@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,7 +38,7 @@
             z-index: 1000;
             width: 250px;
             left: 0;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
         }
 
         .sidebar.collapsed {
@@ -119,7 +120,7 @@
         .btn-light {
             background: white;
             border: 1px solid var(--border-color);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             border-radius: 8px;
             padding: 8px 16px;
             transition: all 0.2s ease;
@@ -127,7 +128,7 @@
 
         .btn-light:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             background: var(--sidebar-hover);
         }
 
@@ -144,7 +145,7 @@
 
         .dropdown-menu {
             border: 1px solid var(--border-color);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border-radius: 12px;
             padding: 8px;
             margin-top: 8px;
@@ -154,19 +155,23 @@
             .sidebar {
                 margin-left: -250px;
             }
+
             .sidebar.active {
                 margin-left: 0;
             }
+
             .content {
                 width: 100%;
                 margin-left: 0;
             }
+
             .content.active {
                 margin-left: 250px;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="wrapper">
         <!-- Sidebar -->
@@ -181,8 +186,8 @@
                 <a href="/admin/home" class="list-group-item list-group-item-action">
                     <i class="fas fa-home me-2"></i> Dashboard
                 </a>
-                <a href="#" class="list-group-item list-group-item-action">
-                    <i class="fas fa-shopping-cart me-2"></i> Sales List
+                <a href="/admin/salesList" class="list-group-item list-group-item-action">
+                    <i class="fas fa-shopping-cart me-2"></i> Sales Report
                 </a>
                 <a href="/admin/products" class="list-group-item list-group-item-action">
                     <i class="fas fa-box me-2"></i> Products
@@ -220,7 +225,8 @@
                     </div>
                     <div class="d-flex align-items-center">
                         <div class="dropdown me-3">
-                            <button class="btn btn-light dropdown-toggle" type="button" id="notificationDropdown" data-bs-toggle="dropdown">
+                            <button class="btn btn-light dropdown-toggle" type="button" id="notificationDropdown"
+                                data-bs-toggle="dropdown">
                                 <i class="fas fa-bell"></i>
                             </button>
                             <ul class="dropdown-menu">
@@ -233,21 +239,24 @@
                             <div class="d-flex align-items-center" data-bs-toggle="dropdown">
                                 <!-- <img src="/api/placeholder/40/40" class="rounded-circle me-2" alt="Profile"> -->
                                 <div class="d-none d-md-block">
-                                    <div class="fw-bold"><%= user.username %></div>
+                                    <div class="fw-bold">
+                                        <%= user.username %>
+                                    </div>
                                     <div class="small text-muted">Admin</div>
                                 </div>
                                 <i class="fas fa-chevron-down ms-2"></i>
                             </div>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>My Profile</a>
+                                </li>
                                 <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="/user/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item text-danger" href="/user/logout"><i
+                                            class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
-                </div>
-              
-    
-    
+            </div>

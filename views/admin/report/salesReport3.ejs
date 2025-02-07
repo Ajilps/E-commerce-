@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Filters & Reports</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container-fluid py-4">
+        <!-- Main Content -->
+        <div class="row">
+            <!-- Filter Sidebar -->
+            <div class="col-lg-3">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-filter me-2"></i>Filters
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="filterForm">
+                            <!-- Sort Options -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Sort By</label>
+                                <select class="form-select" name="sortBy">
+                                    <option value="">Select Sorting</option>
+                                    <option value="name_asc">Name (A-Z)</option>
+                                    <option value="name_desc">Name (Z-A)</option>
+                                    <option value="price_asc">Price (Low to High)</option>
+                                    <option value="price_desc">Price (High to Low)</option>
+                                    <option value="sales_asc">Sales (Low to High)</option>
+                                    <option value="sales_desc">Sales (High to Low)</option>
+                                    <option value="stock_asc">Stock (Low to High)</option>
+                                    <option value="stock_desc">Stock (High to Low)</option>
+                                    <option value="discount_asc">Discount (Low to High)</option>
+                                    <option value="discount_desc">Discount (High to Low)</option>
+                                </select>
+                            </div>
+
+                            <!-- Date Range -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Date Range</label>
+                                <div class="input-group mb-2">
+                                    <input type="text" class="form-control datepicker" name="startDate" placeholder="Start Date">
+                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                </div>
+                                <div class="input-group">
+                                    <input type="text" class="form-control datepicker" name="endDate" placeholder="End Date">
+                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                </div>
+                            </div>
+
+                            <!-- Price Range -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Price Range</label>
+                                <div class="row g-2">
+                                    <div class="col">
+                                        <input type="number" class="form-control" name="minPrice" placeholder="Min">
+                                    </div>
+                                    <div class="col">
+                                        <input type="number" class="form-control" name="maxPrice" placeholder="Max">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Stock Range -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Stock Range</label>
+                                <div class="row g-2">
+                                    <div class="col">
+                                        <input type="number" class="form-control" name="minStock" placeholder="Min">
+                                    </div>
+                                    <div class="col">
+                                        <input type="number" class="form-control" name="maxStock" placeholder="Max">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Methods -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Payment Methods</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="payment_methods[]" value="credit_card">
+                                    <label class="form-check-label">Credit Card</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="payment_methods[]" value="debit_card">
+                                    <label class="form-check-label">Debit Card</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="payment_methods[]" value="upi">
+                                    <label class="form-check-label">UPI</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="payment_methods[]" value="net_banking">
+                                    <label class="form-check-label">Net Banking</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="payment_methods[]" value="cod">
+                                    <label class="form-check-label">Cash on Delivery</label>
+                                </div>
+                            </div>
+
+                            <!-- Coupons Applied -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Coupons Applied</label>
+                                <select class="form-select" name="coupon_type">
+                                    <option value="">All Coupons</option>
+                                    <option value="percentage">Percentage Discount</option>
+                                    <option value="fixed">Fixed Amount</option>
+                                    <option value="first_order">First Order</option>
+                                    <option value="seasonal">Seasonal</option>
+                                    <option value="none">No Coupon</option>
+                                </select>
+                            </div>
+
+                            <!-- Order Status -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Order Status</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="order_status[]" value="pending">
+                                    <label class="form-check-label">Pending</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="order_status[]" value="processing">
+                                    <label class="form-check-label">Processing</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="order_status[]" value="shipped">
+                                    <label class="form-check-label">Shipped</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="order_status[]" value="delivered">
+                                    <label class="form-check-label">Delivered</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="order_status[]" value="cancelled">
+                                    <label class="form-check-label">Cancelled</label>
+                                </div>
+                            </div>
+
+                            <!-- Category Filter -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Categories</label>
+                                <select class="form-select" name="category">
+                                    <option value="">All Categories</option>
+                                    <option value="electronics">Electronics</option>
+                                    <option value="clothing">Clothing</option>
+                                    <option value="furniture">Furniture</option>
+                                    <option value="books">Books</option>
+                                    <option value="food">Food & Beverages</option>
+                                </select>
+                            </div>
+
+                            <!-- Filter Actions -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-filter me-2"></i>Apply Filters
+                                </button>
+                                <button type="reset" class="btn btn-outline-secondary">
+                                    <i class="fas fa-undo me-2"></i>Reset Filters
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Content -->
+            <div class="col-lg-9">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Filtered Results</h5>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-primary" id="downloadPDF">
+                                <i class="far fa-file-pdf me-2"></i>Download PDF
+                            </button>
+                            <button type="button" class="btn btn-outline-success" id="downloadExcel">
+                                <i class="far fa-file-excel me-2"></i>Download Excel
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="reportContent">
+                            <!-- Report content will be dynamically loaded here -->
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Date</th>
+                                            <th>Customer</th>
+                                            <th>Items</th>
+                                            <th>Payment</th>
+                                            <th>Amount</th>
+                                            <th>Discount</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="reportData">
+                                        <!-- Sample data - will be replaced by actual data -->
+                                        <tr>
+                                            <td>#ORD-001</td>
+                                            <td>2024-02-06</td>
+                                            <td>John Doe</td>
+                                            <td>3</td>
+                                            <td>Credit Card</td>
+                                            <td>₹1,500</td>
+                                            <td>₹150</td>
+                                            <td><span class="badge bg-success">Completed</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize datepickers
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayHighlight: true
+            });
+
+            // Handle form submission
+            $('#filterForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                // Get all form data
+                const formData = new FormData(this);
+                const filterData = {};
+                
+                // Convert FormData to object
+                for (let [key, value] of formData.entries()) {
+                    if (key.endsWith('[]')) {
+                        // Handle multiple checkboxes
+                        key = key.slice(0, -2);
+                        if (!filterData[key]) {
+                            filterData[key] = [];
+                        }
+                        filterData[key].push(value);
+                    } else {
+                        filterData[key] = value;
+                    }
+                }
+
+                // Log filter data (for demonstration)
+                console.log('Filter Data:', filterData);
+
+                // Send AJAX request to server
+                $.ajax({
+                    url: '/api/filter-reports', // Replace with your actual API endpoint
+                    method: 'POST',
+                    data: JSON.stringify(filterData),
+                    contentType: 'application/json',
+                    success: function(response) {
+                        // Update report content with response data
+                        updateReportContent(response);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        alert('Error applying filters. Please try again.');
+                    }
+                });
+            });
+
+            // Function to update report content
+            function updateReportContent(data) {
+                const reportData = $('#reportData');
+                reportData.empty();
+
+                // Add new rows based on response data
+                data.forEach(item => {
+                    const row = `
+                        <tr>
+                            <td>${item.orderId}</td>
+                            <td>${item.date}</td>
+                            <td>${item.customer}</td>
+                            <td>${item.items}</td>
+                            <td>${item.payment}</td>
+                            <td>₹${item.amount}</td>
+                            <td>₹${item.discount}</td>
+                            <td><span class="badge bg-${getStatusColor(item.status)}">${item.status}</span></td>
+                        </tr>
+                    `;
+                    reportData.append(row);
+                });
+            }
+
+            // Helper function for status colors
+            function getStatusColor(status) {
+                const colors = {
+                    'Completed': 'success',
+                    'Pending': 'warning',
+                    'Cancelled': 'danger',
+                    'Processing': 'info',
+                    'Shipped': 'primary'
+                };
+                return colors[status] || 'secondary';
+            }
+
+            // Handle download buttons
+            $('#downloadPDF').click(function() {
+                // Implement PDF download logic
+                const filterData = new FormData($('#filterForm')[0]);
+                // Send request to PDF generation endpoint
+                console.log('Downloading PDF with filters:', Object.fromEntries(filterData));
+            });
+
+            $('#downloadExcel').click(function() {
+                // Implement Excel download logic
+                const filterData = new FormData($('#filterForm')[0]);
+                // Send request to Excel generation endpoint
+                console.log('Downloading Excel with filters:', Object.fromEntries(filterData));
+            });
+        });
+    </script>
+</body>
+</html>

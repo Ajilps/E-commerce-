@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wallet</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+
+    .sidebar {
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      color: #666;
+      text-decoration: none;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
+    .sidebar-link.active {
+      background-color: #000;
+      color: white;
+    }
+
+    .sidebar-link i {
+      margin-right: 10px;
+    }
+
+    .wallet-card {
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .wallet-balance {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .balance-amount {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .balance-label {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .transaction-table {
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .table th {
+      font-weight: 500;
+      color: #666;
+      border-top: none;
+    }
+
+    .pagination {
+      margin-bottom: 0;
+    }
+
+    .page-link {
+      color: #000;
+      border: none;
+      padding: 8px 12px;
+    }
+
+    .page-item.active .page-link {
+      background-color: #000;
+      border-color: #000;
+    }
+
+    .wallet-icon {
+      width: 40px;
+      height: 40px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <%- include('../userHeader.ejs') %>
+    <div class="container py-4">
+      <nav class="mb-3">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">HOME</a></li>
+          <li class="breadcrumb-item"><a href="#">PROFILE</a></li>
+          <li class="breadcrumb-item active">DASHBOARD</li>
+        </ol>
+      </nav>
+
+      <div class="row">
+        <%- include('../userInfo/userSidePanel.ejs') %>
+
+
+          <div class="col-lg-9">
+            <div class="wallet-card">
+              <div class="wallet-balance">
+                <div class="d-flex align-items-center">
+                  <div class="wallet-icon">
+                    <i class="fas fa-wallet"></i>
+                  </div>
+                  <% if(wallet){%>
+                    <div>
+                      <div class="balance-amount">₹ <span>
+                          <%= wallet.balance %>
+                        </span></div>
+                      <div class="balance-label">My Wallet Balance</div>
+                    </div>
+                </div>
+                <!-- <button class="btn btn-dark">Add Money</button> -->
+              </div>
+            </div>
+
+            <div class="transaction-table">
+              <h6 class="mb-4">TRANSACTION DETAILS</h6>
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>TRANSACTION ID</th>
+                      <th>DESCRIPTION</th>
+                      <th>DATE</th>
+
+                      <th class="text text-success">DEPOSIT</th>
+                      <th>PURCHASE</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    <% wallet.transactions.forEach((trans)=>{%>
+                      <tr>
+                        <!-- transaction id -->
+                        <td>#
+                          <%= trans._id %>
+                        </td>
+                        <td>
+                          <%= trans.description %>
+                        </td>
+                        <!-- display date dd/mm/yyyy -->
+                        <% let date=new Date(trans.createdAt) %>
+                          <td>
+                            <%= `${date.getDate()}/${date.toLocaleString('default', { month: 'short' })} /
+                              ${date.getFullYear() }` %>
+                          </td>
+
+                          <% if( trans.type==="deposit" || trans.type==="Deposit" ){ %>
+
+
+                            <td>₹ <span>
+                                <%= trans.amount %>
+                              </span></td>
+                            <td>-</td>
+
+                            <% }else{ %>
+
+                              <td>-</td>
+                              <td>₹ <span>
+                                  <%= trans.amount %>
+                                </span></td>
+                              <%} %>
+                      </tr>
+
+                      <% }) %>
+
+                  </tbody>
+                </table>
+              </div>
+              <% } %> <!-- closing if -->
+
+                <!-- pagination  -->
+
+                <!-- pagination end  -->
+            </div>
+          </div>
+      </div>
+    </div>
+    <%- include('../userFooter.ejs') %>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -140,6 +140,10 @@ const productSchema = new Schema({
         default: 'Available',
         enum: ['Available', 'Out Of Stock', 'Discontinued']
      },
+     sellingCount:{
+        type:Number,
+        default:0
+     }
 
 },{timestamps:true});
 

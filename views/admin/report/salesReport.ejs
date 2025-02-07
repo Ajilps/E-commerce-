@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.7.2/font/bootstrap-icons.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <div class="card">
+            <div class="card-header bg-white py-3">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="mb-0">User Management</h5>
+                    </div>
+                    <div class="col text-end">
+                        <button class="btn btn-primary" onclick="downloadReport()">
+                            <i class="bi bi-download me-2"></i>Download Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Filters -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search users...">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" id="roleFilter">
+                            <option value="all">All Roles</option>
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" id="statusFilter">
+                            <option value="all">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="blocked">Blocked</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" id="countryFilter">
+                            <option value="all">All Countries</option>
+                            <option value="USA">USA</option>
+                            <option value="UK">UK</option>
+                            <option value="Canada">Canada</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Location</th>
+                                <th>Redeemed Count</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <!-- Table content will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Sample data - replace with your actual data source
+        let users = [
+            {
+                id: 1,
+                username: "john_doe",
+                email: "john@example.com",
+                role: "user",
+                isBlocked: false,
+                addresses: [{ city: "New York", state: "NY", country: "USA" }],
+                redeemedCount: 2
+            },
+            {
+                id: 2,
+                username: "jane_smith",
+                email: "jane@example.com",
+                role: "admin",
+                isBlocked: false,
+                addresses: [{ city: "London", state: "", country: "UK" }],
+                redeemedCount: 5
+            },
+            {
+                id: 3,
+                username: "blocked_user",
+                email: "blocked@example.com",
+                role: "user",
+                isBlocked: true,
+                addresses: [{ city: "Toronto", state: "ON", country: "Canada" }],
+                redeemedCount: 0
+            }
+        ];
+
+        // Filter users based on current filter values
+        function filterUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const roleFilter = document.getElementById('roleFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const countryFilter = document.getElementById('countryFilter').value;
+
+            return users.filter(user => {
+                const matchesSearch = user.username.toLowerCase().includes(searchTerm) ||
+                                    user.email.toLowerCase().includes(searchTerm);
+                const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+                const matchesStatus = statusFilter === 'all' || 
+                                    (statusFilter === 'blocked') === user.isBlocked;
+                const matchesCountry = countryFilter === 'all' || 
+                                     user.addresses.some(addr => addr.country === countryFilter);
+
+                return matchesSearch && matchesRole && matchesStatus && matchesCountry;
+            });
+        }
+
+        // Render users table
+        function renderUsers() {
+            const filteredUsers = filterUsers();
+            const tableBody = document.getElementById('userTableBody');
+            tableBody.innerHTML = '';
+
+            filteredUsers.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td class="text-capitalize">${user.role}</td>
+                    <td>
+                        <span class="badge ${user.isBlocked ? 'bg-danger' : 'bg-success'}">
+                            ${user.isBlocked ? 'Blocked' : 'Active'}
+                        </span>
+                    </td>
+                    <td>${user.addresses[0]?.country || 'N/A'}</td>
+                    <td>${user.redeemedCount}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Download report as CSV
+        function downloadReport() {
+            const filteredUsers = filterUsers();
+            const report = filteredUsers.map(user => ({
+                Username: user.username,
+                Email: user.email,
+                Role: user.role,
+                Status: user.isBlocked ? "Blocked" : "Active",
+                "Redeemed Count": user.redeemedCount,
+                "Primary Location": user.addresses[0]?.country || "N/A"
+            }));
+
+            const csv = [
+                Object.keys(report[0]).join(","),
+                ...report.map(row => Object.values(row).join(","))
+            ].join("\n");
+
+            const blob = new Blob([csv], { type: "text/csv" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "user-report.csv";
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Add event listeners
+        document.getElementById('searchInput').addEventListener('input', renderUsers);
+        document.getElementById('roleFilter').addEventListener('change', renderUsers);
+        document.getElementById('statusFilter').addEventListener('change', renderUsers);
+        document.getElementById('countryFilter').addEventListener('change', renderUsers);
+
+        // Initial render
+        renderUsers();
+    </script>
+</body>
+</html>

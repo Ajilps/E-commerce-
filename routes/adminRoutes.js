@@ -64,6 +64,8 @@ import {
   deleteCoupon,
 } from "../controllers/admin/couponController.js";
 
+import {displaySalesReport} from "../controllers/admin/report.js"
+
 const router = Router();
 
 //admin routes secured
@@ -162,5 +164,8 @@ router.post("/coupons/create", createCoupon);
 router.get("/coupons/update/:couponId", displayAddCouponForm);
 router.patch("/coupons/update/:couponId", editCoupon);
 router.delete("/coupons/delete/:couponId", deleteCoupon);
+
+// report 
+router.get("/salesList", displaySalesReport)
 
 export default router;

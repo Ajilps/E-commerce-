@@ -14,7 +14,6 @@ import {
   getCurrentUserShippingDetails,
   displayChangePassword,
   showShippingAddressForm,
-  displayWallet,
   updateCurrentUserDetails,
   changePasswordWithOldPss,
   addNewShippingAddress,
@@ -33,6 +32,8 @@ import {
   updateCart,
 } from "../controllers/user/cartController.js"; //cart controller
 
+import { displayWallet } from "../controllers/user/walletController.js";
+
 import {
   displayCheckout,
   placeOrder,
@@ -41,6 +42,10 @@ import {
   cancelOrder,
   confirmPayment,
 } from "../controllers/user/userOrderController.js"; //checkout controller
+
+// retry update
+import { retryPayment, verifyPayment } from "../controllers/user/paymentController.js";
+
 import { verifyJWT } from "../middlewares/authMiddleware.js";
 
 import { validateCoupon } from "../controllers/user/userCoupon.js"; // importing validate coupon from user coupon validation
@@ -134,7 +139,7 @@ router.delete(
 ); // delete address
 router.get("/accountDetails/changePassword/:userId", displayChangePassword);
 router.post("/accountDetails/changePassword/:userId", changePasswordWithOldPss);
-router.get("/wallet", displayWallet);
+
 router.get("/", displayUserHome);
 router.get("/home", displayUserHome);
 router.get("/product/:productId", displayProductUser);
@@ -153,12 +158,18 @@ router.post("/coupon/validateCoupon", validateCoupon);
 router.get("/orders", displayOrders);
 router.get("/orders/orderDetails/:orderId", displayOrdersDetails);
 router.post("/order/placeOrder", placeOrder);
-router.delete("/orders/cancel/:orderId", cancelOrder);
+router.patch("/orders/cancel/:orderId", cancelOrder);
 router.post("/orders/confirm-payment", confirmPayment);
+//retry payment
+router.post("/orders/retryPayment",retryPayment);
+router.post("/orders/verifyPayment",verifyPayment);
 
 //wishlist
 router.get("/wishlist", displayWishlist);
 router.post("/wishlist/add/:productId", addToWishlist);
 router.delete("/wishlist/remove/:productId", removeFromWishlist);
+
+//Wallet
+router.get("/wallet", displayWallet);
 
 export default router;

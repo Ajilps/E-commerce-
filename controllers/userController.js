@@ -716,18 +716,6 @@ const deleteShippingAddress = async (req, res) => {
   }
 };
 
-// display wallet  (get)
-const displayWallet = async (req, res) => {
-  try {
-    return res.status(200).render("user/userInfo/userWallet.ejs", {
-      success: true,
-      user: req.user,
-    });
-  } catch (error) {
-    console.error(`user wallet retrieval failed - ${error.message}`);
-  }
-};
-
 // display displayCheckout (get)
 const displayCheckout = async (req, res) => {
   try {
@@ -754,7 +742,6 @@ export {
   getCurrentUserShippingDetails,
   displayChangePassword,
   showShippingAddressForm,
-  displayWallet,
   displayCheckout,
   changePasswordWithOldPss,
   addNewShippingAddress,

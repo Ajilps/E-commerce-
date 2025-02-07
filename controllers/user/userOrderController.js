@@ -3,6 +3,7 @@ import { Wishlist } from "../../models/wishlistModel.js";
 import { Product } from "../../models/productModel.js";
 import { Cart } from "../../models/cartModel.js";
 import { User } from "../../models/userModel.js";
+import { Wallet } from "../../models/walletModel.js";
 import Razorpay from "razorpay";
 import crypto from "crypto";
 // display displayCheckout (get)
@@ -68,7 +69,11 @@ const placeOrder = async (req, res) => {
       // Update product stock
       const updatedProduct = await Product.findByIdAndUpdate(
         product.productId._id,
-        { $inc: { quantity: -product.quantity } },
+        {
+          $inc: { quantity: -product.quantity },
+          $inc: { sellingCount: product.quantity },
+        },
+
         { new: true } // Return the updated document
       );
 
@@ -180,7 +185,7 @@ const placeOrder = async (req, res) => {
 
 // confirming the payment
 const confirmPayment = async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   try {
     const { razorpayOrderId, razorpaySignature, razorpayPaymentId } = req.body;
     const order = await Order.findOneAndUpdate(
@@ -223,62 +228,6 @@ const confirmPayment = async (req, res) => {
   }
 };
 
-// retry payment
-const retryPayment = async (req, res) => {
-  try {
-    const { orderId } = req.body;
-    const order = await Order.findOne({ orderId });
-
-    if (!order) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Order not found" });
-    }
-
-    if (order.paymentStatus === "paid") {
-      return res
-        .status(400)
-        .json({ success: false, message: "Payment already confirmed" });
-    }
-
-    if (order.paymentAttempts >= 3) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Maximum payment attempts reached" });
-    }
-
-    const razorpay = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_KEY_SECRET,
-    });
-
-    const amount = order.totalPrice * 100; // amount in the smallest currency unit (paise)
-    const orderDataRazorpay = {
-      amount,
-      currency: "INR",
-      receipt: order.orderId,
-      notes: {
-        order_id: order.orderId,
-      },
-    };
-
-    console.log("Razorpay Order Data for Retry:", orderDataRazorpay);
-
-    const response = await razorpay.orders.create(orderDataRazorpay);
-    console.log("Razorpay Response for Retry:", response);
-
-    order.razorpayOrderId = response.id;
-    order.paymentAttempts += 1;
-    await order.save();
-
-    return res
-      .status(200)
-      .json({ success: true, order: order, razorpayOrder: response });
-  } catch (error) {
-    console.error(`Retry payment failed: ${error.message}`);
-    return res.status(500).json({ success: false, message: error.message });
-  }
-};
 
 // render the order details page
 const displayOrders = async (req, res) => {
@@ -362,22 +311,50 @@ const cancelOrder = async (req, res) => {
   try {
     const order = await Order.findById(orderId);
     if (!order) {
-      return res.status(404).send("Order not found");
+      return res
+        .status(404)
+        .json({ status: false, message: "Order not found" });
     }
     order.products.forEach(async (product) => {
       await Product.findByIdAndUpdate(
         product.productId,
-        { $inc: { quantity: product.quantity } },
+        {
+          $inc: { quantity: product.quantity },
+          $inc: { sellingCount: -product.quantity },
+        },
         { new: true }
       );
     });
 
-    // await Order.findByIdAndDelete(orderId);
-    await Order.findByIdAndUpdate(
-      req.params.orderId,
-      { status: "Cancelled" },
-      { new: true }
-    );
+
+    const orderUser = order.userId;
+    let userWallet = await Wallet.findOne({ user: req.user._id });
+    console.log(userWallet);
+    // testing
+    if (!userWallet) {
+      userWallet = await new Wallet({ user: orderUser }).save();
+    }
+    console.log(orderUser, userWallet);
+
+    order.status = "Cancelled";
+
+    if (order.paymentStatus === "Paid") {
+      order.paymentStatus = "Refunded";
+      userWallet.balance += order.totalPrice;
+      userWallet.transactions.push({
+        type: "Deposit",
+        order: order._id,
+        amount: order.totalPrice,
+        status: "completed",
+        description: "product cancellation refund ",
+      });
+    } else {
+      order.paymentStatus = "Cancelled";
+    }
+    // save the order and wallet
+    await order.save();
+    await userWallet.save();
+
     return res
       .status(204)
       .json({ success: true, message: "Order deleted successfully !!" });
