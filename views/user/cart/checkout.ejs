@@ -329,10 +329,10 @@
                   </div>
                 </div>
                 <div class="col-md-4">
-                  <div class="payment-option p-3 d-flex align-items-center justify-content-between"
+                  <div id="wallet" class="payment-option p-3 d-flex align-items-center justify-content-between"
                     onclick="selectPayment('wallet')">
                     <span class="fw-medium">My Wallet</span>
-                    <div class="custom-radio"></div>
+                    <div class="custom-radio "></div>
                   </div>
                 </div>
               </div>
@@ -357,74 +357,69 @@
           <div class="card">
             <div class="card-body">
               <h5 class="mb-4">Order Summary</h5>
-              <% let total=0, discount=0; %>
-                <% if (cart) { %>
-                  <% cart.products.forEach(product=> { %>
-                    <% if (product.quantity !=0) { %>
-                      <div class="d-flex mb-3 .cart-item">
-                        <img src="<%= product.productId.productImageUrls[0] %>" alt="Product" class="product-img me-3">
-                        <div class="flex-grow-1">
-                          <h6 class="mb-0">
-                            <%= product.productId.name %>
-                          </h6>
-                          <small class="text-muted">
-                            <span class="quantity">
-                              <%= product.quantity %>
-                            </span> ×
-                            <span class="price">₹ <%= product.productId.sellingPrice %></span>
-                          </small>
-                        </div>
+
+
+              <% cart.products.forEach(product=> { %>
+                <% if (product.quantity !=0) { %>
+
+                  <div class="d-flex mb-3 .cart-item">
+                    <img src="<%= product.productId.productImageUrls[0] %>" alt="Product" class="product-img me-3">
+                    <div class="flex-grow-1">
+                      <h6 class="mb-0">
+                        <%= product.productId.name %>
+                      </h6>
+                      <small class="text-muted">
+                        <span class="quantity">
+                          <%= product.quantity %>
+                        </span> ×
+                        <span class="price">₹ <%= product.productId.regularPrice %></span>
+                      </small>
+                    </div>
+                  </div>
+                  <!-- calculating the total and discount -->
+                  <% }}); %>
+                    <hr>
+
+                    <!-- Order Details -->
+
+                    <div class="mb-2 d-flex justify-content-between">
+                      <span>Sub-total</span> <span>₹<span id="subTotal">
+
+                        </span></span>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                      <span>Shipping</span> <span>₹ <span class="text-success">Free</span></span>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                      <span>Discount</span> <span>₹ -<span id="discount" class="text-success">
+                          <%= %>
+                        </span></span>
+                    </div>
+                    <!-- <div class="mb-4 d-flex justify-content-between">
+                      <span>Tax</span> <span>₹ <span>
+                          
+                        </span></span>
+                    </div> -->
+                    <div class="mb-4 d-flex justify-content-between">
+                      <span>Coupon</span> <span>₹ -<span class="text-success" id="couponDiscount">0</span></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-4">
+                      <strong>Total</strong> <span>₹ <strong id="totalCost">
+                          <%= %>
+                        </strong></span>
+                    </div>
+
+                    <!-- Coupon Section -->
+                    <div class="d-flex justify-content-between mb-4">
+                      <div class="input-group">
+                        <input name="coupon" id="couponCode" type="text" class="form-control" placeholder="Coupon Code">
+                        <button onclick="checkCoupon()" class="btn btn-outline-dark">Apply</button>
+                        <!-- <button onclick="clearCoupon(this)" class="btn btn-outline-dark">Clear</button> -->
                       </div>
-                      <% total +=product.productId.sellingPrice * product.quantity; %>
-                        <% discount +=(Number(product.productId.regularPrice) - Number(product.productId.sellingPrice))
-                          * product.quantity; %>
-                          <% } %>
-                            <% }) %>
-                              <% } %>
+                    </div>
 
-                                <hr>
-
-                                <!-- Order Details -->
-                                <% let tax=Math.ceil(total * 0.18), finalTotal=Math.ceil(total + tax); %>
-                                  <div class="mb-2 d-flex justify-content-between">
-                                    <span>Sub-total</span> <span>₹<span id="subTotal">
-                                        <%= total %>
-                                      </span></span>
-                                  </div>
-                                  <div class="mb-2 d-flex justify-content-between">
-                                    <span>Shipping</span> <span>₹ <span class="text-success">Free</span></span>
-                                  </div>
-                                  <div class="mb-2 d-flex justify-content-between">
-                                    <span>Discount</span> <span>₹ -<span class="text-success">
-                                        <%= discount %>
-                                      </span></span>
-                                  </div>
-                                  <div class="mb-4 d-flex justify-content-between">
-                                    <span>Tax</span> <span>₹ <span>
-                                        <%= tax %>
-                                      </span></span>
-                                  </div>
-                                  <div class="mb-4 d-flex justify-content-between">
-                                    <span>Coupon</span> <span>₹ -<span class="text-success"
-                                        id="couponDiscount">0</span></span>
-                                  </div>
-                                  <div class="d-flex justify-content-between mb-4">
-                                    <strong>Total</strong> <span>₹ <strong id="totalCost">
-                                        <%= finalTotal %>
-                                      </strong></span>
-                                  </div>
-
-                                  <!-- Coupon Section -->
-                                  <div class="d-flex justify-content-between mb-4">
-                                    <div class="input-group">
-                                      <input name="coupon" id="couponCode" type="text" class="form-control"
-                                        placeholder="Coupon Code">
-                                      <button onclick="checkCoupon()" class="btn btn-outline-dark">Apply</button>
-                                    </div>
-                                  </div>
-
-                                  <!-- Place Order Button -->
-                                  <button id="placeOrderBtn" class="btn btn-dark w-100">Place Order</button>
+                    <!-- Place Order Button -->
+                    <button id="placeOrderBtn" class="btn btn-dark w-100">Place Order</button>
             </div>
           </div>
         </div>
@@ -435,10 +430,55 @@
       <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+      <script>
+        let subTotal = 0, shipping = 0, discount = 0, tax = 0, total = 0;
+        let cart = {};
+        async function getcart() {
+          return fetch("/user/orders/getart")
+            .then((res) => res.json())
+            .then((res) => {
+              if (res.success) {
+                return res;
+              }
+              else {
+                getcart();
+              }
+            })
+        }
+        function roundPrice(price) {
+          return Math.round(price * 100) / 100;
+        }
+
+        getcart().then(res => {
+          cart = res.cart;
+          return cart;
+        }).then((cart) => {
+
+          console.log(cart.products);
+          cart.products.forEach(ele => {
+            subTotal += ele.productId.regularPrice
+            discount += ele.productId.regularPrice - ele.productId.sellingPrice
+            total += (subTotal - discount);
+          })
+          subTotal = roundPrice(subTotal);
+          discount = roundPrice(discount);
+          total = roundPrice(total);
+          document.getElementById("subTotal").innerText = subTotal;
+          document.getElementById("discount").innerText = discount;
+          document.getElementById("totalCost").innerText = total;
+        });
+
+
+
+
+      </script>
+
       <script>
         let paymentMethod = 'COD';
+        let walletStatus = true;
         //payment option selection function 
-        function selectPayment(option) {
+        async function selectPayment(option) {
           // Remove selected class from all options
           document.querySelectorAll('.payment-option').forEach(el => {
             el.classList.remove('selected');
@@ -449,10 +489,67 @@
           const selectedOption = document.querySelector(`[onclick="selectPayment('${option}')"]`);
           selectedOption.classList.add('selected');
           selectedOption.querySelector('.custom-radio').classList.add('selected');
+          // let walletBalance = 0
+          // if (option === "wallet") {
+          //   try {
+          //     // Fetch wallet balance from the server
+          //     const response = await fetch("/user/wallet/balance");
+          //     if (!response.ok) {
+          //       throw new Error(`Failed to fetch wallet balance: ${response.statusText}`);
+          //     }
+          //     const res = await response.json();
 
-          // setting the payment method to selected one 
-          paymentMethod = (option);
+          //     // Validate the response
+          //     const balance = parseFloat(res.balance);
+          //     if (isNaN(balance)) {
+          //       throw new Error("Invalid wallet balance received from the server.");
+          //     }
+
+          //     // Get the total price from the DOM
+          //     const totalCostElement = document.getElementById("totalCost");
+          //     if (!totalCostElement) {
+          //       throw new Error("Total cost element not found in the DOM.");
+          //     }
+          //     const totalPrice = Number(totalCostElement.innerText);
+          //     if (isNaN(totalPrice)) {
+          //       throw new Error("Invalid total price value.");
+          //     }
+
+          //     console.log("Total Price:", totalPrice);
+
+          //     // Check if wallet balance is sufficient
+          //     const myWallet = document.getElementById("wallet");
+          //     if (!myWallet) {
+          //       throw new Error("Wallet element not found in the DOM.");
+          //     }
+
+          //     if (balance < totalPrice) {
+          //       myWallet.style.display = "none"; // Hide the wallet option
+          //       console.warn("Insufficient wallet balance to proceed with payment.");
+          //       walletStatus = false;
+          //       return;
+          //     }
+
+
+
+          // Set the payment method to "wallet"
+          paymentMethod = option;
+
+          //   // Optionally, show a success message to the user
+          //   console.log("Payment method set to wallet.");
+          // } catch (error) {
+          //   console.error("Error processing wallet payment:", error.message);
+
+          //   // Optionally, show an error message to the user
+          //   Swal.fire({
+          //     title: "Error",
+          //     text: "An error occurred while processing your wallet payment. Please try again later.",
+          //     icon: "error",
+          //     confirmButtonText: "Okay",
+          //   });
+          // }
         }
+        // }
       </script>
 
       <script>
@@ -492,8 +589,8 @@
             if (data.success) {
               console.log(data.data._id); //  testing 
 
-              couponDiscount.innerText = ((Number(totalCost.innerText) * Number(data.data.discountValue) / 100))
-              totalCost.innerText = Math.ceil(Number(totalCost.innerText) - Number(couponDiscount.innerText));
+              couponDiscount.innerText = roundPrice((Number(totalCost.innerText) * Number(data.data.discountValue) / 100))
+              totalCost.innerText = roundPrice(Number(totalCost.innerText) - Number(couponDiscount.innerText));
               validatedCoupon = data.data._id;
               couponRedeemed = data.data.code;
             } else {
@@ -545,12 +642,11 @@
           // validate form
           // address
 
+
+
           // payment option
           // additional information
           // submit form
-
-
-
           const notes = document.getElementById('notes').value;
 
           const subTotal = document.getElementById("subTotal").innerText;
@@ -576,8 +672,8 @@
               products: `<%= JSON.stringify(cart.products) %>`,
               subTotal: subTotal,
               total: totalCost.innerText,
-              discount: `<%= Math.ceil(  discount) %>`,
-              tax: `<%= Math.ceil( total *.18) %>`,
+              discount: discount,
+              tax: 0,
               shipping: 0,
               couponDiscount: couponDiscount.innerText,
               paymentMethod: paymentMethod,
@@ -766,6 +862,13 @@
           });
         });
 
+      </script>
+
+      <script>
+        //clearing the apply coupon
+        function clearCoupon(coupon) {
+          console.log(coupon)
+        }
       </script>
 </body>
 

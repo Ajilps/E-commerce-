@@ -1,199 +1,273 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Management Dashboard</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.7.2/font/bootstrap-icons.min.css" rel="stylesheet">
-</head>
-<body>
+<%- include('../adminHead.ejs') %>
+
     <div class="container-fluid py-4">
-        <div class="card">
-            <div class="card-header bg-white py-3">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <h5 class="mb-0">User Management</h5>
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col">
+                <h2 class="mb-0">
+                    <i class="fas fa-chart-line text-primary me-2"></i>
+                    Sales Report
+                </h2>
+            </div>
+        </div>
+
+        <!-- Filters Card -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Filters</h5>
+            </div>
+            <div class="card-body">
+                <form id="reportFilters" method="GET" action="/admin/sales-report">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Report Type</label>
+                            <select class="form-select" id="reportType" name="reportType">
+                                <option value="daily" <%=filters.reportType==='daily' ? 'selected' : '' %>>Daily Report
+                                </option>
+                                <option value="weekly" <%=filters.reportType==='weekly' ? 'selected' : '' %>>Weekly
+                                    Report</option>
+                                <option value="monthly" <%=filters.reportType==='monthly' ? 'selected' : '' %>>Monthly
+                                    Report</option>
+                                <option value="yearly" <%=filters.reportType==='yearly' ? 'selected' : '' %>>Yearly
+                                    Report</option>
+                                <option value="custom" <%=filters.reportType==='custom' ? 'selected' : '' %>>Custom Date
+                                    Range</option>
+                            </select>
+                        </div>
+
+                        <!-- Custom Date Range -->
+                        <div class="col-md-3 custom-date-range"
+                            style="display: <%= filters.reportType === 'custom' ? 'block' : 'none' %>">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" class="form-control" name="startDate" value="<%= filters.startDate %>"
+                                id="startDate">
+                        </div>
+                        <div class="col-md-3 custom-date-range"
+                            style="display: <%= filters.reportType === 'custom' ? 'block' : 'none' %>">
+                            <label class="form-label">End Date</label>
+                            <input type="date" class="form-control" name="endDate" value="<%= filters.endDate %>"
+                                id="endDate">
+                        </div>
+
+                        <!-- Quick Date Selector -->
+                        <div class="col-md-3 quick-date"
+                            style="display: <%= filters.reportType !== 'custom' ? 'block' : 'none' %>">
+                            <label class="form-label">Select Date</label>
+                            <input type="date" class="form-control" name="quickDate" value="<%= filters.quickDate %>"
+                                id="quickDate">
+                        </div>
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-filter me-2"></i>Apply Filters
+                            </button>
+                            <button type="reset" class="btn btn-outline-secondary ms-2">
+                                <i class="fas fa-undo me-2"></i>Reset
+                            </button>
+                        </div>
                     </div>
-                    <div class="col text-end">
-                        <button class="btn btn-primary" onclick="downloadReport()">
-                            <i class="bi bi-download me-2"></i>Download Report
-                        </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row g-4 mb-4">
+            <!-- Total Sales -->
+            <div class="col-md-3">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Total Sales</h6>
+                        <h3 class="card-title mb-0">₹<%= summary.totalSales.toLocaleString() %>
+                        </h3>
+                        <div class="small <%= changes.salesChange >= 0 ? 'text-success' : 'text-danger' %> mt-2">
+                            <i class="fas fa-arrow-<%= changes.salesChange >= 0 ? 'up' : 'down' %> me-1"></i>
+                            <%= Math.abs(changes.salesChange) %>% vs previous period
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="card-body">
-                <!-- Filters -->
-                <div class="row g-3 mb-4">
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="bi bi-search"></i>
-                            </span>
-                            <input type="text" class="form-control" id="searchInput" placeholder="Search users...">
+
+            <!-- Order Count -->
+            <div class="col-md-3">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Total Orders</h6>
+                        <h3 class="card-title mb-0">
+                            <%= summary.totalOrders.toLocaleString() %>
+                        </h3>
+                        <div class="small <%= changes.ordersChange >= 0 ? 'text-success' : 'text-danger' %> mt-2">
+                            <i class="fas fa-arrow-<%= changes.ordersChange >= 0 ? 'up' : 'down' %> me-1"></i>
+                            <%= Math.abs(changes.ordersChange) %>% vs previous period
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <select class="form-select" id="roleFilter">
-                            <option value="all">All Roles</option>
-                            <option value="user">User</option>
-                            <option value="admin">Admin</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <select class="form-select" id="statusFilter">
-                            <option value="all">All Status</option>
-                            <option value="active">Active</option>
-                            <option value="blocked">Blocked</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <select class="form-select" id="countryFilter">
-                            <option value="all">All Countries</option>
-                            <option value="USA">USA</option>
-                            <option value="UK">UK</option>
-                            <option value="Canada">Canada</option>
-                        </select>
+                </div>
+            </div>
+
+            <!-- Total Discounts -->
+            <div class="col-md-3">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Total Discounts</h6>
+                        <h3 class="card-title mb-0">₹<%= summary.totalDiscounts.toLocaleString() %>
+                        </h3>
+                        <div class="small <%= changes.discountsChange >= 0 ? 'text-success' : 'text-danger' %> mt-2">
+                            <i class="fas fa-arrow-<%= changes.discountsChange >= 0 ? 'up' : 'down' %> me-1"></i>
+                            <%= Math.abs(changes.discountsChange) %>% vs previous period
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Table -->
+            <!-- Average Order Value -->
+            <div class="col-md-3">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Avg. Order Value</h6>
+                        <h3 class="card-title mb-0">₹<%= summary.avgOrderValue.toLocaleString() %>
+                        </h3>
+                        <div class="small <%= changes.avgOrderChange >= 0 ? 'text-success' : 'text-danger' %> mt-2">
+                            <i class="fas fa-arrow-<%= changes.avgOrderChange >= 0 ? 'up' : 'down' %> me-1"></i>
+                            <%= Math.abs(changes.avgOrderChange) %>% vs previous period
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Report Card -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Detailed Sales Report</h5>
+                <div class="btn-group">
+                    <a href="/admin/sales-report/download-pdf<%= req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '' %>"
+                        class="btn btn-outline-primary">
+                        <i class="far fa-file-pdf me-2"></i>Download PDF
+                    </a>
+                    <a href="/admin/sales-report/download-excel<%= req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '' %>"
+                        class="btn btn-outline-success">
+                        <i class="far fa-file-excel me-2"></i>Download Excel
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover">
-                        <thead class="table-light">
+                        <thead>
                             <tr>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Role</th>
+                                <th>Date</th>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Subtotal</th>
+                                <th>Discount</th>
+                                <th>Tax</th>
+                                <th>Total</th>
+                                <th>Payment Method</th>
                                 <th>Status</th>
-                                <th>Location</th>
-                                <th>Redeemed Count</th>
                             </tr>
                         </thead>
-                        <tbody id="userTableBody">
-                            <!-- Table content will be populated by JavaScript -->
+                        <tbody>
+                            <% orders.forEach(order=> { %>
+                                <tr>
+                                    <td>
+                                        <%= moment(order.createdAt).format('YYYY-MM-DD') %>
+                                    </td>
+                                    <td>
+                                        <%= order.orderId %>
+                                    </td>
+                                    <td>
+                                        <%= order?.shippingAddress?.name || "user name" %>
+                                    </td>
+                                    <td>
+                                        <%= order.products.length %>
+                                    </td>
+                                    <td>₹<%= order.subtotal.toLocaleString() %>
+                                    </td>
+                                    <td>₹<%= order.discount.toLocaleString() %>
+                                    </td>
+                                    <td>₹<%= order.tax.toLocaleString() %>
+                                    </td>
+                                    <td>₹<%= order.totalPrice.toLocaleString() %>
+                                    </td>
+                                    <td>
+                                        <%= order.paymentMethod %>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-<%= order.status === 'Completed' ? 'success' : 
+                                        order.status === 'Pending' ? 'warning' : 
+                                        order.status === 'Cancelled' ? 'danger' : 'info' %>">
+                                            <%= order.status %>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                    <% if (orders.length===0) { %>
+                                        <tr>
+                                            <td colspan="10" class="text-center">No orders found for the selected
+                                                period</td>
+                                        </tr>
+                                        <% } %>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> -->
+    <%- include('../adminFoot.ejs') %>
+        <script></script>
+        <!-- Scripts -->
+        <script>
+            // Wait for the DOM to load
+            document.addEventListener('DOMContentLoaded', function () {
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // Sample data - replace with your actual data source
-        let users = [
-            {
-                id: 1,
-                username: "john_doe",
-                email: "john@example.com",
-                role: "user",
-                isBlocked: false,
-                addresses: [{ city: "New York", state: "NY", country: "USA" }],
-                redeemedCount: 2
-            },
-            {
-                id: 2,
-                username: "jane_smith",
-                email: "jane@example.com",
-                role: "admin",
-                isBlocked: false,
-                addresses: [{ city: "London", state: "", country: "UK" }],
-                redeemedCount: 5
-            },
-            {
-                id: 3,
-                username: "blocked_user",
-                email: "blocked@example.com",
-                role: "user",
-                isBlocked: true,
-                addresses: [{ city: "Toronto", state: "ON", country: "Canada" }],
-                redeemedCount: 0
-            }
-        ];
+                // Handle report type change
+                var reportType = document.getElementById('reportType');
+                reportType.addEventListener('change', function () {
+                    var selectedType = this.value;
+                    if (selectedType === 'custom') {
+                        document.querySelector('.custom-date-range').style.display = 'block';
+                        document.querySelector('.quick-date').style.display = 'none';
+                    } else {
+                        document.querySelector('.custom-date-range').style.display = 'none';
+                        document.querySelector('.quick-date').style.display = 'block';
+                    }
+                });
 
-        // Filter users based on current filter values
-        function filterUsers() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const roleFilter = document.getElementById('roleFilter').value;
-            const statusFilter = document.getElementById('statusFilter').value;
-            const countryFilter = document.getElementById('countryFilter').value;
 
-            return users.filter(user => {
-                const matchesSearch = user.username.toLowerCase().includes(searchTerm) ||
-                                    user.email.toLowerCase().includes(searchTerm);
-                const matchesRole = roleFilter === 'all' || user.role === roleFilter;
-                const matchesStatus = statusFilter === 'all' || 
-                                    (statusFilter === 'blocked') === user.isBlocked;
-                const matchesCountry = countryFilter === 'all' || 
-                                     user.addresses.some(addr => addr.country === countryFilter);
 
-                return matchesSearch && matchesRole && matchesStatus && matchesCountry;
+                // Handle form reset
+                var resetButton = document.querySelector('button[type="reset"]');
+                resetButton.addEventListener('click', function () {
+                    setTimeout(function () {
+                        window.location.href = '/admin/sales-report';
+                    }, 100);
+                });
             });
-        }
+        </script>
+        <script>
+            document.getElementById('reportType').addEventListener('change', function () {
+                const isCustom = this.value === 'custom';
 
-        // Render users table
-        function renderUsers() {
-            const filteredUsers = filterUsers();
-            const tableBody = document.getElementById('userTableBody');
-            tableBody.innerHTML = '';
+                // Toggle visibility of date fields
+                document.querySelectorAll('.custom-date-range').forEach(el => {
+                    el.style.display = isCustom ? 'block' : 'none';
+                });
+                document.querySelectorAll('.quick-date').forEach(el => {
+                    el.style.display = isCustom ? 'none' : 'block';
+                });
 
-            filteredUsers.forEach(user => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${user.username}</td>
-                    <td>${user.email}</td>
-                    <td class="text-capitalize">${user.role}</td>
-                    <td>
-                        <span class="badge ${user.isBlocked ? 'bg-danger' : 'bg-success'}">
-                            ${user.isBlocked ? 'Blocked' : 'Active'}
-                        </span>
-                    </td>
-                    <td>${user.addresses[0]?.country || 'N/A'}</td>
-                    <td>${user.redeemedCount}</td>
-                `;
-                tableBody.appendChild(row);
+                // Clear values when switching types
+                if (!isCustom) {
+                    document.getElementById('startDate').value = '';
+                    document.getElementById('endDate').value = '';
+                } else {
+                    document.getElementById('quickDate').value = '';
+                }
             });
-        }
+        </script>
 
-        // Download report as CSV
-        function downloadReport() {
-            const filteredUsers = filterUsers();
-            const report = filteredUsers.map(user => ({
-                Username: user.username,
-                Email: user.email,
-                Role: user.role,
-                Status: user.isBlocked ? "Blocked" : "Active",
-                "Redeemed Count": user.redeemedCount,
-                "Primary Location": user.addresses[0]?.country || "N/A"
-            }));
 
-            const csv = [
-                Object.keys(report[0]).join(","),
-                ...report.map(row => Object.values(row).join(","))
-            ].join("\n");
+        </body>
 
-            const blob = new Blob([csv], { type: "text/csv" });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "user-report.csv";
-            a.click();
-            window.URL.revokeObjectURL(url);
-        }
-
-        // Add event listeners
-        document.getElementById('searchInput').addEventListener('input', renderUsers);
-        document.getElementById('roleFilter').addEventListener('change', renderUsers);
-        document.getElementById('statusFilter').addEventListener('change', renderUsers);
-        document.getElementById('countryFilter').addEventListener('change', renderUsers);
-
-        // Initial render
-        renderUsers();
-    </script>
-</body>
-</html>
+        </html>

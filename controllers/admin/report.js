@@ -1,387 +1,443 @@
-import express from "express";
+import { Order } from "../../models/orderModel.js";
+// const Order = require('../models/orderModel');
+import PDFDocument from "pdfkit";
+import moment from "moment";
 import { User } from "../../models/userModel.js";
+import excel from "exceljs";
 
-const router = express.Router();
+// Helper function to get date filter based on parameters
+const getDateFilter = (reportType, startDate, endDate, quickDate) => {
+  let dateFilter = {};
 
-/**
- * @route GET /api/users
- * @desc Get users with filtering
- * @access Private (Admin only)
- */
-
-// display the sales report page
-const displaySalesReport = async (req, res) => {
-  return res.status(200).render("admin/report/salesReport3.ejs");
-};
-
-//filtering request
-
-const filterData = async (req, res) => {
-  const filter = req.body;
-};
-
-router.get("/", async (req, res) => {
-  try {
-    const { search, role, status, country, page = 1, limit = 10 } = req.query;
-
-    // Build filter query
-    const query = {};
-
-    // Search filter
-    if (search) {
-      query.$or = [
-        { username: { $regex: search, $options: "i" } },
-        { email: { $regex: search, $options: "i" } },
-      ];
+  // Validate input parameters
+  if (reportType === "custom") {
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      if (!isNaN(start) && !isNaN(end)) {
+        dateFilter.createdAt = { $gte: start, $lte: end };
+      }
     }
+  } else {
+    const validReportTypes = ["daily", "weekly", "monthly", "yearly"];
+    if (validReportTypes.includes(reportType) && quickDate) {
+      const selectedDate = moment(quickDate);
+      if (selectedDate.isValid()) {
+        const range = {
+          daily: { start: "day", end: "day" },
+          weekly: { start: "week", end: "week" },
+          monthly: { start: "month", end: "month" },
+          yearly: { start: "year", end: "year" },
+        }[reportType];
 
-    // Role filter
-    if (role && role !== "all") {
-      query.role = role;
+        dateFilter.createdAt = {
+          $gte: selectedDate.startOf(range.start).toDate(),
+          $lte: selectedDate.endOf(range.end).toDate(),
+        };
+      }
     }
-
-    // Status filter
-    if (status && status !== "all") {
-      query.isBlocked = status === "blocked";
-    }
-
-    // Country filter
-    if (country && country !== "all") {
-      query["addresses.country"] = country;
-    }
-
-    // Pagination
-    const skip = (page - 1) * limit;
-
-    // Get users with pagination
-    const users = await User.find(query)
-      .select("username email role isBlocked addresses redeemedCount")
-      .skip(skip)
-      .limit(Number(limit))
-      .lean();
-
-    // Get total count for pagination
-    const total = await User.countDocuments(query);
-
-    res.json({
-      users,
-      pagination: {
-        total,
-        pages: Math.ceil(total / limit),
-        currentPage: Number(page),
-        perPage: Number(limit),
-      },
-    });
-  } catch (error) {
-    console.error("Error fetching users:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
-
-/**
- * @route GET /api/users/report
- * @desc Generate user report
- * @access Private (Admin only)
- */
-router.get("/report", async (req, res) => {
-  try {
-    const { search, role, status, country } = req.query;
-
-    // Build filter query (same as above)
-    const query = {};
-
-    if (search) {
-      query.$or = [
-        { username: { $regex: search, $options: "i" } },
-        { email: { $regex: search, $options: "i" } },
-      ];
-    }
-
-    if (role && role !== "all") {
-      query.role = role;
-    }
-
-    if (status && status !== "all") {
-      query.isBlocked = status === "blocked";
-    }
-
-    if (country && country !== "all") {
-      query["addresses.country"] = country;
-    }
-
-    // Get all filtered users for report
-    const users = await User.find(query)
-      .select(
-        "username email role isBlocked addresses redeemedCount orders wallet"
-      )
-      .populate("orders", "totalAmount status")
-      .populate("wallet", "balance")
-      .lean();
-
-    // Transform data for CSV
-    const reportData = users.map((user) => ({
-      Username: user.username,
-      Email: user.email,
-      Role: user.role,
-      Status: user.isBlocked ? "Blocked" : "Active",
-      "Primary Location": user.addresses[0]?.country || "N/A",
-      "Redeemed Count": user.redeemedCount,
-      "Total Orders": user.orders?.length || 0,
-      "Wallet Balance": user.wallet?.balance || 0,
-      "Registration Date": user.createdAt,
-    }));
-
-    // Set headers for CSV download
-    res.setHeader("Content-Type", "text/csv");
-    res.setHeader(
-      "Content-Disposition",
-      "attachment; filename=user-report.csv"
-    );
-
-    // Send CSV header
-    res.write(Object.keys(reportData[0]).join(",") + "\n");
-
-    // Send each row
-    reportData.forEach((row) => {
-      res.write(Object.values(row).join(",") + "\n");
-    });
-
-    res.end();
-  } catch (error) {
-    console.error("Error generating report:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
-
-/**
- * @route GET /api/users/stats
- * @desc Get user statistics
- * @access Private (Admin only)
- */
-router.get("/stats", async (req, res) => {
-  try {
-    const stats = await User.aggregate([
-      {
-        $facet: {
-          totalUsers: [{ $count: "count" }],
-          roleDistribution: [
-            {
-              $group: {
-                _id: "$role",
-                count: { $sum: 1 },
-              },
-            },
-          ],
-          blockedUsers: [
-            {
-              $match: { isBlocked: true },
-            },
-            { $count: "count" },
-          ],
-          countryDistribution: [
-            {
-              $unwind: "$addresses",
-            },
-            {
-              $group: {
-                _id: "$addresses.country",
-                count: { $sum: 1 },
-              },
-            },
-          ],
-        },
-      },
-    ]);
-
-    res.json(stats[0]);
-  } catch (error) {
-    console.error("Error fetching user stats:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
-
-/**
- * @route GET /api/users/search-suggestions
- * @desc Get search suggestions for countries and other filters
- * @access Private (Admin only)
- */
-router.get("/search-suggestions", async (req, res) => {
-  try {
-    const countries = await User.distinct("addresses.country");
-
-    res.json({
-      countries,
-      roles: ["user", "admin"],
-      statuses: ["active", "blocked"],
-    });
-  } catch (error) {
-    console.error("Error fetching search suggestions:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
-
-export { displaySalesReport };
-
-// import Order from "../models/Order.js";
-// import mongoose from "mongoose";
-
-// Utility function to build date range queries
-const buildDateRangeQuery = (startDate, endDate, fieldName) => {
-  const dateQuery = {};
-  if (startDate) dateQuery.$gte = new Date(startDate);
-  if (endDate) dateQuery.$lte = new Date(endDate);
-  return Object.keys(dateQuery).length ? dateQuery : null;
-};
-
-// Main filter function with multiple filtering capabilities
-const filterOrders = async (filterParams) => {
-  const {
-    userId,
-    status,
-    paymentStatus,
-    orderId,
-    trackingNumber,
-    productId,
-    createdStart,
-    createdEnd,
-    updatedStart,
-    updatedEnd,
-    deliveryStart,
-    deliveryEnd,
-    minTotal,
-    maxTotal,
-    page = 1,
-    limit = 10,
-    sortBy = "-createdAt",
-  } = filterParams;
-
-  const query = {};
-
-  // User and basic filters
-  if (userId) query.userId = userId;
-  if (status) query.status = status;
-  if (paymentStatus) query.paymentStatus = paymentStatus;
-  if (orderId) query.orderId = orderId;
-  if (trackingNumber) query.trackingNumber = trackingNumber;
-
-  // Date range filters
-  const createdAtQuery = buildDateRangeQuery(createdStart, createdEnd);
-  if (createdAtQuery) query.createdAt = createdAtQuery;
-
-  const updatedAtQuery = buildDateRangeQuery(updatedStart, updatedEnd);
-  if (updatedAtQuery) query.updatedAt = updatedAtQuery;
-
-  const deliveryDateQuery = buildDateRangeQuery(deliveryStart, deliveryEnd);
-  if (deliveryDateQuery) query.deliveryDate = deliveryDateQuery;
-
-  // Price range filter
-  if (minTotal || maxTotal) {
-    query.totalPrice = {};
-    if (minTotal) query.totalPrice.$gte = Number(minTotal);
-    if (maxTotal) query.totalPrice.$lte = Number(maxTotal);
   }
 
-  // Product filter
-  if (productId) {
-    query.products = {
-      $elemMatch: {
-        productId: new mongoose.Types.ObjectId(productId),
-      },
-    };
-  }
-
-  // Execute query with pagination
-  const options = {
-    skip: (page - 1) * limit,
-    limit: Number(limit),
-    sort: sortBy,
-  };
-
-  const [orders, total] = await Promise.all([
-    Order.find(query)
-      .populate("userId", "name email")
-      .populate("products.productId", "name price")
-      .lean(),
-    Order.countDocuments(query),
-  ]);
-
-  return {
-    success: true,
-    count: orders.length,
-    total,
-    page: Number(page),
-    totalPages: Math.ceil(total / limit),
-    data: orders,
-  };
+  return dateFilter;
 };
 
-// Specific filter examples
+const orderController = {
+  // Render sales report page with filtered data
+  getSalesReport: async (req, res) => {
+    try {
+      const { reportType, startDate, endDate, quickDate } = req.query;
+      console.log(reportType, startDate, endDate, quickDate);
 
-// 1. Get orders by user
-const getOrdersByUser = async (userId, page = 1, limit = 10) => {
-  return filterOrders({
-    userId,
-    page,
-    limit,
-    sortBy: "-createdAt",
-  });
+      // Get date filter using helper function
+      const dateFilter = getDateFilter(
+        reportType,
+        startDate,
+        endDate,
+        quickDate
+      );
+      console.log("data filtered : ", dateFilter);
+      // Fetch orders with filter
+      const orders = await Order.find(dateFilter).sort({ createdAt: -1 });
+
+      // Calculate summary statistics
+      const summary = {
+        totalSales: orders.reduce((sum, order) => sum + order.totalPrice, 0),
+        totalOrders: orders.length,
+        totalDiscounts: orders.reduce((sum, order) => sum + order.discount, 0),
+        avgOrderValue: orders.length
+          ? Math.round(
+              orders.reduce((sum, order) => sum + order.totalPrice, 0) /
+                orders.length
+            )
+          : 0,
+      };
+
+      // Safely calculate previous period filter
+      const previousPeriodFilter = {};
+      if (dateFilter.createdAt?.$gte && dateFilter.createdAt?.$lte) {
+        const duration = dateFilter.createdAt.$lte - dateFilter.createdAt.$gte;
+        previousPeriodFilter.createdAt = {
+          $gte: new Date(dateFilter.createdAt.$gte - duration),
+          $lte: new Date(dateFilter.createdAt.$gte),
+        };
+      }
+
+      // // Get previous period statistics for comparison
+      // const previousPeriodFilter = { ...dateFilter };
+      // if (dateFilter.createdAt) {
+      //   const duration = dateFilter.createdAt.$lte - dateFilter.createdAt.$gte;
+      //   previousPeriodFilter.createdAt = {
+      //     $gte: new Date(dateFilter.createdAt.$gte - duration),
+      //     $lte: new Date(dateFilter.createdAt.$gte),
+      //   };
+      // }
+
+      const previousOrders = await Order.find(previousPeriodFilter);
+      const previousSummary = {
+        totalSales: previousOrders.reduce(
+          (sum, order) => sum + order.totalPrice,
+          0
+        ),
+        totalOrders: previousOrders.length,
+        totalDiscounts: previousOrders.reduce(
+          (sum, order) => sum + order.discount,
+          0
+        ),
+        avgOrderValue: previousOrders.length
+          ? Math.round(
+              previousOrders.reduce((sum, order) => sum + order.totalPrice, 0) /
+                previousOrders.length
+            )
+          : 0,
+      };
+
+      // Calculate percentage changes
+      const changes = {
+        salesChange: previousSummary.totalSales
+          ? (
+              ((summary.totalSales - previousSummary.totalSales) /
+                previousSummary.totalSales) *
+              100
+            ).toFixed(1)
+          : 0,
+        ordersChange: previousSummary.totalOrders
+          ? (
+              ((summary.totalOrders - previousSummary.totalOrders) /
+                previousSummary.totalOrders) *
+              100
+            ).toFixed(1)
+          : 0,
+        discountsChange: previousSummary.totalDiscounts
+          ? (
+              ((summary.totalDiscounts - previousSummary.totalDiscounts) /
+                previousSummary.totalDiscounts) *
+              100
+            ).toFixed(1)
+          : 0,
+        avgOrderChange: previousSummary.avgOrderValue
+          ? (
+              ((summary.avgOrderValue - previousSummary.avgOrderValue) /
+                previousSummary.avgOrderValue) *
+              100
+            ).toFixed(1)
+          : 0,
+      };
+
+      res.render("admin/report/salesReport", {
+        orders,
+        summary,
+        changes,
+        filters: { reportType, startDate, endDate, quickDate },
+        moment,
+        user: req.user,
+        req,
+      });
+    } catch (error) {
+      console.error("Error in sales report:", error);
+      res.status(500).send("Error generating sales report");
+    }
+  },
+
+  // Generate and download PDF report
+  downloadPDF: async (req, res) => {
+    try {
+      const { reportType, startDate, endDate, quickDate } = req.query;
+
+      // Get date filter using helper function
+      const dateFilter = getDateFilter(
+        reportType,
+        startDate,
+        endDate,
+        quickDate
+      );
+
+      // Fetch orders with filter
+      const orders = await Order.find(dateFilter).sort({ createdAt: -1 });
+
+      // Calculate summary for PDF
+      const summary = {
+        totalSales: orders.reduce((sum, order) => sum + order.totalPrice, 0),
+        totalOrders: orders.length,
+        totalDiscounts: orders.reduce((sum, order) => sum + order.discount, 0),
+        avgOrderValue: orders.length
+          ? Math.round(
+              orders.reduce((sum, order) => sum + order.totalPrice, 0) /
+                orders.length
+            )
+          : 0,
+      };
+
+      // Create PDF document
+      const doc = new PDFDocument({ margin: 50 });
+
+      // Set response headers
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=sales-report.pdf"
+      );
+
+      doc.pipe(res);
+
+      // Add content to PDF
+      doc.fontSize(20).text("Sales Report", { align: "center" });
+      doc.moveDown();
+
+      // Add date range information
+      if (reportType === "custom") {
+        doc
+          .fontSize(12)
+          .text(`Period: ${startDate} to ${endDate}`, { align: "center" });
+      } else if (quickDate) {
+        doc
+          .fontSize(12)
+          .text(
+            `${
+              reportType.charAt(0).toUpperCase() + reportType.slice(1)
+            } Report: ${quickDate}`,
+            { align: "center" }
+          );
+      }
+      doc.moveDown();
+
+      // Add summary section
+      doc.fontSize(14).text("Summary", { underline: true });
+      doc
+        .fontSize(12)
+        .text(`Total Sales: ₹${summary.totalSales.toLocaleString()}`);
+      doc.text(`Total Orders: ${summary.totalOrders}`);
+      doc.text(`Total Discounts: ₹${summary.totalDiscounts.toLocaleString()}`);
+      doc.text(
+        `Average Order Value: ₹${summary.avgOrderValue.toLocaleString()}`
+      );
+      doc.moveDown();
+
+      // Add orders table
+      doc.fontSize(14).text("Detailed Orders", { underline: true });
+      doc.moveDown();
+
+      // Table settings
+      const startX = 50;
+      const columnWidth = 100;
+      const pageBottom = doc.page.height - 50;
+      const rowPadding = 8;
+      let currentY = doc.y;
+
+      // Draw headers
+      const headers = ["Order ID", "Date", "Customer", "Total", "Status"];
+      headers.forEach((header, i) => {
+        doc.fontSize(10).text(header, startX + i * columnWidth, currentY, {
+          width: columnWidth,
+          align: "left",
+        });
+      });
+      currentY += 20;
+
+      // Draw rows with proper pagination
+      orders.forEach((order) => {
+        // Calculate row height
+        const rowHeight =
+          Math.max(
+            doc.heightOfString(order.orderId, { width: columnWidth }),
+            doc.heightOfString(moment(order.createdAt).format("YYYY-MM-DD"), {
+              width: columnWidth,
+            }),
+            doc.heightOfString(order.shippingAddress?.name || "", {
+              width: columnWidth,
+            }),
+            doc.heightOfString(`₹${order.totalPrice.toLocaleString()}`, {
+              width: columnWidth,
+            }),
+            doc.heightOfString(order.status, { width: columnWidth })
+          ) + rowPadding;
+
+        // Check page space
+        if (currentY + rowHeight > pageBottom) {
+          doc.addPage();
+          currentY = 50;
+
+          // Redraw headers on new page
+          headers.forEach((header, i) => {
+            doc.fontSize(10).text(header, startX + i * columnWidth, currentY, {
+              width: columnWidth,
+              align: "left",
+            });
+          });
+          currentY += 20;
+        }
+
+        // Draw row
+        doc
+          .fontSize(9)
+          .text(order.orderId, startX, currentY, { width: columnWidth })
+          .text(
+            moment(order.createdAt).format("YYYY-MM-DD"),
+            startX + columnWidth,
+            currentY,
+            { width: columnWidth }
+          )
+          .text(
+            order.shippingAddress?.name,
+            startX + columnWidth * 2,
+            currentY,
+            { width: columnWidth }
+          )
+          .text(
+            `₹${order.totalPrice.toLocaleString()}`,
+            startX + columnWidth * 3,
+            currentY,
+            { width: columnWidth }
+          )
+          .text(order.status, startX + columnWidth * 4, currentY, {
+            width: columnWidth,
+          });
+
+        currentY += rowHeight;
+      });
+
+      doc.end();
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      res.status(500).send("Error generating PDF report");
+    }
+  },
+
+  // Generate and download Excel report
+  downloadExcel: async (req, res) => {
+    try {
+      const { reportType, startDate, endDate, quickDate } = req.query;
+
+      // Get date filter using helper function
+      const dateFilter = getDateFilter(
+        reportType,
+        startDate,
+        endDate,
+        quickDate
+      );
+
+      // Fetch orders with filter
+      const orders = await Order.find(dateFilter).sort({ createdAt: -1 });
+
+      // Calculate summary
+      const summary = {
+        totalSales: orders.reduce((sum, order) => sum + order.totalPrice, 0),
+        totalOrders: orders.length,
+        totalDiscounts: orders.reduce((sum, order) => sum + order.discount, 0),
+        avgOrderValue: orders.length
+          ? Math.round(
+              orders.reduce((sum, order) => sum + order.totalPrice, 0) /
+                orders.length
+            )
+          : 0,
+      };
+
+      // Create a new workbook
+      const workbook = new excel.Workbook();
+
+      // Add a worksheet for summary
+      const summarySheet = workbook.addWorksheet("Summary");
+      summarySheet.addRow(["Sales Report Summary"]);
+      summarySheet.addRow([]); // Empty row for spacing
+
+      // Add date range information
+      if (reportType === "custom") {
+        summarySheet.addRow([`Period: ${startDate} to ${endDate}`]);
+      } else if (quickDate) {
+        summarySheet.addRow([
+          `${
+            reportType.charAt(0).toUpperCase() + reportType.slice(1)
+          } Report: ${quickDate}`,
+        ]);
+      }
+      summarySheet.addRow([]); // Empty row for spacing
+
+      // Add summary data
+      summarySheet.addRow([
+        "Total Sales",
+        `₹${summary.totalSales.toLocaleString()}`,
+      ]);
+      summarySheet.addRow(["Total Orders", summary.totalOrders]);
+      summarySheet.addRow([
+        "Total Discounts",
+        `₹${summary.totalDiscounts.toLocaleString()}`,
+      ]);
+      summarySheet.addRow([
+        "Average Order Value",
+        `₹${summary.avgOrderValue.toLocaleString()}`,
+      ]);
+
+      // Add a worksheet for detailed orders
+      const ordersSheet = workbook.addWorksheet("Detailed Orders");
+
+      // Add headers
+      ordersSheet.addRow([
+        "Order ID",
+        "Date",
+        "Customer",
+        "Total",
+        "Status",
+        "Payment Method",
+        "Items",
+      ]);
+
+      // Add order data
+      orders.forEach((order) => {
+        ordersSheet.addRow([
+          order.orderId,
+          moment(order.createdAt).format("YYYY-MM-DD"),
+          order.shippingAddress?.name,
+          `₹${order.totalPrice.toLocaleString()}`,
+          order.status,
+          order.paymentMethod,
+          order.items?.length || 0,
+        ]);
+      });
+
+      // Style the worksheets
+      summarySheet.getColumn(1).width = 20;
+      summarySheet.getColumn(2).width = 20;
+      ordersSheet.columns.forEach((column) => {
+        column.width = 20;
+      });
+
+      // Set headers for download
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      );
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=sales-report.xlsx"
+      );
+
+      // Write to response
+      await workbook.xlsx.write(res);
+      res.end();
+    } catch (error) {
+      console.error("Error generating Excel:", error);
+      res.status(500).send("Error generating Excel report");
+    }
+  },
 };
 
-// 2. Get orders by status
-const getOrdersByStatus = async (status, page = 1, limit = 10) => {
-  return filterOrders({
-    status,
-    page,
-    limit,
-    sortBy: "-createdAt",
-  });
-};
-
-// 3. Get orders by payment status
-const getOrdersByPaymentStatus = async (
-  paymentStatus,
-  page = 1,
-  limit = 10
-) => {
-  return filterOrders({
-    paymentStatus,
-    page,
-    limit,
-    sortBy: "-createdAt",
-  });
-};
-
-// 4. Get orders containing specific product
-const getOrdersWithProduct = async (productId, page = 1, limit = 10) => {
-  return filterOrders({
-    productId,
-    page,
-    limit,
-    sortBy: "-createdAt",
-  });
-};
-
-// 5. Get orders within date range
-const getOrdersByDateRange = async (
-  startDate,
-  endDate,
-  page = 1,
-  limit = 10
-) => {
-  return filterOrders({
-    createdStart: startDate,
-    createdEnd: endDate,
-    page,
-    limit,
-    sortBy: "createdAt",
-  });
-};
-
-export {
-  filterOrders,
-  getOrdersByUser,
-  getOrdersByStatus,
-  getOrdersByPaymentStatus,
-  getOrdersWithProduct,
-  getOrdersByDateRange,
-};
+export { orderController };

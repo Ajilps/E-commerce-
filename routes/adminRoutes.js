@@ -64,7 +64,7 @@ import {
   deleteCoupon,
 } from "../controllers/admin/couponController.js";
 
-import {displaySalesReport} from "../controllers/admin/report.js"
+import { orderController } from "../controllers/admin/report.js";
 
 const router = Router();
 
@@ -165,7 +165,13 @@ router.get("/coupons/update/:couponId", displayAddCouponForm);
 router.patch("/coupons/update/:couponId", editCoupon);
 router.delete("/coupons/delete/:couponId", deleteCoupon);
 
-// report 
-router.get("/salesList", displaySalesReport)
+// report
+// Sales report routes
+router.get("/sales-report", orderController.getSalesReport);
+router.get("/sales-report/download-pdf", orderController.downloadPDF);
+router.get("/sales-report/download-excel", orderController.downloadExcel);
+
+// import { getReport } from "../controllers/admin/reportCopy.js";
+// router.get("/report", getReport);
 
 export default router;

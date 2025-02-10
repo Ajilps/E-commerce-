@@ -66,10 +66,21 @@
                 <p>Payment method : <span>
                     <%= order.paymentMethod %>
                   </span></p>
-                <p class="card-text">Expected Arrival: </p>
-                <span> including 18% tax</span>
-                <p class=" card-text badge bg-info">Total: ₹<%= order.totalPrice %>
-                </p>
+                <p>Discount : <span>
+                    <%= order.discount %>
+                  </span></p>
+                <% if(order.deliveryDate){ %>
+                  <% let date=new Date(order?.deliveryDate) %>
+
+                    <p class="card-text">
+                      Expected Arrival:
+                      <%= `${date.getDate()}/${date.toLocaleString('default', { month: 'short' })} /
+                        ${date.getFullYear() }` || 0 %>
+                    </p>
+                    <% } %>
+                      <span> including 18% tax</span>
+                      <p class=" card-text badge bg-info">Total: ₹<%= order.totalPrice %>
+                      </p>
             </div>
           </div>
         </div>
@@ -102,7 +113,7 @@
                           <td>
                             <%= product.quantity %>
                           </td>
-                          <td>₹<%= Math.ceil( product.price * product.quantity) %>/-</td>
+                          <td>₹<%= ( product.price * product.quantity) %>/-</td>
                         </tr>
                         <!-- <tr>
                     <td>Google Pixel 6 Pro - Crystal Clear Phone Case with 12ft Anti Drop</td>

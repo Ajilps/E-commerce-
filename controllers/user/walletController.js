@@ -20,4 +20,19 @@ const displayWallet = async (req, res) => {
   }
 };
 
-export { displayWallet };
+// get wallet balance
+const getWalletBalance = async (req, res) => {
+  try {
+    const wallet = await Wallet.findOne({ user: req.user._id });
+
+    if (!wallet) {
+      return res
+        .status(402)
+        .json({ success: false, message: "No wallet found !!" });
+    }
+
+    return res.status(200).json({ success: true, balance: wallet.balance });
+  } catch (error) {}
+};
+
+export { displayWallet, getWalletBalance };

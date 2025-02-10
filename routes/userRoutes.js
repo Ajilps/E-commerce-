@@ -32,7 +32,10 @@ import {
   updateCart,
 } from "../controllers/user/cartController.js"; //cart controller
 
-import { displayWallet } from "../controllers/user/walletController.js";
+import {
+   displayWallet,
+   getWalletBalance,
+   } from "../controllers/user/walletController.js";  //wallet
 
 import {
   displayCheckout,
@@ -41,6 +44,7 @@ import {
   displayOrdersDetails,
   cancelOrder,
   confirmPayment,
+  getCart,
 } from "../controllers/user/userOrderController.js"; //checkout controller
 
 // retry update
@@ -160,6 +164,7 @@ router.get("/orders/orderDetails/:orderId", displayOrdersDetails);
 router.post("/order/placeOrder", placeOrder);
 router.patch("/orders/cancel/:orderId", cancelOrder);
 router.post("/orders/confirm-payment", confirmPayment);
+router.get("/orders/getart",getCart);
 //retry payment
 router.post("/orders/retryPayment",retryPayment);
 router.post("/orders/verifyPayment",verifyPayment);
@@ -171,5 +176,7 @@ router.delete("/wishlist/remove/:productId", removeFromWishlist);
 
 //Wallet
 router.get("/wallet", displayWallet);
+router.get("/wallet/balance", getWalletBalance);
+
 
 export default router;

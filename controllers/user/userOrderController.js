@@ -31,12 +31,15 @@ function generateOrderId() {
   const randomNum = Math.floor(Math.random() * 100); // Random number between 0 and 99
   return `ORD-${timestamp}-${randomNum}`;
 }
+function roundPrice(price) {
+  return Math.round(price * 100) / 100;
+}
 
 const placeOrder = async (req, res) => {
   try {
     const userId = req.user._id;
     // testing
-    // console.log(req.body);
+    console.log(req.body);
 
     // Fetch the user's cart and populate product details
     const cart = await Cart.findOne({ user: userId }).populate(
@@ -90,39 +93,46 @@ const placeOrder = async (req, res) => {
         price: product.productId.sellingPrice,
       });
 
-      // Calculate total price
-      subtotal += Math.ceil(product.productId.sellingPrice * product.quantity);
-      // Calculate total totalSellingPrice
-      totalRegularPrice += Math.ceil(
-        product.productId.regularPrice * product.quantity
-      );
+      // // Calculate total price
+      // subtotal += roundPrice(product.productId.sellingPrice * product.quantity);
+      // // Calculate total totalSellingPrice
+      // totalRegularPrice += roundPrice(
+      //   product.productId.regularPrice * product.quantity
+      // );
+      // totalSellingPrice += totalRegularPrice - totalDiscount
     }
 
     // Add 18% tax to the total price
-    let tax = Math.ceil(subtotal * 0.18);
-    let totalPrice = Math.ceil(subtotal * 0.18 + subtotal);
+
     let shippingFee = 0;
-    let discount = totalRegularPrice - subtotal;
+
     // if(coupon){
     //   discount = coupon.discount;
     //   totalPrice = totalPrice - (totalPrice * (coupon.discount / 100));
     //   shippingFee = 10;
     // }
-    // Create the order
 
+    //create a expected delivery date
+    const deliveryDate = new Date();
+    deliveryDate.setDate(deliveryDate.getDate() + 9);
+
+
+    // Create the order
     const orderData = {
       userId,
       products,
-      totalPrice,
-      subtotal,
-      tax,
-      discount,
+      totalPrice: req.body.total,
+      subtotal: req.body.subTotal,
+      tax: 0,
+      discount: req.body.discount,
       shippingFee,
+      coupon: req.body.coupon,
       shippingAddress: req.body.address,
       billingAddress: req.body.address,
       paymentMethod: req.body.paymentMethod,
       orderNotes: req.body?.notes,
       orderId: generateOrderId(),
+      deliveryDate,
     };
 
     // if the payment is razor pay
@@ -131,7 +141,7 @@ const placeOrder = async (req, res) => {
         key_id: process.env.RAZORPAY_KEY_ID,
         key_secret: process.env.RAZORPAY_KEY_SECRET,
       });
-      const amount = totalPrice * 100; // amount in the smallest currency unit (paise)
+      const amount = req.body.total * 100; // amount in the smallest currency unit (paise)
       const orderDataRazorpay = {
         amount,
         currency: "INR",
@@ -228,17 +238,61 @@ const confirmPayment = async (req, res) => {
   }
 };
 
-
 // render the order details page
 const displayOrders = async (req, res) => {
-  const orderId = req.params.orderId;
-
   try {
-    const orders = await Order.find({ userId: req.user._id })
-      .populate("products.productId")
-      .sort({ createdAt: -1 });
-    // console.log(orders);
-    res.render("user/orders/order.ejs", { orders, user: req.user });
+    // Pagination
+    const page = parseInt(req.query.page) || 1;
+    const perPage = 10;
+    const skip = (page - 1) * perPage;
+
+    // Search and Filters
+    // orderId , start date, end date
+    const { search, startDate, endDate } = req.query;
+    const query = { userId: req.user._id };
+
+    // Search by Order ID (if needed, adjust based on your ID type)
+    if (search) {
+      query.orderId = { $regex: new RegExp(search, "i") };
+    }
+
+    // Date Filter
+    if (startDate || endDate) {
+      query.createdAt = {};
+      if (startDate) {
+        const start = new Date(startDate);
+        start.setUTCHours(0, 0, 0, 0);
+        query.createdAt.$gte = start;
+      }
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setUTCHours(23, 59, 59, 999);
+        query.createdAt.$lte = end;
+      }
+    }
+
+    // Fetch orders and count
+    const [orders, totalOrders] = await Promise.all([
+      Order.find(query)
+        .populate("products.productId")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(perPage),
+      Order.countDocuments(query),
+    ]);
+
+    // Pagination calculations
+    const totalPages = Math.ceil(totalOrders / perPage);
+
+    res.render("user/orders/order.ejs", {
+      orders,
+      user: req.user,
+      currentPage: page,
+      totalPages,
+      search: search || "",
+      startDate: startDate || "",
+      endDate: endDate || "",
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send("Server Error");
@@ -326,7 +380,6 @@ const cancelOrder = async (req, res) => {
       );
     });
 
-
     const orderUser = order.userId;
     let userWallet = await Wallet.findOne({ user: req.user._id });
     console.log(userWallet);
@@ -364,6 +417,20 @@ const cancelOrder = async (req, res) => {
   }
 };
 
+//get cart
+const getCart = async (req, res) => {
+  const userId = req.user._id;
+  if (!userId) {
+    return res.status(400).json({ success: false, message: "invalid user " });
+  }
+  const cart = await Cart.findOne({ user: userId }).populate(
+    "products.productId"
+  );
+
+  console.log(cart);
+  return res.status(200).json({ success: true, cart });
+};
+
 export {
   displayCheckout,
   displayOrders,
@@ -373,4 +440,5 @@ export {
   placeOrder,
   displayOrdersDetails,
   confirmPayment,
+  getCart,
 };
