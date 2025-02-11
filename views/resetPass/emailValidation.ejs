@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,12 +8,12 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .hero-section {
-            background: linear-gradient(45deg, #1a1a1a, #2d2d2d);
+            background: #7f8081cc;
             min-height: 80vh;
             position: relative;
             overflow: hidden;
         }
-        
+
         .device-image {
             position: absolute;
             right: -5%;
@@ -22,48 +23,48 @@
             opacity: 0.7;
             transform: rotate(-15deg);
         }
-        
+
         .footer-section {
             background-color: #fff;
             padding: 3rem 0;
         }
-        
+
         .nav-link {
             color: #666;
             transition: color 0.3s;
         }
-        
+
         .nav-link:hover {
             color: #333;
         }
-        
+
         .reset-card {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(41, 40, 40, 0.747);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 15px;
         }
-        
+
         .form-control {
             background-color: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: #fff;
             padding: 0.8rem;
         }
-        
+
         .form-control:focus {
             background-color: rgba(255, 255, 255, 0.15);
             border-color: rgba(255, 255, 255, 0.3);
             color: #fff;
         }
-        
+
         .btn-primary {
             padding: 0.8rem 2rem;
             background-color: #fff;
             color: #000;
             border: none;
         }
-        
+
         .btn-secondary {
             padding: 0.8rem 2rem;
             background-color: transparent;
@@ -72,156 +73,159 @@
         }
     </style>
 </head>
+
 <body>
 
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white">
-    <div class="container">
-        <a class="navbar-brand" href="#">TechStore</a>
-        <div class="d-flex">
-            <button class="btn"><i class="bi bi-search"></i></button>
-            <button class="btn"><i class="bi bi-cart"></i></button>
-            <button class="btn"><i class="bi bi-person"></i></button>
+    <!-- Navigation -->
+    <!-- <nav class="navbar navbar-expand-lg navbar-light bg-white">
+        <div class="container">
+            <a class="navbar-brand" href="#">TechStore</a>
+            <div class="d-flex">
+                <button class="btn"><i class="bi bi-search"></i></button>
+                <button class="btn"><i class="bi bi-cart"></i></button>
+                <button class="btn"><i class="bi bi-person"></i></button>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav> -->
+    <%- include('../head.ejs') %>
+        <!-- Hero Section -->
+        <section class="hero-section d-flex align-items-center">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="reset-card p-4 p-md-5">
+                            <h1 class="text-white mb-3">FORGOT YOUR PASSWORD?</h1>
+                            <p class="text-white-50 mb-4">Don't worry, we're here to help!</p>
 
-<!-- Hero Section -->
-<section class="hero-section d-flex align-items-center">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-6">
-                <div class="reset-card p-4 p-md-5">
-                    <h1 class="text-white mb-3">FORGOT YOUR PASSWORD?</h1>
-                    <p class="text-white-50 mb-4">Don't worry, we're here to help!</p>
-                    
-                    <form class="mb-4" id="myForm">
-                        <div class="mb-4">
-                            <input type="email" name="email" class="form-control" placeholder="Enter your email">
+                            <form class="mb-4" id="myForm">
+                                <div class="mb-4">
+                                    <input type="email" name="email" class="form-control"
+                                        placeholder="Enter your email">
+                                </div>
+                                <div class="d-flex gap-3">
+                                    <button type="button" class="btn btn-secondary">Go back</button>
+                                    <button type="submit" class="btn btn-primary">Continue</button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="d-flex gap-3">
-                            <button type="button" class="btn btn-secondary">Go back</button>
-                            <button type="submit"  class="btn btn-primary">Continue</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <img src="/api/placeholder/800/600" alt="Device mockup" class="device-image">
-</section>
+            <img src="" alt="Device mockup" class="device-image">
+        </section>
 
-<!-- Footer -->
-<footer class="footer-section">
-    <div class="container">
-        <div class="row gy-4">
-            <div class="col-md-3">
-                <h5 class="mb-3">Quick Links</h5>
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a href="#" class="nav-link">Home</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">About Us</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Contact Us</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">FAQ</a></li>
-                </ul>
+        <!-- Footer -->
+        <footer class="footer-section">
+            <div class="container">
+                <div class="row gy-4">
+                    <div class="col-md-3">
+                        <h5 class="mb-3">Quick Links</h5>
+                        <ul class="nav flex-column">
+                            <li class="nav-item"><a href="#" class="nav-link">Home</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link">About Us</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link">Contact Us</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link">FAQ</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-3">
+                        <h5 class="mb-3">Important Policies</h5>
+                        <ul class="nav flex-column">
+                            <li class="nav-item"><a href="#" class="nav-link">Privacy Policy</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link">Terms of Service</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link">Returns & Refunds</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link">Shipping Policy</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-3">
+                        <h5 class="mb-3">Let Us Help You</h5>
+                        <ul class="nav flex-column">
+                            <li class="nav-item"><a href="#" class="nav-link">Customer Support</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link">Live Chat</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link">Help Center</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-3">
+                        <h5 class="mb-3">Connect With Us</h5>
+                        <ul class="nav flex-column">
+                            <li class="nav-item"><a href="#" class="nav-link">Facebook</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link">Twitter</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link">Instagram</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <p class="small text-muted mb-0">© 2024 TechStore. All Rights Reserved.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <form class="d-flex gap-2">
+                            <input type="email" class="form-control" placeholder="Enter your email">
+                            <button type="submit" class="btn btn-dark">Subscribe</button>
+                        </form>
+                    </div>
+                </div>
             </div>
-            
-            <div class="col-md-3">
-                <h5 class="mb-3">Important Policies</h5>
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a href="#" class="nav-link">Privacy Policy</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Terms of Service</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Returns & Refunds</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Shipping Policy</a></li>
-                </ul>
-            </div>
-            
-            <div class="col-md-3">
-                <h5 class="mb-3">Let Us Help You</h5>
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a href="#" class="nav-link">Customer Support</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Live Chat</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Help Center</a></li>
-                </ul>
-            </div>
-            
-            <div class="col-md-3">
-                <h5 class="mb-3">Connect With Us</h5>
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a href="#" class="nav-link">Facebook</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Twitter</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Instagram</a></li>
-                </ul>
-            </div>
-        </div>
-        
-        <hr class="my-4">
-        
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <p class="small text-muted mb-0">© 2024 TechStore. All Rights Reserved.</p>
-            </div>
-            <div class="col-md-4">
-                <form class="d-flex gap-2">
-                    <input type="email" class="form-control" placeholder="Enter your email">
-                    <button type="submit" class="btn btn-dark">Subscribe</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</footer>
+        </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-<script>
-   document.addEventListener('DOMContentLoaded',function(){
-    const form = document.getElementById('myForm');
-    const emailInput = document.querySelector('input[name="email"]');
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const form = document.getElementById('myForm');
+                const emailInput = document.querySelector('input[name="email"]');
 
-    const showError = (element, message) => {
-        const errorDiv = element.nextElementSibling || document.createElement('div');
-        errorDiv.className = 'error-message text-danger';
-        errorDiv.textContent = message;
-        if (!element.nextElementSibling) {
-            element.parentElement.appendChild(errorDiv);
-        }
-        element.classList.add('is-invalid');
-    };
-    const removeError = (element) => {
-        const errorDiv = element.nextElementSibling;
-        if (errorDiv?.classList.contains('error-message')) {
-            errorDiv.remove();
-        }
-        element.classList.remove('is-invalid');
-    };
-    const validateEmail = (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
+                const showError = (element, message) => {
+                    const errorDiv = element.nextElementSibling || document.createElement('div');
+                    errorDiv.className = 'error-message text-danger';
+                    errorDiv.textContent = message;
+                    if (!element.nextElementSibling) {
+                        element.parentElement.appendChild(errorDiv);
+                    }
+                    element.classList.add('is-invalid');
+                };
+                const removeError = (element) => {
+                    const errorDiv = element.nextElementSibling;
+                    if (errorDiv?.classList.contains('error-message')) {
+                        errorDiv.remove();
+                    }
+                    element.classList.remove('is-invalid');
+                };
+                const validateEmail = (email) => {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    return emailRegex.test(email);
+                };
 
-            form.addEventListener('submit', async (e) => {
-           e.preventDefault();
-           let isValid = true;
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    let isValid = true;
 
-           /// Validate email
-           if (!validateEmail(emailInput.value.trim())) {
-               showError(emailInput, 'Please enter a valid email');
-               isValid = false;
-           } else {
-               removeError(emailInput);
-           }
+                    /// Validate email
+                    if (!validateEmail(emailInput.value.trim())) {
+                        showError(emailInput, 'Please enter a valid email');
+                        isValid = false;
+                    } else {
+                        removeError(emailInput);
+                    }
 
-           if(isValid){
-            try {
-               const url = `/user/verifyPassEmail/${emailInput.value.trim()}`
-                // console.log(url)//test
-                window.location.href = url 
-            } catch (error) {
-                console.log(error)
-            }
-           }
+                    if (isValid) {
+                        try {
+                            const url = `/user/verifyPassEmail/${emailInput.value.trim()}`
+                            // console.log(url)//test
+                            window.location.href = url
+                        } catch (error) {
+                            console.log(error)
+                        }
+                    }
 
-       })
+                })
 
-   })
-  </script>
+            })
+        </script>
 </body>
+
 </html>

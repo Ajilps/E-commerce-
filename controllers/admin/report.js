@@ -82,15 +82,7 @@ const orderController = {
         };
       }
 
-      // // Get previous period statistics for comparison
-      // const previousPeriodFilter = { ...dateFilter };
-      // if (dateFilter.createdAt) {
-      //   const duration = dateFilter.createdAt.$lte - dateFilter.createdAt.$gte;
-      //   previousPeriodFilter.createdAt = {
-      //     $gte: new Date(dateFilter.createdAt.$gte - duration),
-      //     $lte: new Date(dateFilter.createdAt.$gte),
-      //   };
-      // }
+     
 
       const previousOrders = await Order.find(previousPeriodFilter);
       const previousSummary = {

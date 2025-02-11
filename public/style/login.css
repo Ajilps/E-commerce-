@@ -1,9 +1,9 @@
 body {
-    background-color: #1a1a1a;
+    background-color: #7f8081cc;
     color: white;
 }
 .nav-link, .navbar-brand {
-    color: #333;
+    color: #c1c987cb;
 }
 .login-container {
     background-color: rgba(33, 33, 33, 0.9);
@@ -23,7 +23,7 @@ body {
 }
 .quick-links-section {
     background-color: white;
-    color: #333;
+    color: #000000;
     padding: 3rem 0;
 }
 
@@ -35,3 +35,6 @@ body {
 .is-invalid {
     border-color: #dc3545;
 }
+
+
+  

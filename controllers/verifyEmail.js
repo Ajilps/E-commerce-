@@ -34,35 +34,6 @@ function generateOtp() {
   return OTP;
 }
 
-const resentOpt = async (req, res) => {
-  const email = req.params.email;
-  const username = req.session.username;
-
-  console.log(`email from sent otp ${email} , ${username}`);
-
-  if (!email) return { message: "Email is required." };
-
-  const otp = generateOtp();
-  console.log(`resent Otp ${otp}`); // test
-  otpStore[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000 }; // OTP valid for 5 minutes
-
-  try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Your OTP Code",
-      text: `Your OTP code is ${otp}. It is valid for 5 minutes.`,
-    });
-    // res.status(200).send({ message: 'OTP sent successfully!' });
-    // return true;
-    return res.status(200).send("otp resent ");
-  } catch (error) {
-    res.status(500).send({ message: "Error sending OTP.", error });
-    console.log(error);
-    return false;
-  }
-};
-
 const passSendOtp = async (req, res) => {
   if (req.session.passOtpValid === true || req.session.passOtpValid === null)
     return res.redirect("/user/login");
@@ -70,7 +41,7 @@ const passSendOtp = async (req, res) => {
   const email = req.params.email;
   const username = req.session.username;
 
-  console.log(`email from sent otp ${email} , ${username}`);
+  console.log(`email from sent otp ${email} `);
 
   if (!email) return { message: "Email is required." };
 
@@ -78,6 +49,7 @@ const passSendOtp = async (req, res) => {
   console.log(`otp from password reset ${otp}`);
   otpStore[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000 }; // OTP valid for 5 minutes
 
+  console.log(otpStore[email]);
   try {
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
@@ -95,11 +67,42 @@ const passSendOtp = async (req, res) => {
   }
 };
 
+// reset the OTP
+const resentOpt = async (req, res) => {
+  const email = req.params.email;
+  const username = req.session.username;
+
+  console.log(`email from sent otp ${email} `);
+
+  if (!email) return { message: "Email is required." };
+
+  const otp = generateOtp();
+  console.log(`resent Otp ${otp}`); // test
+  otpStore[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000 }; // OTP valid for 5 minutes
+
+  try {
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Your OTP Code",
+      text: `Your OTP code is ${otp}. It is valid for 5 minutes.`,
+    });
+    // res.status(200).send({ message: 'OTP sent successfully!' });
+    // return true;
+    return res.status(200).json({ success:true, message:"otp resent "});
+  } catch (error) {
+    res.status(500).send({ message: "Error sending OTP.", error });
+    console.log(error);
+    return false;
+  }
+};
+
 const validateOtpForPassword = async (req, res) => {
   const otp = req.body.otp;
   const email = req.body.email;
 
   console.log(otp, email);
+  console.log(otpStore[email]);
   console.log(otpStore[email]?.otp == otp);
   if (otpStore[email]?.otp == otp) {
     // if the otp is valid then create a session passOtpValid = true

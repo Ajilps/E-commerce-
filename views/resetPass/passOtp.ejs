@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,11 +9,12 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .hero-section {
-            background: linear-gradient(45deg, #1a1a1a, #2d2d2d);
+            background: #7f8081cc;
             min-height: 100vh;
             position: relative;
             overflow: hidden;
         }
+
         .form-container {
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
@@ -22,12 +24,14 @@
             padding: 2rem;
             max-width: 500px;
         }
+
         .otp-input-group {
             display: flex;
             gap: 10px;
             justify-content: center;
             margin: 30px 0;
         }
+
         .otp-input {
             width: 50px;
             height: 50px;
@@ -38,6 +42,7 @@
             color: white;
             border-radius: 8px;
         }
+
         .otp-input:focus {
             background: rgba(255, 255, 255, 0.15);
             border-color: rgba(255, 255, 255, 0.3);
@@ -45,6 +50,7 @@
             box-shadow: none;
             outline: none;
         }
+
         .verify-btn {
             background: #4a5568;
             color: white;
@@ -53,234 +59,274 @@
             border-radius: 5px;
             width: 100%;
         }
+
         .verify-btn:hover {
             background: #2d3748;
         }
+
         .resend-link {
             color: #718096;
             text-decoration: none;
         }
+
         .resend-link:hover {
             color: #A0AEC0;
         }
+
         .timer {
             color: #718096;
             font-size: 14px;
         }
+
         .footer {
             background: rgba(0, 0, 0, 0.8);
             padding: 2rem 0;
         }
+
         .navbar {
             background: rgba(0, 0, 0, 0.8);
         }
     </style>
 </head>
+
 <body class="bg-dark">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <svg width="30" height="30" viewBox="0 0 100 100">
-                    <polygon points="50,10 90,90 10,90" fill="white"/>
-                </svg>
-            </a>
-            <div class="d-flex">
-                <a href="#" class="btn btn-link text-white">HOME</a>
-                <a href="#" class="btn btn-link text-white">STORE</a>
-                <a href="#" class="btn btn-link text-white">BLOG</a>
-                <a href="#" class="btn btn-link text-white">CONTACT</a>
-            </div>
-        </div>
-    </nav>
+    <%- include("../head.ejs") %>
 
-    <!-- Main Content -->
-    <div class="hero-section d-flex align-items-center">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <div class="form-container">
-                        <h2 class="text-white mb-2">Verify your email</h2>
-                        <p class="text-white-50 mb-4" id="email"><%= locals.email%></p>
-                        <p class="text-white-50 mb-4">Please enter the 6-digit code sent to your email address</p>
-                        
-                        <form id="otpForm" novalidate>
-                            <div class="otp-input-group">
-                                <input type="text" class="form-control otp-input" maxlength="1" pattern="[0-9]" required>
-                                <input type="text" class="form-control otp-input" maxlength="1" pattern="[0-9]" required>
-                                <input type="text" class="form-control otp-input" maxlength="1" pattern="[0-9]" required>
-                                <input type="text" class="form-control otp-input" maxlength="1" pattern="[0-9]" required>
-                                <input type="text" class="form-control otp-input" maxlength="1" pattern="[0-9]" required>
-                                <input type="text" class="form-control otp-input" maxlength="1" pattern="[0-9]" required>
-                            </div>
-                            
-                            <div class="text-center mb-4">
-                                <span class="timer">Resend code in: <span id="countdown">02:00</span></span>
-                            </div>
-                            
-                            <button type="submit" class="verify-btn mb-3">Verify</button>
-                            
-                            <div class="text-center">
-                                <a href="#" class="resend-link" id="resendLink" style="display: none;">Resend Code</a>
-                            </div>
-                        </form>
+        <!-- Main Content -->
+        <div class="hero-section d-flex align-items-center">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="form-container">
+                            <h2 class="text-white mb-2">Verify your email</h2>
+                            <p class="text-white-50 mb-4" id="emailId">
+                                <%= locals.email%>
+                            </p>
+                            <p class="text-white-50 mb-4">Please enter the 6-digit code sent to your email address</p>
+
+                            <form id="otpForm" novalidate>
+                                <div class="otp-input-group">
+                                    <input type="text" class="form-control otp-input" maxlength="1" pattern="[0-9]"
+                                        required>
+                                    <input type="text" class="form-control otp-input" maxlength="1" pattern="[0-9]"
+                                        required>
+                                    <input type="text" class="form-control otp-input" maxlength="1" pattern="[0-9]"
+                                        required>
+                                    <input type="text" class="form-control otp-input" maxlength="1" pattern="[0-9]"
+                                        required>
+                                    <input type="text" class="form-control otp-input" maxlength="1" pattern="[0-9]"
+                                        required>
+                                    <input type="text" class="form-control otp-input" maxlength="1" pattern="[0-9]"
+                                        required>
+                                </div>
+
+                                <div class="text-center mb-4">
+                                    <span class="timer">Resend code in: <span id="countdown">02:00</span></span>
+                                </div>
+
+                                <button type="submit" class="verify-btn mb-3">Verify</button>
+
+                                <div class="text-center">
+                                    <a href="#" class="resend-link" id="resendLink" style="display: none;">Resend
+                                        Code</a>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Footer -->
-    <footer class="footer text-white">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-3">
-                    <h5>Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-white-50 text-decoration-none">Home</a></li>
-                        <li><a href="#" class="text-white-50 text-decoration-none">About Us</a></li>
-                        <li><a href="#" class="text-white-50 text-decoration-none">Contact</a></li>
-                        <li><a href="#" class="text-white-50 text-decoration-none">FAQ</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-3">
-                    <h5>Important Policies</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
-                        <li><a href="#" class="text-white-50 text-decoration-none">Terms Of Service</a></li>
-                        <li><a href="#" class="text-white-50 text-decoration-none">Returns & Refunds</a></li>
-                        <li><a href="#" class="text-white-50 text-decoration-none">Shipping Policy</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-3">
-                    <h5>Connect With Us</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-white-50 text-decoration-none">Facebook</a></li>
-                        <li><a href="#" class="text-white-50 text-decoration-none">Twitter</a></li>
-                        <li><a href="#" class="text-white-50 text-decoration-none">Instagram</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-3">
-                    <h5>Subscribe For Updates And Exclusive Offers</h5>
-                    <div class="input-group mb-3">
-                        <input type="email" class="form-control custom-input" placeholder="Enter Your Email">
-                        <button class="btn btn-dark" type="button">Subscribe</button>
+        <!-- Footer -->
+        <footer class="footer text-white">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h5>Quick Links</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white-50 text-decoration-none">Home</a></li>
+                            <li><a href="#" class="text-white-50 text-decoration-none">About Us</a></li>
+                            <li><a href="#" class="text-white-50 text-decoration-none">Contact</a></li>
+                            <li><a href="#" class="text-white-50 text-decoration-none">FAQ</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3">
+                        <h5>Important Policies</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
+                            <li><a href="#" class="text-white-50 text-decoration-none">Terms Of Service</a></li>
+                            <li><a href="#" class="text-white-50 text-decoration-none">Returns & Refunds</a></li>
+                            <li><a href="#" class="text-white-50 text-decoration-none">Shipping Policy</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3">
+                        <h5>Connect With Us</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white-50 text-decoration-none">Facebook</a></li>
+                            <li><a href="#" class="text-white-50 text-decoration-none">Twitter</a></li>
+                            <li><a href="#" class="text-white-50 text-decoration-none">Instagram</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3">
+                        <h5>Subscribe For Updates And Exclusive Offers</h5>
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control custom-input" placeholder="Enter Your Email">
+                            <button class="btn btn-dark" type="button">Subscribe</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </footer>
+        </footer>
 
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- OTP Handling Script -->
-    <script>
-        // OTP input handling
-        const otpInputs = document.querySelectorAll('.otp-input');
-        
-        otpInputs.forEach((input, index) => {
-            // Allow only numbers
-            input.addEventListener('input', function() {
-                this.value = this.value.replace(/[^0-9]/g, '');
-                
-                if (this.value.length === 1 && index < otpInputs.length - 1) {
-                    otpInputs[index + 1].focus();
-                }
-            });
+        <!-- Bootstrap Bundle with Popper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-            // Handle backspace
-            input.addEventListener('keydown', function(e) {
-                if (e.key === 'Backspace' && !this.value && index > 0) {
-                    otpInputs[index - 1].focus();
-                }
-            });
-        });
 
-        // Form submission
-        document.getElementById('otpForm').addEventListener('submit',async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').innerHTML
-            const otp = Array.from(otpInputs).map(input => input.value).join('');
-            console.log(email,otp)
-            const formData = {
-                otp:otp,
-                email:email
-            }
-            if (otp.length === 6 && /^\d+$/.test(otp)) {
-                // Here you would typically make an API call to verify the OTP
-                // alert('OTP verified successfully!');
-                try {
-                    const response = await fetch('/user/verifyPassEmail',{
-                        method:'POST',
-                        headers:{
-                            'Content-Type':'application/json'
-                        },
-                        body: JSON.stringify(formData)
-                    });
-                    const data = await response.json();
-                    if(data.success){
-                        console.log(`${data.success} , ${data.message}`)
-                        window.location.href = `/user/resetPass/${formData.email}`;
-                    }else{
-                        alert(data.message || `OTP validation failed `);
+        <!-- OTP Handling Script -->
+        <script>
+            // OTP input handling
+            const otpInputs = document.querySelectorAll('.otp-input');
+
+            otpInputs.forEach((input, index) => {
+                // Allow only numbers
+                input.addEventListener('input', function () {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+
+                    if (this.value.length === 1 && index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
                     }
+                });
 
-                } catch (error) {
-                        console.log(error);
-                        alert("OTP validation failed ");
+                // Handle backspace
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'Backspace' && !this.value && index > 0) {
+                        otpInputs[index - 1].focus();
+                    }
+                });
+            });
+
+            // Form submission
+            document.getElementById('otpForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const email = document.getElementById('emailId').innerText;
+                const otp = Array.from(otpInputs).map(input => input.value).join('');
+
+                const formData = {
+                    otp: otp,
+                    email: email
                 }
-                this.reset();
-                
-            } else {
-                alert('Please enter a valid 6-digit OTP');
+
+                if (otp.length === 6 && /^\d+$/.test(otp)) {
+
+                    try {
+                        const response = await fetch('/user/verifyPassEmail', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(formData)
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            console.log(`${data.success} , ${data.message}`)
+                            window.location.href = `/user/resetPass/${formData.email}`;
+                        } else {
+
+                            Swal.fire({
+                                title: 'Invalid OTP',
+                                text: data.message || `OTP validation failed `,
+                                icon: 'error',
+                                confirmButtonText: 'Re try'
+                            });
+
+
+                        }
+
+                    } catch (error) {
+
+
+                        Swal.fire({
+                            title: 'Oops...',
+                            text: "OTP validation failed ",
+                            icon: 'error',
+                            confirmButtonText: 'Try Again'
+                        });
+
+                    }
+                    this.reset();
+
+                } else {
+
+                    Swal.fire({
+                        title: 'Oops...',
+                        text: 'Please enter a valid 6-digit OTP',
+                        icon: 'error', confirmButtonText: 'Try Again'
+                    });
+
+                }
+            });
+
+            // Countdown timer
+            function startTimer(duration) {
+                let timer = duration;
+                const countdownEl = document.getElementById('countdown');
+                const resendLink = document.getElementById('resendLink');
+
+                const interval = setInterval(() => {
+                    const minutes = Math.floor(timer / 60);
+                    const seconds = timer % 60;
+
+                    countdownEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                    if (--timer < 0) {
+                        clearInterval(interval);
+                        countdownEl.parentElement.style.display = 'none';
+                        resendLink.style.display = 'inline';
+                    }
+                }, 1000);
             }
-        });
 
-        // Countdown timer
-        function startTimer(duration) {
-            let timer = duration;
-            const countdownEl = document.getElementById('countdown');
-            const resendLink = document.getElementById('resendLink');
-            
-            const interval = setInterval(() => {
-                const minutes = Math.floor(timer / 60);
-                const seconds = timer % 60;
-
-                countdownEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-                if (--timer < 0) {
-                    clearInterval(interval);
-                    countdownEl.parentElement.style.display = 'none';
-                    resendLink.style.display = 'inline';
-                }
-            }, 1000);
-        }
-
-        // Start countdown timer (2 minutes)
-        startTimer(30);
-
-        // Resend OTP handler
-        document.getElementById('resendLink').addEventListener('click', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').innerHTML
-            fetch(`/user/resentOtp/${email}`).then(res=>res.json())
-            .then(data=>{
-                if(data.success){
-                    console.log(`${data.success} , ${data.message}`)
-                }
-                else{
-                    alert(data.message || `Failed to resend OTP `);
-                }
-            })
-
-                
-            // Here you would typically make an API call to resend OTP
-            this.style.display = 'none';
-            document.querySelector('.timer').style.display = 'inline';
+            // Start countdown timer (2 minutes)
             startTimer(30);
-            alert('New OTP has been sent!');
-        });
-    </script>
+
+            // Resend OTP handler
+            document.getElementById('resendLink').addEventListener('click', function (e) {
+
+                e.preventDefault();
+                const email = document.getElementById('emailId').innerText
+                fetch(`/user/resentOtp/${email}`).then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log(`${data.success} , ${data.message}`)
+                        }
+                        else {
+
+                            Swal.fire({
+                                title: 'Oops...',
+                                text: data.message || `Failed to resend OTP `,
+                                icon: 'error', confirmButtonText: 'Try Again'
+                            });
+
+                        }
+                    })
+
+
+
+                this.style.display = 'none';
+                document.querySelector('.timer').style.display = 'inline';
+                startTimer(30);
+
+                Swal.fire({
+                    title: 'Resend OTP',
+                    text: 'New OTP has been sent!',
+                    icon: 'success',
+                    confirmButtonText: 'Ok'
+                });
+
+            });
+        </script>
 </body>
+
 </html>

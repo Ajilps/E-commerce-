@@ -10,7 +10,11 @@ import nocache from "nocache";
 // importing admin routes
 import adminRoutes from "./routes/adminRoutes.js";
 import cookieParser from "cookie-parser";
-import { verifyJWT, isAdmin } from "./middlewares/authMiddleware.js";
+import {
+  verifyJWT,
+  isAdmin,
+  isLoggedInUser,
+} from "./middlewares/authMiddleware.js";
 
 // importing user routes
 import userRoutes from "./routes/userRoutes.js";
@@ -36,7 +40,7 @@ app.use(
 app.use(
   cors({
     origin: "http://localhost:3000",
-    methods: "GET,POST,PUT,DELETE",
+    methods: "GET,POST,PUT,DELETE,PATCH",
     credentials: true,
   })
 );
@@ -52,13 +56,16 @@ app.use(express.static(path.resolve("public")));
 // Apply nocache middleware globally
 app.use(nocache());
 //landing page
-app.get("/", displayAllProducts);
+app.get("/", isLoggedInUser, displayAllProducts);
 
 // testing the put data middleware
-// app.use((req, res, next) => {
-//   console.log(`Request Body: ${JSON.stringify(req.body)}`);
-//   next();
-// });
+
+//dev testing
+app.use((req, res, next) => {
+  console.log("\x1b[35m" + `Request Path: ${req.url}` + "\x1b[0m");
+  console.log("\x1b[36m" + `Request method: ${req.method}` + "\x1b[0m");
+  next();
+});
 
 app.get("/pageerror", (req, res) => {
   res.render("error.ejs");
@@ -73,7 +80,6 @@ app.get("/resetpass", (req, res) => {
 app.get("/passotp", (req, res) => {
   res.render("passOtp.ejs");
 });
-
 
 //using google auth route
 
