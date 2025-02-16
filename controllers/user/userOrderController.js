@@ -35,6 +35,7 @@ function roundPrice(price) {
   return Math.round(price * 100) / 100;
 }
 
+//create order and save the order and if the payment is online sent the payment details;
 const placeOrder = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -106,7 +107,7 @@ const placeOrder = async (req, res) => {
 
     let shippingFee = 0;
 
-    // if(coupon){
+    // if(req.body.coupon){
     //   discount = coupon.discount;
     //   totalPrice = totalPrice - (totalPrice * (coupon.discount / 100));
     //   shippingFee = 10;
@@ -116,7 +117,11 @@ const placeOrder = async (req, res) => {
     const deliveryDate = new Date();
     deliveryDate.setDate(deliveryDate.getDate() + 9);
 
-
+    // getting the selected address from the user
+    const shippingAddress = req.user.addresses.find(
+      (addr) => addr._id == req.body.address.address
+    );
+    console.log("shipping address from the user data : ", shippingAddress);
     // Create the order
     const orderData = {
       userId,
@@ -127,12 +132,13 @@ const placeOrder = async (req, res) => {
       discount: req.body.discount,
       shippingFee,
       coupon: req.body.coupon,
-      shippingAddress: req.body.address,
-      billingAddress: req.body.address,
+      shippingAddress: shippingAddress,
+      billingAddress: shippingAddress,
       paymentMethod: req.body.paymentMethod,
       orderNotes: req.body?.notes,
       orderId: generateOrderId(),
       deliveryDate,
+      couponDiscount: req.body?.couponDiscount,
     };
 
     // if the payment is razor pay
@@ -159,7 +165,12 @@ const placeOrder = async (req, res) => {
       await Cart.findOneAndDelete({ user: userId });
       // if coupon is there then add the coupon id to user redeemedCoupon
       if (req.body?.coupon) {
-        const user = await User.findByIdAndUpdate(
+        await Coupon.findOneAndUpdate(
+          { code: coupon },
+          { $inc: { usageCount: 1 } }
+        );
+
+        await User.findByIdAndUpdate(
           userId,
           { $push: { redeemedCoupon: req.body.coupon } },
           { new: true }

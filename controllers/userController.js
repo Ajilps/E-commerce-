@@ -521,6 +521,7 @@ const addNewShippingAddress = async (req, res) => {
       zipCode,
       country,
     } = req.body;
+    const isDefault = req.body.isDefault == "on" ? true : false;
     console.log(req.body);
     if (
       !phone ||
@@ -536,6 +537,7 @@ const addNewShippingAddress = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Invalid request" });
     }
+
     const newAddress = {
       phone,
       street,
@@ -545,14 +547,27 @@ const addNewShippingAddress = async (req, res) => {
       country,
       email,
       name: firstName,
-
+      isDefault,
       address,
     };
+    if (isDefault === true) {
+      // First, set all addresses isDefault to false
+      await User.updateOne(
+        { _id: req.user._id },
+        { $set: { "addresses.$[].isDefault": false } }
+      );
+    }
+
     const user = await User.findByIdAndUpdate(
       req.user._id,
       { $push: { addresses: newAddress } },
       { new: true }
     );
+    console.log(
+      "from new address add : ",
+      user.addresses[user.addresses.length - 1]._id
+    );
+    console.log("from new address add : ", user.addresses);
     return res
       .status(200)
       .json({ success: true, message: "Address added successfully", user });

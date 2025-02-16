@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,14 +13,14 @@
         body {
             background-color: #f8f9fa;
         }
-        
+
         .sidebar {
             background-color: white;
             border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        
+
         .sidebar-link {
             display: flex;
             align-items: center;
@@ -29,281 +30,292 @@
             margin-bottom: 10px;
             border-radius: 5px;
         }
-        
+
         .sidebar-link.active {
             background-color: #000;
             color: white;
         }
-        
+
         .sidebar-link i {
             margin-right: 10px;
         }
-        
-        .form-control, .form-select {
+
+        .form-control,
+        .form-select {
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #ddd;
         }
-        
+
         .form-label {
             margin-bottom: 8px;
             font-weight: 500;
         }
-        
+
         .optional-label {
             color: #999;
             font-weight: normal;
         }
-        .error{
+
+        .error {
             color: red;
             font-weight: bold;
             display: none;
         }
     </style>
 </head>
+
 <body>
     <%- include('../userHeader.ejs')%>
-    <div class="container py-4">
-        <nav class="mb-3">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">HOME</a></li>
-                <li class="breadcrumb-item"><a href="#">PROFILE</a></li>
-                <li class="breadcrumb-item"><a href="#">ADDRESS</a></li>
-                <li class="breadcrumb-item active">ADD</li>
-            </ol>
-        </nav>
-        
-        <div class="row">
-            <%- include('./userSidePanel.ejs') %>
-            
-            <div class="col-lg-9">
-                <div class="bg-white p-4 rounded-3 shadow-sm">
-                    <h5 class="mb-4">Create Address</h5>
-                    
-                    <form id="addressForm" >
-                        <div class="row mb-3">
-                            <label class="form-label">User name</label>
-                            <div class="col-md-6 mb-3 mb-md-0">
-                                <input type="text" name="firstName" id="firstName" class="form-control" placeholder="name">
-                                <span class="error" id="firstNameError"> Enter a valid username</span>
-                            </div>
-                           
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Address</label>
-                            <textarea class="form-control" name="address" id="address" rows="3"></textarea>
-                            <span class="error" id="addressError"> Enter a valid address</span>
-                        </div>
+        <div class="container py-4">
+            <nav class="mb-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">HOME</a></li>
+                    <li class="breadcrumb-item"><a href="#">PROFILE</a></li>
+                    <li class="breadcrumb-item"><a href="#">ADDRESS</a></li>
+                    <li class="breadcrumb-item active">ADD</li>
+                </ol>
+            </nav>
 
-                        <div class="row mb-3">
-                            <div class="col-md-3 mb-3 mb-md-0">
-                                <label class="form-label">Country</label>
-                                <select id="country" name="country" class="form-select">
-                                    <option value="">Select...</option>
-                                    <option value="AF">Afghanistan</option>
-                                    <option value="AL">Albania</option>
-                                    <option value="DZ">Algeria</option>
-                                    <option value="AS">American Samoa</option>
-                                    <option value="AD">Andorra</option>
-                                    <option value="AO">Angola</option>
-                                    <option value="AI">Anguilla</option>
-                                    <option value="HT">Haiti</option>
-                                    <option value="HN">Honduras</option>
-                                    <option value="HU">Hungary</option>
-                                    <option value="IS">Iceland</option>
-                                    <option value="IN">India</option>
-                                    <option value="ID">Indonesia</option>
-                                    <option value="IR">Iran</option>
-                                    <option value="IQ">Iraq</option>
-                                    <option value="IE">Ireland</option>
-                                    <option value="IL">Israel</option>
-                                    <option value="IT">Italy</option>
-                                    <option value="JM">Jamaica</option>
-                                    <option value="JP">Japan</option>
-                                    <option value="JO">Jordan</option>
-                                </select>
-                                <span class="error" id="countryError">Select a country</span>
-                            </div>
-                            <div class="col-md-3 mb-3 mb-md-0">
-                                <label class="form-label">Region/State</label>
-                                <input type="text" class="form-control" name="state" id="state">
-                                <span class="error" id="stateError">Enter a valid state/region</span>
-                            </div>
-                            <div class="col-md-3 mb-3 mb-md-0">
-                                <label class="form-label">City</label>
-                                <input type="text" class="form-control" name="city" id="city">
-                                <span class="error" id="cityError">Enter a valid city</span>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Zip Code</label>
-                                <input type="text" class="form-control" name="zipCode" id="zipCode">
-                                <span class="error" id="zipCodeError">Enter a valid zip code</span>
-                            </div>
-                        </div>
+            <div class="row">
+                <%- include('./userSidePanel.ejs') %>
 
-                        <div class="row mb-4">
-                            <div class="col-md-6 mb-3 mb-md-0">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="email" id="email">
-                                <span class="error" id="emailError">Enter a valid email</span>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control" name="phone" id="phone">
-                                <span class="error" id="phoneError">Enter a valid phone number</span>
-                            </div>
-                        </div>
+                    <div class="col-lg-9">
+                        <div class="bg-white p-4 rounded-3 shadow-sm">
+                            <h5 class="mb-4">Create Address</h5>
 
-                        <div class="text-end">
-                            <button type="submit" class="btn btn-dark px-4">Save</button>
+                            <form id="addressForm">
+                                <div class="row mb-3">
+                                    <label class="form-label">User name</label>
+                                    <div class="col-md-6 mb-3 mb-md-0">
+                                        <input type="text" name="firstName" id="firstName" class="form-control"
+                                            placeholder="name">
+                                        <span class="error" id="firstNameError"> Enter a valid username</span>
+                                    </div>
+
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Address</label>
+                                    <textarea class="form-control" name="address" id="address" rows="3"></textarea>
+                                    <span class="error" id="addressError"> Enter a valid address</span>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-3 mb-3 mb-md-0">
+                                        <label class="form-label">Country</label>
+                                        <select id="country" name="country" class="form-select">
+                                            <option value="">Select...</option>
+                                            <option value="AF">Afghanistan</option>
+                                            <option value="AL">Albania</option>
+                                            <option value="DZ">Algeria</option>
+                                            <option value="AS">American Samoa</option>
+                                            <option value="AD">Andorra</option>
+                                            <option value="AO">Angola</option>
+                                            <option value="AI">Anguilla</option>
+                                            <option value="HT">Haiti</option>
+                                            <option value="HN">Honduras</option>
+                                            <option value="HU">Hungary</option>
+                                            <option value="IS">Iceland</option>
+                                            <option value="IN">India</option>
+                                            <option value="ID">Indonesia</option>
+                                            <option value="IR">Iran</option>
+                                            <option value="IQ">Iraq</option>
+                                            <option value="IE">Ireland</option>
+                                            <option value="IL">Israel</option>
+                                            <option value="IT">Italy</option>
+                                            <option value="JM">Jamaica</option>
+                                            <option value="JP">Japan</option>
+                                            <option value="JO">Jordan</option>
+                                        </select>
+                                        <span class="error" id="countryError">Select a country</span>
+                                    </div>
+                                    <div class="col-md-3 mb-3 mb-md-0">
+                                        <label class="form-label">Region/State</label>
+                                        <input type="text" class="form-control" name="state" id="state">
+                                        <span class="error" id="stateError">Enter a valid state/region</span>
+                                    </div>
+                                    <div class="col-md-3 mb-3 mb-md-0">
+                                        <label class="form-label">City</label>
+                                        <input type="text" class="form-control" name="city" id="city">
+                                        <span class="error" id="cityError">Enter a valid city</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Zip Code</label>
+                                        <input type="text" class="form-control" name="zipCode" id="zipCode">
+                                        <span class="error" id="zipCodeError">Enter a valid zip code</span>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4">
+                                    <div class="col-md-6 mb-3 mb-md-0">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" name="email" id="email">
+                                        <span class="error" id="emailError">Enter a valid email</span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Phone Number</label>
+                                        <input type="tel" class="form-control" name="phone" id="phone">
+                                        <span class="error" id="phoneError">Enter a valid phone number</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="isDefault"> Set as default address </label>
+                                    <input type="checkbox" id="isDefault" name="isDefault">
+                                </div>
+
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-dark px-4">Save</button>
+                                </div>
+                            </form>
                         </div>
-                    </form>
-                </div>
+                    </div>
             </div>
         </div>
-    </div>
-<%- include('../userFooter.ejs') %>
-<script src="/script/user/productSearch.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <%- include('../userFooter.ejs') %>
+            <script src="/script/user/productSearch.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
-        document.getElementById('addressForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    // Get all form fields
-    const firstName = document.getElementById('firstName').value.trim();
-    
-    const address = document.getElementById('address').value.trim();
-    const country = document.getElementById('country').value;
-    const state = document.getElementById('state').value.trim();
-    const city = document.getElementById('city').value.trim();
-    const zipCode = document.getElementById('zipCode').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const phone = document.getElementById('phone').value.trim();
+            <script>
+                document.getElementById('addressForm').addEventListener('submit', async function (e) {
+                    e.preventDefault();
 
-   
-            if(validate()){
+                    // Get all form fields
+                    const firstName = document.getElementById('firstName').value.trim();
 
-    // Show loading state
-    Swal.fire({
-        title: 'Submitting...',
-        html: 'Please wait while we process your information',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
-
-    // If validation passes, prepare the data for submission
-    const formData = {
-        firstName,
-        
-        address,
-        country,
-        state,
-        city,
-        zipCode,
-        email,
-        phone
-    };
-
-    try {
-        // Submit the form data
-        const response = await fetch('/user/shippingAddress/addAddress', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            await Swal.fire({
-                title: 'Success!',
-                text: 'Your form has been submitted successfully!',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            });
-            // Reset the form
-            document.getElementById('addressForm').reset();
-            window.location.href = '/user/shippingAddress';
-        } else {
-            await Swal.fire({
-                title: 'Error!',
-                text: result.message || 'There was an error submitting your form. Please try again.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-        }
-    } catch (error) {
-        await Swal.fire({
-            title: 'Error!',
-            text: `Error submitting form: ${error.message}`,
-            icon: 'error',
-            confirmButtonText: 'OK'
-        });
-    }
-}
-});
-
-function validate(){
-   
-    const firstName = document.getElementById('firstName').value.trim();
-    const address = document.getElementById('address').value.trim();
-    const country = document.getElementById('country').value;
-    const state = document.getElementById('state').value.trim();
-    const city = document.getElementById('city').value.trim();
-    const zipCode = document.getElementById('zipCode').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-
-    if(firstName.trim() === ""){
-        document.getElementById('firstNameError').style.display = 'block';
-        return false;
-    }
-   
-    if(address.trim() === ""){
-        document.getElementById('addressError').style.display = 'block';
-        return false;
-    }
-    if(city.trim() === ""){
-        document.getElementById('cityError').style.display = 'block';
-        return false;
-    }
-    if(zipCode.trim() === ""){
-        document.getElementById('zipCodeError').style.display = 'block';
-        return false;
-    }
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (email === '') {
-        document.getElementById('emailError').style.display = 'block';
-        return false
-    } else if (!emailRegex.test(email)) {
-        document.getElementById('emailError').style.display = 'block';
-        document.getElementById('emailError').innerText = 'Enter a valid email address ';
-
-        return false
-    }
-
- // Phone validation
- const phoneRegex = /^\+?[\d\s-]{10,}$/;
-    if (phone === '') {
-        document.getElementById('phoneError').style.display = 'block';
-        return false
-    } else if (!phoneRegex.test(phone)) {
-        document.getElementById('phoneError').style.display = 'block'
-        document.getElementById('phoneError').innerText = 'enter a valid phone number '
-        return false
-    }
+                    const address = document.getElementById('address').value.trim();
+                    const country = document.getElementById('country').value;
+                    const state = document.getElementById('state').value.trim();
+                    const city = document.getElementById('city').value.trim();
+                    const zipCode = document.getElementById('zipCode').value.trim();
+                    const email = document.getElementById('email').value.trim();
+                    const phone = document.getElementById('phone').value.trim();
+                    const isDefault = document.getElementById('isDefault').value;
 
 
-return true;
-}
-    </script>
+                    if (validate()) {
+
+                        // Show loading state
+                        Swal.fire({
+                            title: 'Submitting...',
+                            html: 'Please wait while we process your information',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        // If validation passes, prepare the data for submission
+                        const formData = {
+                            firstName,
+
+                            address,
+                            country,
+                            state,
+                            city,
+                            zipCode,
+                            email,
+                            phone,
+                            isDefault,
+                        };
+                        console.log(formData)
+                        try {
+                            // Submit the form data
+                            const response = await fetch('/user/shippingAddress/addAddress', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(formData)
+                            });
+
+                            const result = await response.json();
+
+                            if (result.success) {
+                                await Swal.fire({
+                                    title: 'Success!',
+                                    text: 'Your form has been submitted successfully!',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                });
+                                // Reset the form
+                                document.getElementById('addressForm').reset();
+                                window.location.href = '/user/shippingAddress';
+                            } else {
+                                await Swal.fire({
+                                    title: 'Error!',
+                                    text: result.message || 'There was an error submitting your form. Please try again.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        } catch (error) {
+                            await Swal.fire({
+                                title: 'Error!',
+                                text: `Error submitting form: ${error.message}`,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    }
+                });
+
+                function validate() {
+
+                    const firstName = document.getElementById('firstName').value.trim();
+                    const address = document.getElementById('address').value.trim();
+                    const country = document.getElementById('country').value;
+                    const state = document.getElementById('state').value.trim();
+                    const city = document.getElementById('city').value.trim();
+                    const zipCode = document.getElementById('zipCode').value.trim();
+                    const email = document.getElementById('email').value.trim();
+                    const phone = document.getElementById('phone').value.trim();
+
+                    if (firstName.trim() === "") {
+                        document.getElementById('firstNameError').style.display = 'block';
+                        return false;
+                    }
+
+                    if (address.trim() === "") {
+                        document.getElementById('addressError').style.display = 'block';
+                        return false;
+                    }
+                    if (city.trim() === "") {
+                        document.getElementById('cityError').style.display = 'block';
+                        return false;
+                    }
+                    if (zipCode.trim() === "") {
+                        document.getElementById('zipCodeError').style.display = 'block';
+                        return false;
+                    }
+                    // Email validation
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (email === '') {
+                        document.getElementById('emailError').style.display = 'block';
+                        return false
+                    } else if (!emailRegex.test(email)) {
+                        document.getElementById('emailError').style.display = 'block';
+                        document.getElementById('emailError').innerText = 'Enter a valid email address ';
+
+                        return false
+                    }
+
+                    // Phone validation
+                    const phoneRegex = /^\+?[\d\s-]{10,}$/;
+                    if (phone === '') {
+                        document.getElementById('phoneError').style.display = 'block';
+                        return false
+                    } else if (!phoneRegex.test(phone)) {
+                        document.getElementById('phoneError').style.display = 'block'
+                        document.getElementById('phoneError').innerText = 'enter a valid phone number '
+                        return false
+                    }
+
+
+                    return true;
+                }
+            </script>
 </body>
+
 </html>

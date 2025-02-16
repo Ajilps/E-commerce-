@@ -195,6 +195,28 @@
               <% } %> <!-- closing if -->
 
                 <!-- pagination  -->
+                <div class="pagination-container d-flex justify-content-end mt-4">
+                  <% if (currentPage> 1) { %>
+                    <a class="btn btn-outline-secondary me-2" href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+                    <% } %>
+
+                      <% for (let i=1; i <=totalPages+1; i++) { %>
+                        <% if (i===Number(currentPage)) { %>
+                          <span class="btn btn-outline-primary active me-2">
+                            <%= i %>
+                          </span>
+                          <% } else { %>
+                            <a class="btn btn-outline-secondary me-2" href="?page=<%= i %>">
+                              <%= i %>
+                            </a>
+                            <% } %>
+                              <% } %>
+
+                                <% if (currentPage < totalPages+1) { %>
+                                  <a class="btn btn-outline-secondary" href="?page=<%= currentPage + 1 %>">Next
+                                    &raquo;</a>
+                                  <% } %>
+                </div>
 
                 <!-- pagination end  -->
             </div>
@@ -202,7 +224,7 @@
       </div>
     </div>
     <%- include('../userFooter.ejs') %>
-    <script src="/script/user/productSearch.js"></script>
+      <script src="/script/user/productSearch.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 </body>
 

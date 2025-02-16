@@ -126,22 +126,35 @@ const deleteBrand = async (req, res) => {
 // list brand
 const listBrand = async (req, res) => {
   const brandId = req?.query?.id;
-  if (!brandId)
-    return res
-      .status(400)
-      .json({ success: false, message: "brand Id required" });
-  await Brand.findByIdAndUpdate(brandId, { $set: { isListed: true } });
-  return res.status(200).redirect("/admin/brand");
+  try {
+    if (!brandId)
+      return res
+        .status(400)
+        .json({ success: false, message: "brand Id required" });
+    await Brand.findByIdAndUpdate(brandId, { $set: { isListed: true } });
+    await Product.updateMany(
+      { brand: brandId },
+      { $set: { isBlocked: false } }
+    );
+    return res.status(200).redirect("/admin/brand");
+  } catch (error) {
+    console.log("error from list Brand: ", error);
+  }
 };
 //  un-list brand
 const Un_listBrand = async (req, res) => {
   const brandId = req?.query?.id;
-  if (!brandId)
-    return res
-      .status(400)
-      .json({ success: false, message: "brand Id required" });
-  await Brand.findByIdAndUpdate(brandId, { $set: { isListed: false } });
-  return res.status(200).redirect("/admin/brand");
+  try {
+    if (!brandId)
+      return res
+        .status(400)
+        .json({ success: false, message: "brand Id required" });
+    await Brand.findByIdAndUpdate(brandId, { $set: { isListed: false } });
+    await Product.updateMany({ brand: brandId }, { $set: { isBlocked: true } });
+    return res.status(200).redirect("/admin/brand");
+  } catch (error) {
+    console.log("error from un_listing brand:", error);
+  }
 };
 
 // creating new brand and saving to database

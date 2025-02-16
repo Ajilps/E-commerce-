@@ -74,8 +74,6 @@
     }
 
     .address-card {
-      max-height: 200px;
-
       border: 1px solid #e0e0e0;
       border-radius: 10px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -84,10 +82,6 @@
 
     .address-card:hover {
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    #addressForm {
-      /* max-height: 300px; */
     }
 
     .error {
@@ -145,41 +139,92 @@
         <div class="col-lg-7">
           <div class="shipping-section">
             <!-- Shipping Address -->
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <h5 class="mb-0 fs-6">Shipping Address</h5>
-              <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addressModal">
-                <i class="bi bi-pencil"></i> Add New
-              </button>
-            </div>
-
-            <div class="address-card p-3 mb-2 bg-white overflow-scroll">
+            <div class="address-card p-3 mb-2 bg-white">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0 fs-6">Shipping Address</h5>
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addressModal">
+                  <i class="bi bi-pencil"></i> Edit
+                </button>
+              </div>
               <form id="addressForm" class="needs-validation" novalidate>
                 <div id="currentAddress">
                   <% if(user.addresses && user.addresses.length> 0) { %>
                     <% user.addresses.forEach(address=> { %>
-                      <%# if(address.isDefault) { %>
-                        <label class="w-100">
-                          <input class="radio-custom" type="radio" name="address" value="<%= address._id %>"
-                            <%=(address.isDefault)? 'checked' : "" %>>
-                          <div class="address-details card mb-2 shadow-sm">
-                            <div class="card-body p-2">
-                              <div class="row g-2">
-                                <p>
-                                  <%= address.name %> <br>
-                                    <%= address.address %> <br>
-                                      <%= address.zipCode %> <br>
-                                        <%= address.phone %> <br>
+                      <% if(address.isDefault) { %>
+                        <div class="address-details card mb-2 shadow-sm">
+                          <div class="card-body p-2">
+                            <div class="row g-2">
+                              <!-- Name & Phone -->
+                              <div class="col-md-6">
+                                <label class="fw-bold fs-7">Name</label>
+                                <input id="name" class="form-control form-control-sm" type="text" name="name"
+                                  value="<%= address.name %>">
+                              </div>
+                              <span class="error" id="nameError">Please enter your full
+                                name</span>
+                              <!-- phone number -->
+                              <div class="col-md-6">
+                                <label class="fw-bold fs-7">Phone</label>
+                                <input id="phone" class="form-control form-control-sm" type="text" name="phone"
+                                  value="<%= address.phone %>">
+                                <span class="error" id="phoneError">Please enter a valid phone
+                                  number</span>
+                              </div>
+                              <!-- email -->
+                              <div class="col-md-6">
+                                <label class="fw-bold fs-7">Email</label>
+                                <input id="email" class="form-control form-control-sm" type="email" name="email"
+                                  value="<%= address.email %>">
+                                <span class="error" id="emailError">Please enter a valid email
+                                  address</span>
+                              </div>
 
-                                </p>
+                              <!-- Full-width Address -->
+                              <div class="col-12">
+                                <label class="fw-bold fs-7">Address</label>
+                                <textarea id="address" class="form-control form-control-sm" name="address"
+                                  rows="2"><%= address.address %></textarea>
+                                <span class="error" id="addressError">Please enter your
+                                  address</span>
+                              </div>
+
+                              <!-- City, State, Country -->
+                              <div class="col-md-4">
+                                <label class="fw-bold fs-7">City</label>
+                                <input id="city" class="form-control form-control-sm" type="text" name="city"
+                                  value="<%= address.city %>">
+                                <span class="error" id="cityError">Please enter your
+                                  city</span>
+                              </div>
+                              <div class="col-md-4">
+                                <label class="fw-bold fs-7">State</label>
+                                <input id="state" class="form-control form-control-sm" type="text" name="state"
+                                  value="<%= address.state %>">
+                                <span class="error" id="stateError">Please enter your
+                                  state/region</span>
+                              </div>
+                              <div class="col-md-4">
+                                <label class="fw-bold fs-7">Country</label>
+                                <input id="currency" class="form-control form-control-sm" type="text" name="country"
+                                  value="<%= address.country %>">
+                                <span class="error" id="countryError">Please select a
+                                  country</span>
+                              </div>
+                              <div class="col-md-4">
+                                <label class="fw-bold fs-7">zipCode</label>
+                                <input id="zipCode" class="form-control form-control-sm" type="number" name="zipCode"
+                                  value="<%= address.zipCode %>">
+                                <span class="error" id="zipCodeError">Please enter a valid ZIP
+                                  code</span>
                               </div>
                             </div>
                           </div>
-                          <%# } %>
-                        </label>
-                        <% }) %>
-                          <% } else { %>
-                            <div class="alert alert-warning p-2">No address found. Please add a new address.</div>
-                            <% } %>
+                        </div>
+                        <% } %>
+                          <% }) %>
+                            <% } else { %>
+                              <div class="alert alert-warning p-2">No address found. Please add a new address.</div>
+                              <% } %>
                 </div>
               </form>
             </div>
@@ -193,11 +238,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                   </div>
                   <div class="modal-body">
-                    <form id="newAddressForm" class="needs-validation" novalidate>
+                    <form id="addressForm" class="needs-validation" novalidate>
                       <div class="row g-3">
                         <div class="col-12">
                           <label class="form-label">Full Name</label>
-                          <input type="text" class="form-control" name="firstName" id="name" required>
+                          <input type="text" class="form-control" name="name" id="name" required>
                           <span class="error" id="nameError">Please enter your full
                             name</span>
                         </div>
@@ -250,12 +295,6 @@
                           <input type="tel" class="form-control" name="phone" id="phone" required>
                           <span class="error" id="phoneError">Please enter a valid phone
                             number</span>
-                        </div>
-                        <div>
-                          <label for="isDefault"> Set this as default
-                            <input type="checkbox" id="isDefault" name="isDefault" checked>
-                          </label>
-
                         </div>
                       </div>
                     </form>
@@ -576,78 +615,33 @@
           return null;
 
         }
-        // save new address and rerender the address field  
-        async function saveAddress() {
-          const form = document.getElementById('newAddressForm');
+        // address collection 
+        function saveAddress() {
+          const form = document.getElementById('addressForm');
           const formData = new FormData(form);
           const data = Object.fromEntries(formData);
 
-          // for (const [key, value] of formData.entries()) {
-          //   console.log(`${key}: ${value}`);
-          // }
-          // console.log(Object.fromEntries(formData))
           // Validate form
           if (!validateForm()) {
             return;
           }
-          // billingAddress = data;
-          // shippingAddress = data;
-          // saving the new address to the server and display the new address as default 
-          await fetch("/user/shippingAddress/addAddress", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-          }).then(res => res.json()).then(res => {
-            if (!res.success) {
+          billingAddress = data;
+          shippingAddress = data;
+          // Update the current address display
+          const currentAddress = document.getElementById('currentAddress');
+          currentAddress.innerHTML = `
+                <div class="address-details">
+                    <h5 class="mb-2">${data.name}</h5>
+                    <p class="mb-1">${data.address}</p>
+                    <p class="mb-1">${data.city}, ${data.state} ${data.zipCode}</p>
+                    <p class="mb-1">${data.country}</p>
+                    <p class="mb-0"><strong>Phone:</strong> ${data.phone}</p>
+                </div>
+            `;
 
-              Swal.fire({
-                title: 'Process Failed',
-                text: res.message,
-                icon: 'error',
-                confirmButtonText: 'Try Again'
-              });
-              // Close the modal
-              const modal = bootstrap.Modal.getInstance(document.getElementById('addressModal'));
-              modal.hide();
-              return
-            }
-            console.log(res);
-            console.log(res?.user);
-            let user = res?.user;
-
-            // Update the current address display
-            const currentAddress = document.getElementById('currentAddress');
-            currentAddress.innerHTML = user.addresses.map(address => `
-                  <label class="w-100">
-                      <input class="radio-custom" type="radio" name="address" value="${address._id}"
-                          ${address.isDefault ? 'checked' : ''}>
-                      <div class="address-details card mb-2 shadow-sm">
-                          <div class="card-body p-2">
-                              <div class="row g-2">
-                                  <p>
-                                      ${address.name} <br>
-                                      ${address.address} <br>
-                                      ${address.zipCode} <br>
-                                      ${address.phone} <br>
-                                  </p>
-                              </div>
-                          </div>
-                      </div>
-                  </label>
-              `).join('');
-
-          }).then(() => {
-
-            // Close the modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('addressModal'));
-            modal.hide();
-          }).catch(err => {
-            console.log(err);
-          })
-
-
+          // Close the modal
+          const modal = bootstrap.Modal.getInstance(document.getElementById('addressModal'));
+          modal.hide();
 
         }
 

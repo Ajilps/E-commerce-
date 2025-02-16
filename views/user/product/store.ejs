@@ -604,31 +604,31 @@
                 </div>
             </div>
             <!-- pagination -->
-            <nav class="d-flex pagination">
-                <div class="pagination-container d-flex justify-content-end mt-4">
-                    <% if (currentPage> 1) { %>
-                        <a class="btn btn-outline-secondary me-2" href="?page=<%= currentPage - 1 %>">&laquo;
-                            Previous</a>
-                        <% } %>
+            <!-- <nav class="d-flex pagination"> -->
+            <div class="pagination-container d-flex justify-content-end mt-4">
+                <% if (currentPage> 1) { %>
+                    <a class="btn btn-outline-secondary me-2" href="?page=<%= currentPage - 1 %>">&laquo;
+                        Previous</a>
+                    <% } %>
 
-                            <% for (let i=1; i <=totalPages+1; i++) { %>
-                                <% if (i===Number(currentPage)) { %>
-                                    <span class="btn btn-outline-primary active me-2">
+                        <% for (let i=1; i <=totalPages+1; i++) { %>
+                            <% if (i===Number(currentPage)) { %>
+                                <span class="btn btn-outline-primary active me-2">
+                                    <%= i%>
+                                </span>
+                                <% } else { %>
+                                    <a class="btn btn-outline-secondary me-2" href="?page=<%= i %>">
                                         <%= i %>
-                                    </span>
-                                    <% } else { %>
-                                        <a class="btn btn-outline-secondary me-2" href="?page=<%= i %>">
-                                            <%= i %>
-                                        </a>
+                                    </a>
+                                    <% } %>
                                         <% } %>
-                                            <% } %>
 
-                                                <% if (currentPage < totalPages) { %>
-                                                    <a class="btn btn-outline-secondary"
-                                                        href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
-                                                    <% } %>
-                </div>
-            </nav>
+                                            <% if (currentPage < totalPages+1) { %>
+                                                <a class="btn btn-outline-secondary"
+                                                    href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+                                                <% } %>
+            </div>
+            <!-- </nav> -->
 
             <!-- pagination end -->
         </div>
@@ -638,7 +638,7 @@
 
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 
-            <script>
+            <!-- <script>
                 // JavaScript to toggle the side filter bar
                 const filterToggleBtn = document.getElementById('filterToggleBtn');
                 const filterSidebar = document.getElementById('filterSidebar');
@@ -646,7 +646,7 @@
                 filterToggleBtn.addEventListener('click', () => {
                     filterSidebar.classList.toggle('collapsed');
                 });
-            </script>
+            </script> -->
 
             <script>
                 // add to wishlist

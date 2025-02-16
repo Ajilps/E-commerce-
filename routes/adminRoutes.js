@@ -62,6 +62,7 @@ import {
   displayAddCouponForm,
   editCoupon,
   deleteCoupon,
+  statusChange,
 } from "../controllers/admin/couponController.js";
 
 import { orderController } from "../controllers/admin/report.js";
@@ -86,7 +87,7 @@ router.get("/unblockCustomer", customerUnBlock);
 // category routes
 router.get("/category", categoryInfo);
 router.get("/category/addCategory", (req, res) => {
-  res.render("admin/category/addCategory.ejs");
+  res.render("admin/category/addCategory.ejs", { user: req.user });
 });
 
 router.post("/category/addCategory", addCategory);
@@ -101,7 +102,7 @@ router.delete("/category/deleteCategory/:categoryId", deleteCategory);
 //brand routes
 router.get("/brand", brandInfo);
 router.get("/brand/addBrand", (req, res) => {
-  res.render("admin/brand/addBrand.ejs");
+  res.render("admin/brand/addBrand.ejs", { user: req.user });
 });
 // add brand route
 router.post("/brand/addBrand", uploads.single("brandImage"), addBrand);
@@ -164,6 +165,8 @@ router.post("/coupons/create", createCoupon);
 router.get("/coupons/update/:couponId", displayAddCouponForm);
 router.patch("/coupons/update/:couponId", editCoupon);
 router.delete("/coupons/delete/:couponId", deleteCoupon);
+router.patch("/coupons/statusChange", statusChange);
+// router.patch("/coupons/enable", enableCoupon);
 
 // report
 // Sales report routes

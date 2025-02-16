@@ -1,35 +1,35 @@
-
 <%- include('../adminHead.ejs') %>
-<style>
-  .pagination {
-  margin-top: 20px;
-  text-align: center;
-}
+  <style>
+    .pagination {
+      margin-top: 20px;
+      text-align: center;
+    }
 
-.pagination a {
-  margin: 0 5px;
-  padding: 5px 10px;
-  text-decoration: none;
-  color: #333;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-}
+    .pagination a {
+      margin: 0 5px;
+      padding: 5px 10px;
+      text-decoration: none;
+      color: #333;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+    }
 
-.pagination a.active {
-  background-color: #007bff;
-  color: #fff;
-  border-color: #007bff;
-}
+    .pagination a.active {
+      background-color: #007bff;
+      color: #fff;
+      border-color: #007bff;
+    }
 
-.pagination a:hover:not(.active) {
-  background-color: #f1f1f1;
-}
-.statusFilter{
-  max-width: 200px;
-  margin: 0 auto;
-  margin-left: 0;
-}
-</style>
+    .pagination a:hover:not(.active) {
+      background-color: #f1f1f1;
+    }
+
+    .statusFilter {
+      max-width: 200px;
+      margin: 0 auto;
+      margin-left: 0;
+    }
+  </style>
   <div class="container my-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h1>Order</h1>
@@ -40,19 +40,19 @@
     </div>
     <div class="statusFilter container mt-4">
       <div class="custom-select">
-          <select id="statusFilter" class="form-select shadow-sm" aria-label="Order Status Select">
-              <option value="" class="text-muted">All Statuses</option>
-              <option value="Pending" class="status-pending">Pending</option>
-              <option value="Shipped" class="status-shipped">Shipped</option>
-              <option value="Delivered" class="status-delivered">Delivered</option>
-              <option value="Cancelled" class="status-cancelled">Cancelled</option>
-              <option value="Rejected" class="status-rejected">Rejected</option>
-              <option value="Placed" class="status-placed">Placed</option>
-          </select>
+        <select id="statusFilter" class="form-select shadow-sm" aria-label="Order Status Select">
+          <option value="" class="text-muted">All Statuses</option>
+          <option value="Pending" class="status-pending">Pending</option>
+          <option value="Shipped" class="status-shipped">Shipped</option>
+          <option value="Delivered" class="status-delivered">Delivered</option>
+          <option value="Cancelled" class="status-cancelled">Cancelled</option>
+          <option value="Rejected" class="status-rejected">Rejected</option>
+          <option value="Placed" class="status-placed">Placed</option>
+        </select>
       </div>
-  </div>
+    </div>
 
-   
+
     <div class="table-responsive">
       <table class="table table-hover">
         <thead>
@@ -64,30 +64,47 @@
             <th>Total</th>
             <th>Payment</th>
             <th>Status</th>
-            
+
+
             <th>Action</th>
           </tr>
         </thead>
-        <p><% orders %></p>
+        <p>
+          <% orders %>
+        </p>
         <tbody>
           <% if(orders){ %>
-          <% orders.forEach(order=>{ %>
-            <p><%#= order._id %></p>
-           <% let totalQ = 0 %>
-            <% order.products.forEach(product=>{   %>
-              <%  totalQ += product.quantity %>
-              <% }) %>
-          <tr>
-            <td><%= order.orderId %></td>
-            <td><%=  totalQ   %></td>
+            <% orders.forEach(order=>{ %>
+              <p>
+                <%#= order._id %>
+              </p>
+              <% let totalQ=0 %>
+                <% order.products.forEach(product=>{ %>
+                  <% totalQ +=product.quantity %>
+                    <% }) %>
+                      <tr>
+                        <td>
+                          <%= order.orderId %>
+                        </td>
+                        <td>
+                          <%= totalQ %>
+                        </td>
 
-            <% let date = new Date(order.createdAt) %>
-            <td> <%= `${date.getDate()}/${date.toLocaleString('default', { month: 'short' })} / ${date.getFullYear() }` %></td>
-            <td><%= order.userId?.username || ''%></td>
-            <td>₹ <%= order.totalPrice  %></td>
-            <td><%= order.paymentStatus %></td>
-            <td>
-              <span class="badge 
+                        <% let date=new Date(order.createdAt) %>
+                          <td>
+                            <%= `${date.getDate()}/${date.toLocaleString('default', { month: 'short' })} /
+                              ${date.getFullYear() }` %>
+                          </td>
+                          <td>
+                            <%= order.userId?.username || '' %>
+                          </td>
+                          <td>₹ <%= order.totalPrice %>
+                          </td>
+                          <td>
+                            <%= order.paymentStatus %>
+                          </td>
+                          <td>
+                            <span class="badge 
                 <% if (order.status === 'Pending') { %>bg-warning<% } %>
                 <% if (order.status === 'Processing') { %>bg-info<% } %>
                 <% if (order.status === 'Shipped') { %>bg-primary<% } %>
@@ -96,53 +113,55 @@
                 <% if (order.status === 'Rejected') { %>bg-danger<% } %>
                 <% if (order.status === 'Cancelled') { %>bg-danger<% } %>
               ">
-                <%= order.status %>
-              </span>
-            </td>
-            <td>
-              <a href="/admin/orders/<%= order._id%>" class="btn btn-outline-primary btn-sm me-2">Edit</a>
-              <!-- <a href="#" class="btn btn-outline-danger btn-sm">Delete</a> -->
-            </td>
-          </tr>
-          <!-- Add more rows as needed -->
-              <% }) %>
-            <%# }) %>
-          <% } %>
+                              <%= order.status %>
+                            </span>
+                          </td>
+                          <td>
+                            <a href="/admin/orders/<%= order._id%>" class="btn btn-outline-primary btn-sm me-2">Edit</a>
+                            <!-- <a href="#" class="btn btn-outline-danger btn-sm">Delete</a> -->
+                          </td>
+                      </tr>
+                      <!-- Add more rows as needed -->
+                      <% }) %>
+                        <%# }) %>
+                          <% } %>
         </tbody>
       </table>
     </div>
 
     <!-- Pagination Controls -->
-<div class="pagination">
-  <% if (pagination.page > 1) { %>
-    <a href="/admin/orders?page=<%= pagination.page - 1 %>&limit=<%= pagination.limit %>">Previous</a>
-  <% } %>
+    <div class="pagination">
+      <% if (pagination.page> 1) { %>
+        <a href="/admin/orders?page=<%= pagination.page - 1 %>&limit=<%= pagination.limit %>">Previous</a>
+        <% } %>
 
-  <% for (let i = 1; i <= pagination.totalPages; i++) { %>
-    <a href="/admin/orders?page=<%= i %>&limit=<%= pagination.limit %>" class="<%= i === pagination.page ? 'active' : '' %>">
-      <%= i %>
-    </a>
-  <% } %>
+          <% for (let i=1; i <=pagination.totalPages; i++) { %>
+            <a href="/admin/orders?page=<%= i %>&limit=<%= pagination.limit %>"
+              class="<%= i === pagination.page ? 'active' : '' %>">
+              <%= i %>
+            </a>
+            <% } %>
 
-  <% if (pagination.page < pagination.totalPages) { %>
-    <a href="/admin/orders?page=<%= pagination.page + 1 %>&limit=<%= pagination.limit %>">Next</a>
-  <% } %>
-</div>
+              <% if (pagination.page < pagination.totalPages) { %>
+                <a href="/admin/orders?page=<%= pagination.page + 1 %>&limit=<%= pagination.limit %>">Next</a>
+                <% } %>
+    </div>
   </div>
 
   <%- include('../adminFoot.ejs') %>
-  <script>
-    document.getElementById('statusFilter').value = "<%= statusFilter || '' %>";
-    document.getElementById('statusFilter').addEventListener('change', function() {
-      const status = this.value;
-      window.location.href = `?status=${status}&page=1&limit=10`;
-    });
-  </script>
-</body>
-</html>
+    <script>
+      document.getElementById('statusFilter').value = "<%= statusFilter || '' %>";
+      document.getElementById('statusFilter').addEventListener('change', function () {
+        const status = this.value;
+        window.location.href = `?status=${status}&page=1&limit=10`;
+      });
+    </script>
+    </body>
+
+    </html>
 
 
 
-<!-- { productId: new ObjectId('6789e2c9fcdd7454ef65964e'), quantity: 4, price: 990, _id: new ObjectId('6797d73e07da2d19661533a8') },
+    <!-- { productId: new ObjectId('6789e2c9fcdd7454ef65964e'), quantity: 4, price: 990, _id: new ObjectId('6797d73e07da2d19661533a8') },
 { productId: new ObjectId('678a961739cba380c870e5a6'), quantity: 2, price: 2061.19, _id: new ObjectId('6797d73e07da2d19661533a9') },
 { productId: new ObjectId('678a96a939cba380c870e5b0'), quantity: 2, price: 20466.99, _id: new ObjectId('6797d73e07da2d19661533aa') } -->

@@ -65,7 +65,7 @@
                                 <th>Brand Name</th>
                                 <th>isListed</th>
                                 <th>List/Un-list</th>
-                                <th>offer</th>
+                                <th>offer (Max 35%)</th>
                                 <th>add/remove offer</th>
                                 <th>Added</th>
                                 <th>Action</th>
@@ -90,46 +90,52 @@
                                             </div>
                                         </div>
                                     </td>
-                                    
+
                                     <!-- show the status of brand -->
-                                     <td>
-                                         <% if (brand.isListed) { %>
-                                             <span class="badge rounded-pill alert-success text-black">Listed</span>
-                                             <% } else { %>
-                                                 <span class="badge rounded-pill alert-danger text-black">Unlisted</span>
-                                                 <% } %>
-                                     </td>
+                                    <td>
+                                        <% if (brand.isListed) { %>
+                                            <span class="badge rounded-pill alert-success text-black">Listed</span>
+                                            <% } else { %>
+                                                <span class="badge rounded-pill alert-danger text-black">Unlisted</span>
+                                                <% } %>
+                                    </td>
                                     <!-- list / un-list action -->
                                     <td>
                                         <% if (brand?.isListed) { %>
-                                            <a href="/admin/brand/unlistBrand?id=<%= brand?._id%>" class="btn btn-sm btn-outline-danger text-black">Un list</a>
-                                        <% } else { %>
-                                            <a href="/admin/brand/listBrand?id=<%= brand?._id%>" class="btn btn-sm btn-outline-success text-black">List</a>
-                                        <% } %>
+                                            <a href="/admin/brand/unlistBrand?id=<%= brand?._id%>"
+                                                class="btn btn-sm btn-outline-danger text-black">Un list</a>
+                                            <% } else { %>
+                                                <a href="/admin/brand/listBrand?id=<%= brand?._id%>"
+                                                    class="btn btn-sm btn-outline-success text-black">List</a>
+                                                <% } %>
                                     </td>
                                     <!-- offer -->
-                                     <td>
-                                         <% if (brand.offer) { %>
-                                             <span class="badge rounded-pill alert-success text-black"><%= brand?.offer%>%</span>
-                                             <% } else { %>
-                                                 <span class="badge rounded-pill alert-danger text-black">No Offer</span>
-                                                 <% } %>
-                                     </td>
-                                     <!-- add and delete offer  -->
-                                       <td>
-                                           <div class="d-flex align-items-center">
-                                              
-                                               <button class="btn btn-sm btn-primary me-2 updateOfferBtn" onclick="addOffer('<%= brand._id%>')" dId="<%= brand._id%>">Update</button>
-                                               <button class="btn btn-sm btn-danger deleteOfferBtn" onclick="removeOffer('<%= brand._id%>')" dId="<%= brand._id%>">Delete</button>
-                                           </div>
-                                       </td>
- 
+                                    <td>
+                                        <% if (brand.offer) { %>
+                                            <span class="badge rounded-pill alert-success text-black">
+                                                <%= brand?.offer%>%
+                                            </span>
+                                            <% } else { %>
+                                                <span class="badge rounded-pill alert-danger text-black">No Offer</span>
+                                                <% } %>
+                                    </td>
+                                    <!-- add and delete offer  -->
+                                    <td>
+                                        <div class="d-flex align-items-center">
+
+                                            <button class="btn btn-sm btn-primary me-2 updateOfferBtn"
+                                                onclick="addOffer('<%= brand._id%>')"
+                                                dId="<%= brand._id%>">Update</button>
+                                            <button class="btn btn-sm btn-danger deleteOfferBtn"
+                                                onclick="removeOffer('<%= brand._id%>')"
+                                                dId="<%= brand._id%>">Delete</button>
+                                        </div>
+                                    </td>
+
                                     <!-- showing the created date -->
-                                    <% const date=brand.createdAt 
-                                    const year=date.getFullYear(); 
-                                    const month=date.toLocaleString('default', { month: 'short' }); // "Dec" 
-                                    const day=date.getDate();
-                                     %>
+                                    <% const date=brand.createdAt; const year=date.getFullYear(); const
+                                        month=date.toLocaleString('default', { month: 'short' }); // "Dec" const
+                                        day=date.getDate(); %>
                                         <td>
                                             <%= `${day}/${month}/${year}` %>
                                         </td>
@@ -177,94 +183,108 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-          // Function to handle user input from the prompt
-   async function addOffer(brandId) {
-    
-        Swal.fire({ title: 'Enter a number', 
-        input: 'number', 
-        inputAttributes: { min: 1, max: 100 }, 
-        showCancelButton: true, confirmButtonText: 'Submit',
-        cancelButtonText: 'Cancel' })
-        .then((result) => { 
-            if (result.isConfirmed) { 
-                const number = result.value; 
+        // Function to handle user input from the prompt
+        async function addOffer(brandId) {
 
-                fetch(`/admin/brand/addOffer`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ offer:number,brandId })
-        }).then((res)=>{
-            return res.json();
-        }).then((data)=>{
-            if(data.success){
-                Swal.fire({ title: 'Success!',
-                text: 'offer added successfully.',
-                icon: 'success',
-                confirmButtonText: 'Great' })
-                .then(()=>location.reload());
-            }
-            else{
-            
-                Swal.fire({ title: 'Oops!', 
-                text: `Something went wrong.${data.message || ""} `,
-                icon: 'error',
-                confirmButtonText: 'Try Again' })
-                .then(()=>location.reload());
-            }
-            
-        }).catch((err)=>{
-            Swal.fire({ title: 'Oops!', 
-                text: 'Something went wrong.',
-                icon: 'error',
-                confirmButtonText: 'Try Again' })
-                .then(()=>location.reload());
-            console.log(err);
-           
-        });    
-            }
+            Swal.fire({
+                title: 'Enter a number',
+                input: 'number',
+                inputAttributes: { min: 1, max: 35 },
+                showCancelButton: true, confirmButtonText: 'Submit',
+                cancelButtonText: 'Cancel'
+            })
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        const number = result.value;
+
+                        fetch(`/admin/brand/addOffer`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({ offer: number, brandId })
+                        }).then((res) => {
+                            return res.json();
+                        }).then((data) => {
+                            if (data.success) {
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: 'offer added successfully.',
+                                    icon: 'success',
+                                    confirmButtonText: 'Great'
+                                })
+                                    .then(() => location.reload());
+                            }
+                            else {
+
+                                Swal.fire({
+                                    title: 'Oops!',
+                                    text: `Something went wrong.${data.message || ""} `,
+                                    icon: 'error',
+                                    confirmButtonText: 'Try Again'
+                                })
+                                    .then(() => location.reload());
+                            }
+
+                        }).catch((err) => {
+                            Swal.fire({
+                                title: 'Oops!',
+                                text: 'Something went wrong.',
+                                icon: 'error',
+                                confirmButtonText: 'Try Again'
+                            })
+                                .then(() => location.reload());
+                            console.log(err);
+
+                        });
+                    }
+                });
+
+            console.log(number);
+
+        }
+
+        async function removeOffer(brandId) {
+            // Send a POST request to the server
+            await fetch(`/admin/brand/removeOffer`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ brandId })
+            }).then((res) => {
+                return res.json();
+            }).then((data) => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'offer deleted successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'Great'
+                    })
+                        .then(() => location.reload());
+                }
+                else {
+                    Swal.fire({
+                        title: 'Oops!',
+                        text: 'Something went wrong.',
+                        icon: 'error',
+                        confirmButtonText: 'Try Again'
+                    })
+                        .then(() => location.reload());
+                }
+
+            }).catch((err) => {
+                console.log(err);
+                Swal.fire({
+                    title: 'Oops!',
+                    text: 'Something went wrong.',
+                    icon: 'error',
+                    confirmButtonText: 'Try Again'
+                })
+                    .then(() => location.reload());
             });
-      
-    console.log(number);
-  
-    }
-
-    async function removeOffer(brandId) {
-        // Send a POST request to the server
-        await fetch(`/admin/brand/removeOffer`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ brandId })
-        }).then((res)=>{
-            return res.json();
-        }).then((data)=>{
-            if(data.success){
-                Swal.fire({ title: 'Success!',
-                text: 'offer deleted successfully.',
-                icon: 'success',
-                confirmButtonText: 'Great' })
-                .then(()=>location.reload());
-            }
-            else{
-                Swal.fire({ title: 'Oops!', 
-                text: 'Something went wrong.',
-                icon: 'error',
-                confirmButtonText: 'Try Again' })
-                .then(()=>location.reload());
-            }
-           
-        }).catch((err)=>{
-            console.log(err);
-            Swal.fire({ title: 'Oops!', 
-                text: 'Something went wrong.',
-                icon: 'error',
-                confirmButtonText: 'Try Again' })
-                .then(()=>location.reload());
-        });
-    }
+        }
 
     </script>
 
@@ -294,5 +314,6 @@
     </script>
 
     <%- include('../adminFoot') %>
-</body>
-</html>
+        </body>
+
+        </html>

@@ -1,22 +1,51 @@
 import { Coupon } from "../../models/couponModel.js";
 
+// display all the coupons GET
 const displayCoupons = async (req, res) => {
-  try {
-    const coupons = await Coupon.find({});
+  const page = req.query.page || 1;
+  const limit = 5;
+  const search = req.query.search || "";
+  const status = req.query.status || "";
+  console.log(search, status);
 
-    return res
-      .status(200)
-      .render("admin/coupon/coupons.ejs", {
-        success: true,
-        user: req.user,
-        coupons,
-      });
+  const filter = {};
+
+  if (status <= 1 && status !== "") {
+    filter.isActive = status == 1 ? true : false;
+  }
+  if (search !== "") {
+    filter.code = { $regex: search, $options: "i" };
+  }
+
+  try {
+    const coupons = await Coupon.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(limit * (page - 1))
+      .limit(limit);
+
+    const totalDocuments = await Coupon.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(limit * (page - 1))
+      .limit(limit)
+      .countDocuments();
+
+    console.log(coupons);
+    return res.status(200).render("admin/coupon/coupons.ejs", {
+      success: true,
+      user: req.user,
+      coupons,
+      currentPage: page,
+      totalPages: Math.ceil(totalDocuments / limit),
+    });
   } catch (error) {
     console.error(`coupon retrieval failed - ${error.message}`);
+    // return res.redirect("/admin/coupons");
   }
 };
 
-//display add coupon page
+// searching and filtering
+
+//display add coupon page GET
 const displayAddCouponForm = async (req, res) => {
   try {
     const couponId = req?.params?.couponId;
@@ -30,39 +59,46 @@ const displayAddCouponForm = async (req, res) => {
       const expiry = expiryDate.toISOString().split("T")[0];
       console.log(coupon);
 
-      return res
-        .status(200)
-        .render("admin/coupon/addCoupon.ejs", {
-          success: true,
-          user: req.user,
-          coupon,
-          start,
-          expiry,
-          cNew: true,
-        });
+      return res.status(200).render("admin/coupon/addCoupon.ejs", {
+        success: true,
+        user: req.user,
+        coupon,
+        start,
+        expiry,
+        cNew: true,
+      });
     } else {
-      return res
-        .status(200)
-        .render("admin/coupon/addCoupon.ejs", {
-          success: true,
-          user: req.user,
-          cNew: null,
-          coupon: null,
-        });
+      return res.status(200).render("admin/coupon/addCoupon.ejs", {
+        success: true,
+        user: req.user,
+        cNew: null,
+        coupon: null,
+      });
     }
   } catch (error) {}
 };
 
+// Create new coupon POST
 const createCoupon = async (req, res) => {
   try {
-    const { couponCode, start, expiry, discountAmount } = req.body;
-
+    const {
+      couponCode,
+      start,
+      expiry,
+      discountAmount,
+      usageLimit,
+      maximumDiscount,
+      minimumPurchaseAmount,
+    } = req.body;
     const coupon = new Coupon({
       code: couponCode,
       startDate: start,
       expiryDate: expiry,
       discountValue: discountAmount,
       discountType: "percentage",
+      minPurchase: minimumPurchaseAmount,
+      maxDiscount: maximumDiscount,
+      usageLimit,
     });
     await coupon.save();
     return res
@@ -74,9 +110,18 @@ const createCoupon = async (req, res) => {
   }
 };
 
+//edit the coupon PATCH
 const editCoupon = async (req, res) => {
   try {
-    const { couponCode, start, expiry, discountAmount } = req.body;
+    const {
+      couponCode,
+      start,
+      expiry,
+      discountAmount,
+      usageLimit,
+      maximumDiscount,
+      minimumPurchaseAmount,
+    } = req.body;
     const couponId = req.params.couponId;
 
     // Validate input data
@@ -103,6 +148,9 @@ const editCoupon = async (req, res) => {
       startDate: startDate,
       expiryDate: expiryDate,
       discountValue: discountAmount,
+      minPurchase: minimumPurchaseAmount,
+      maxDiscount: maximumDiscount,
+      usageLimit,
       // Do not hardcode discountType; retrieve it from the existing coupon or pass it in the request
     };
     console.log(data);
@@ -118,6 +166,9 @@ const editCoupon = async (req, res) => {
         expiryDate: expiryDate,
         discountValue: discountAmount,
         code: couponCode,
+        minPurchase: minimumPurchaseAmount,
+        maxDiscount: maximumDiscount,
+        usageLimit,
       },
       { new: true }
     );
@@ -129,13 +180,11 @@ const editCoupon = async (req, res) => {
         .json({ success: false, message: "Coupon not found" });
     }
 
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Coupon updated successfully",
-        data: updatedCoupon,
-      });
+    return res.status(200).json({
+      success: true,
+      message: "Coupon updated successfully",
+      data: updatedCoupon,
+    });
   } catch (error) {
     console.error(`Coupon update failed - ${error.message}`);
     return res.status(500).json({ success: false, message: error.message });
@@ -153,10 +202,42 @@ const deleteCoupon = async (req, res) => {
   }
 };
 
+// disable/ enable coupon on demand PATCH
+const statusChange = async (req, res) => {
+  try {
+    const couponId = req.body?.couponId;
+    const status = req.body?.status;
+    console.log(req.body);
+    if (!couponId)
+      return res
+        .status(403)
+        .json({ success: false, message: "Invalid coupon Id " });
+
+    const result = await Coupon.findByIdAndUpdate(
+      couponId,
+      { isActive: status },
+      { new: true }
+    );
+    console.log(result);
+    return res.status(200).json({
+      success: true,
+      message: `The coupon status updated to ${
+        status == true ? "Enabled" : " Disabled"
+      }`,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "server Error !!!" });
+  }
+};
+
 export {
   displayCoupons,
   createCoupon,
   editCoupon,
   deleteCoupon,
   displayAddCouponForm,
+  statusChange,
 };

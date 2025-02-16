@@ -3,9 +3,11 @@
         body {
             background-color: #f8f9fa;
         }
-        .breadcrumb-item + .breadcrumb-item::before {
+
+        .breadcrumb-item+.breadcrumb-item::before {
             content: ">";
         }
+
         .upload-area {
             border: 2px dashed #dee2e6;
             border-radius: 8px;
@@ -15,9 +17,11 @@
             cursor: pointer;
             background: #fff;
         }
+
         .upload-area:hover {
             border-color: #00c389;
         }
+
         .thumbnail-preview {
             width: 100px;
             height: 100px;
@@ -26,6 +30,7 @@
             margin: 0 auto 1rem;
             position: relative;
         }
+
         .check-icon {
             position: absolute;
             top: 5px;
@@ -35,18 +40,22 @@
             border-radius: 50%;
             padding: 2px;
         }
+
         .btn-save {
             background-color: #00c389;
             color: white;
         }
+
         .btn-save:hover {
             background-color: #00a371;
             color: white;
         }
+
         .change-image-btn {
             color: #00c389;
             text-decoration: none;
         }
+
         .change-image-btn:hover {
             color: #00a371;
         }
@@ -56,14 +65,16 @@
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#" class="text-decoration-none" style="color: #00c389;">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="#" class="text-decoration-none" style="color: #00c389;">Brands</a></li>
+                <li class="breadcrumb-item"><a href="#" class="text-decoration-none"
+                        style="color: #00c389;">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="#" class="text-decoration-none" style="color: #00c389;">Brands</a>
+                </li>
                 <li class="breadcrumb-item active">Brand Details</li>
             </ol>
         </nav>
 
-        
-       
+
+
 
         <!-- Main Content -->
         <div class="row">
@@ -95,15 +106,19 @@
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Description</label>
-                                <textarea name="description" class="form-control" rows="4"><%= locals.brand?.description%></textarea>
+                                <textarea name="description" class="form-control"
+                                    rows="4"><%= locals.brand?.description%></textarea>
                             </div>
                             <!-- New Image Upload Field -->
                             <div class="mb-4">
                                 <label class="form-label">Upload Image</label>
-                                <input type="file" id="brandImage" name="brandImage" class="form-control" accept="image/*" onchange="previewImage(event)">
+                                <input type="file" id="brandImage" name="brandImage" class="form-control"
+                                    accept="image/*" onchange="previewImage(event)">
                                 <!-- Preview Container -->
                                 <div class="mt-3">
-                                    <img id="imagePreview" src="/uploads/re-images/<%= locals.brand?.imageUrl%>" alt="Image Preview" class="img-thumbnail" style="display: none; max-width: 200px;">
+                                    <img id="imagePreview" src="/uploads/re-images/<%= locals.brand?.imageUrl%>"
+                                        alt="Image Preview" class="img-thumbnail"
+                                        style="display: none; max-width: 200px;">
                                 </div>
                             </div>
                             <!-- Buttons -->
@@ -121,28 +136,28 @@
             </div>
             <script>// Cancel button
                 const cancelButton = document.getElementById('Cancel');
-                cancelButton.addEventListener('click', function() {
+                cancelButton.addEventListener('click', function () {
                     event.preventDefault();
                     if (confirm("cancel the form?")) {
                         txt = "You pressed OK!";
                         window.location.href = '/admin/brand';
-                        
-                        } else {
+
+                    } else {
                         txt = "You pressed Cancel!";
                         event.preventDefault();
-                        }
-                                            
+                    }
+
                 });
             </script>
-            
+
             <script>
                 function previewImage(event) {
                     const imageInput = event.target;
                     const preview = document.getElementById('imagePreview');
-                    
+
                     if (imageInput.files && imageInput.files[0]) {
                         const reader = new FileReader();
-                        reader.onload = function(e) {
+                        reader.onload = function (e) {
                             preview.src = e.target.result;
                             preview.style.display = 'block';
                         };
@@ -150,40 +165,48 @@
                     }
                 }
             </script>
-            
-            
-
-    <script>
-        const brandForm = document.getElementById('brandForm');
-
-        brandForm.addEventListener('submit', async function (event) {
-            event.preventDefault();
-            const formData = new FormData(brandForm);
-
-            const brandId = '<%= locals.brand?._id %>' || '';
-            if ( brandId != '' ) {
-                formData.append('brandId', brandId);
-            }
 
 
-          try {
-              const response = await fetch('/admin/brand/addBrand', {
-                  method: 'POST',
-                  body: formData,
-              });
-              const data = await response.json();
-              if (data.success) {
-                  alert('Brand created successfully');
-                  window.location.href = '/admin/brand';
-              } else {
-                  alert('An error occurred. Please try again.');
-              }
-          } catch (error) {
-            console.log(error);
-          }
-        });
-    </script>
 
-   <%- include('../adminFoot') %>
-</body>
-</html>
+            <script>
+                const brandForm = document.getElementById('brandForm');
+
+                brandForm.addEventListener('submit', async function (event) {
+                    event.preventDefault();
+                    const formData = new FormData(brandForm);
+
+                    const brandId = '<%= locals.brand?._id %>' || '';
+                    if (brandId != '') {
+                        formData.append('brandId', brandId);
+                    }
+
+
+                    try {
+                        const response = await fetch('/admin/brand/addBrand', {
+                            method: 'POST',
+                            body: formData,
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Sweet!',
+                                text: 'Here\'s a custom alert for you!',
+                                icon: 'success',
+                                confirmButtonText: 'Cool'
+                            });
+
+
+                            window.location.href = '/admin/brand';
+                        } else {
+                            alert('An error occurred. Please try again.');
+                        }
+                    } catch (error) {
+                        console.log(error);
+                    }
+                });
+            </script>
+
+            <%- include('../adminFoot') %>
+                </body>
+
+                </html>

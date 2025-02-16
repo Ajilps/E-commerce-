@@ -48,6 +48,9 @@ const orderController = {
       const { reportType, startDate, endDate, quickDate } = req.query;
       console.log(reportType, startDate, endDate, quickDate);
 
+      const currentPage = req?.query?.page || 1;
+      const limit = 10;
+
       // Get date filter using helper function
       const dateFilter = getDateFilter(
         reportType,
@@ -57,8 +60,12 @@ const orderController = {
       );
       console.log("data filtered : ", dateFilter);
       // Fetch orders with filter
-      const orders = await Order.find(dateFilter).sort({ createdAt: -1 });
-
+      const orders = await Order.find(dateFilter)
+      const ordersData = await Order.find(dateFilter)
+        .sort({ createdAt: -1 })
+        .skip(limit * (currentPage - 1))
+        .limit(limit);
+      const totalDocuments = await Order.countDocuments(dateFilter);
       // Calculate summary statistics
       const summary = {
         totalSales: orders.reduce((sum, order) => sum + order.totalPrice, 0),
@@ -81,8 +88,6 @@ const orderController = {
           $lte: new Date(dateFilter.createdAt.$gte),
         };
       }
-
-     
 
       const previousOrders = await Order.find(previousPeriodFilter);
       const previousSummary = {
@@ -136,13 +141,15 @@ const orderController = {
       };
 
       res.render("admin/report/salesReport", {
-        orders,
+        ordersData,
         summary,
         changes,
         filters: { reportType, startDate, endDate, quickDate },
         moment,
         user: req.user,
         req,
+        currentPage,
+        totalPages: Math.ceil(totalDocuments / limit),
       });
     } catch (error) {
       console.error("Error in sales report:", error);
@@ -186,7 +193,11 @@ const orderController = {
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
         "Content-Disposition",
-        "attachment; filename=sales-report.pdf"
+        `attachment; filename=sales-report-${new Date(
+          Date.now()
+        ).toLocaleDateString()}-${new Date(
+          Date.now()
+        ).toLocaleTimeString()}.pdf`
       );
 
       doc.pipe(res);
@@ -419,7 +430,11 @@ const orderController = {
       );
       res.setHeader(
         "Content-Disposition",
-        "attachment; filename=sales-report.xlsx"
+        `attachment; filename=sales-report-${new Date(
+          Date.now()
+        ).toLocaleDateString()}-${new Date(
+          Date.now()
+        ).toLocaleTimeString()}.xlsx`
       );
 
       // Write to response

@@ -160,14 +160,14 @@
                                 <th>Items</th>
                                 <th>Subtotal</th>
                                 <th>Discount</th>
-                                <th>Tax</th>
+                                <th>CouponDiscount</th>
                                 <th>Total</th>
                                 <th>Payment Method</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <% orders.forEach(order=> { %>
+                            <% ordersData.forEach(order=> { %>
                                 <tr>
                                     <td>
                                         <%= moment(order.createdAt).format('YYYY-MM-DD') %>
@@ -185,7 +185,7 @@
                                     </td>
                                     <td>₹<%= order.discount.toLocaleString() %>
                                     </td>
-                                    <td>₹<%= order.tax.toLocaleString() %>
+                                    <td>₹<%= order.couponDiscount.toLocaleString() || 0 %>
                                     </td>
                                     <td>₹<%= order.totalPrice.toLocaleString() %>
                                     </td>
@@ -201,7 +201,7 @@
                                     </td>
                                 </tr>
                                 <% }) %>
-                                    <% if (orders.length===0) { %>
+                                    <% if (ordersData.length===0) { %>
                                         <tr>
                                             <td colspan="10" class="text-center">No orders found for the selected
                                                 period</td>
@@ -212,6 +212,31 @@
                 </div>
             </div>
         </div>
+        <!-- pagination  -->
+        <div class="pagination-container d-flex justify-content-end mt-4">
+            <% if (currentPage> 1) { %>
+                <a class="btn btn-outline-secondary me-2" href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+                <% } %>
+
+                    <% for (let i=1; i <=totalPages; i++) { %>
+                        <% if (i===Number(currentPage)) { %>
+                            <span class="btn btn-outline-primary active me-2">
+                                <%= i %>
+                            </span>
+                            <% } else { %>
+                                <a class="btn btn-outline-secondary me-2" href="?page=<%= i %>">
+                                    <%= i %>
+                                </a>
+                                <% } %>
+                                    <% } %>
+
+                                        <% if (currentPage < totalPages+1) { %>
+                                            <a class="btn btn-outline-secondary"
+                                                href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+                                            <% } %>
+        </div>
+
+
     </div>
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> -->
     <%- include('../adminFoot.ejs') %>
