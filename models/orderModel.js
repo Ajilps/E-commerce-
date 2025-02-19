@@ -45,9 +45,9 @@ const orderSchema = mongoose.Schema(
       type: Number,
       required: false,
     },
-    couponDiscount:{
-      type:Number,
-      default : 0,
+    couponDiscount: {
+      type: Number,
+      default: 0,
     },
     totalPrice: {
       type: Number,
@@ -98,6 +98,7 @@ const orderSchema = mongoose.Schema(
         "Cancelled",
         "Rejected",
         "Placed",
+        "Return",
       ],
       default: "Placed",
     },

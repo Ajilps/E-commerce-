@@ -5,21 +5,41 @@
       <h1>Order Details</h1>
       <div>
         <%# if( order.status=="Processing" || order.status=="Pending" ) {%>
-          <% if( order.status !="Rejected" && order.status !="Cancelled" ){ %>
-            <button onclick="changeOrder(`<%= order._id%>`, 'Rejected')" class="btn btn-danger me-2">Reject
-              Order</button>
-            <button onclick="changeOrder(`<%= order._id%>`, 'Pending')" class="btn btn-warning me-2">Hold Order</button>
-            <% if(order.status !="Placed" && order.status !="Rejected" ){ %>
-              <button onclick="changeOrder(`<%= order._id%>`, 'Placed')" class="btn btn-success me-2">Accept
-                Order</button>
-              <%} %>
-                <%} %>
-                  <button onclick="changeOrder(`<%= order._id%>`, 'Delivered')" class="btn btn-success me-2">Delivered
+          <% const isDelivered=order.status==="Delivered" ; const isRejected=order.status==="Rejected" ; const
+            isCancelled=order.status==="Cancelled" ; const isPlaced=order.status==="Placed" ; const
+            canManageOrder=!isDelivered; const canRejectOrHold=!isRejected && !isCancelled; const
+            canAcceptOrder=!isPlaced && !isRejected; const canDeliverOrShip=!isCancelled && !isRejected; %>
+
+            <% if (canManageOrder) { %>
+              <% if (canRejectOrHold) { %>
+                <button onclick="changeOrder('<%= order._id %>', 'Rejected')" class="btn btn-danger me-2">
+                  Reject Order
+                </button>
+                <button onclick="changeOrder('<%= order._id %>', 'Pending')" class="btn btn-warning me-2">
+                  Hold Order
+                </button>
+                <% if (canAcceptOrder) { %>
+                  <button onclick="changeOrder('<%= order._id %>', 'Placed')" class="btn btn-success me-2">
+                    Accept Order
                   </button>
-                  <button onclick="changeOrder(`<%= order._id%>`, 'Shipped')" class="btn btn-info me-2">Shipped
-                  </button>
-                  <button onclick="exportOrder(`<%= order._id%>`)" class="btn btn-outline-secondary">Export</button>
-                  <!-- <button class="btn btn-outline-secondary">Print</button> -->
+                  <% } %>
+                    <% } %>
+
+                      <% if (canDeliverOrShip) { %>
+                        <button onclick="changeOrder('<%= order._id %>', 'Delivered')" class="btn btn-success me-2">
+                          Delivered
+                        </button>
+                        <button onclick="changeOrder('<%= order._id %>', 'Shipped')" class="btn btn-info me-2">
+                          Shipped
+                        </button>
+                        <% } %>
+                          <% } else { %>
+                            <!-- Optionally add alternative actions for orders that are Delivered -->
+                            <!-- For example, a Return button: -->
+                            <!-- <button onclick="changeOrder('<%#= order._id %>', 'Return')" class="btn btn-info me-2">Return</button> -->
+                            <% } %>
+                              <!-- <button onclick="exportOrder(`<%#= order._id%>`)" class="btn btn-outline-secondary">Export</button> -->
+                              <!-- <button class="btn btn-outline-secondary">Print</button> -->
       </div>
     </div>
 

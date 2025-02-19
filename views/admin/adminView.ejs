@@ -46,13 +46,7 @@
             background: white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .chart-container {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+        
         .progress {
             height: 8px;
         }
@@ -82,8 +76,8 @@
 </head>
 <body>
     <div class="wrapper"> -->
-        <!-- Sidebar -->
-        <!-- <nav id="sidebar" class="sidebar">
+<!-- Sidebar -->
+<!-- <nav id="sidebar" class="sidebar">
             <div class="d-flex justify-content-between align-items-center p-3">
                 <h4 class="mb-0">Bytez.</h4>
                 <button class="sidebar-toggle d-md-none">
@@ -105,12 +99,38 @@
                 </a>
             </div>
         </nav> -->
-        <%- include ('adminHead') %>
-        <!-- Main Content -->
-        <!-- <div id="content" class="content">
+
+<%- include ('adminHead') %>
+    <style>
+        .chart-container {
+
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            margin-left: 20px;
+            margin-right: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .row {
+            margin-left: 20px;
+        }
+
+        .toprow {
+            /* margin-top: 20px; */
+            margin: 20Px;
+
+            #graph {
+                /* max-width: 300px; */
+            }
+    </style>
+    <!-- 
+Main Content -->
+    <!-- <div id="content" class="content">
             <div class="p-4"> -->
-                <!-- Header -->
-                <!-- <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Header -->
+    <!-- <div class="d-flex justify-content-between align-items-center mb-4">
                     <div class="d-flex align-items-center">
                         <button class="sidebar-toggle me-3">
                             <i class="fas fa-bars"></i>
@@ -127,8 +147,8 @@
                                 <li><a class="dropdown-item" href="#">Notification 2</a></li>
                             </ul>
                         </div> -->
-                        <!-- Profile Dropdown -->
-                        <!-- <div class="dropdown profile-dropdown">
+    <!-- Profile Dropdown -->
+    <!-- <div class="dropdown profile-dropdown">
                             <div class="d-flex align-items-center" data-bs-toggle="dropdown">
                                 <img src="/api/placeholder/40/40" class="rounded-circle me-2" alt="Profile">
                                 <div class="d-none d-md-block">
@@ -147,120 +167,125 @@
                     </div>
                 </div> -->
 
-                <!-- Stats Cards -->
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="stats-card">
-                            <h6 class="text-muted">Total Sales</h6>
-                            <h3>75</h3>
-                            <small class="text-success">+12% increase</small>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stats-card">
-                            <h6 class="text-muted">Total Revenue</h6>
-                            <h3>357</h3>
-                            <small class="text-success">+8% increase</small>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stats-card">
-                            <h6 class="text-muted">Total Products</h6>
-                            <h3>65</h3>
-                            <small class="text-danger">-2% decrease</small>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stats-card">
-                            <h6 class="text-muted">Total Customers</h6>
-                            <h3>$128</h3>
-                            <small class="text-success">+5% increase</small>
-                        </div>
-                    </div>
-                </div>
+    <!-- Stats Cards -->
+    <div class="row toprow">
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h6 class="text-muted">Total Sales</h6>
+                <h3>75</h3>
+                <small class="text-success">+12% increase</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h6 class="text-muted">Total Revenue</h6>
+                <h3>357</h3>
+                <small class="text-success">+8% increase</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h6 class="text-muted">Total Products</h6>
+                <h3>65</h3>
+                <small class="text-danger">-2% decrease</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h6 class="text-muted">Total Customers</h6>
+                <h3>$128</h3>
+                <small class="text-success">+5% increase</small>
+            </div>
+        </div>
+    </div>
 
-                <!-- Charts Row -->
-                <div class="row mt-4">
-                    <div class="col-md-8">
-                        <div class="chart-container">
-                            <h5>Total Revenue</h5>
-                            <canvas id="revenueChart"></canvas>
+    <!-- Charts Row -->
+    <div class="row mt-4">
+        <div class="col-md-6" id="graph">
+            <div class="chart-container">
+                <h5>Top brands</h5>
+                <canvas id="topBrands"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6" id="graph">
+            <div class="chart-container">
+                <h5>Top products</h5>
+                <canvas id="topProducts"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6" id="graph">
+            <div class="chart-container">
+                <h5>Top categories</h5>
+                <canvas id="topCategories"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h5>Most Sold Items All time</h5>
+                <div class="mt-4">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Phone X Pro</span>
+                            <span>85%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-primary" style="width: 85%"></div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="chart-container">
-                            <h5>Most Sold Items</h5>
-                            <div class="mt-4">
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <span>Phone X Pro</span>
-                                        <span>85%</span>
-                                    </div>
-                                    <div class="progress">
-                                        <div class="progress-bar bg-primary" style="width: 85%"></div>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <span>Laptop Air</span>
-                                        <span>75%</span>
-                                    </div>
-                                    <div class="progress">
-                                        <div class="progress-bar bg-success" style="width: 75%"></div>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <span>Smart Watch</span>
-                                        <span>65%</span>
-                                    </div>
-                                    <div class="progress">
-                                        <div class="progress-bar bg-warning" style="width: 65%"></div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Laptop Air</span>
+                            <span>75%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" style="width: 75%"></div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Latest Orders -->
-                <div class="chart-container mt-4">
-                    <h5>Latest Orders</h5>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Product</th>
-                                    <th>Date</th>
-                                    <th>Customer</th>
-                                    <th>Total</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>#12345</td>
-                                    <td>Phone X Pro</td>
-                                    <td>2024-12-30</td>
-                                    <td>John Doe</td>
-                                    <td>$999</td>
-                                    <td><span class="badge bg-success">Shipped</span></td>
-                                </tr>
-                                <tr>
-                                    <td>#12346</td>
-                                    <td>Laptop Air</td>
-                                    <td>2024-12-30</td>
-                                    <td>Jane Smith</td>
-                                    <td>$1299</td>
-                                    <td><span class="badge bg-warning">Pending</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Smart Watch</span>
+                            <span>65%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-warning" style="width: 65%"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Latest Orders -->
+    <div class="chart-container mt-4">
+        <h5>Latest Orders</h5>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Product</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#12345</td>
+                        <td>Phone X Pro</td>
+                        <td>2024-12-30</td>
+                        <td>John Doe</td>
+                        <td>$999</td>
+                        <td><span class="badge bg-success">Shipped</span></td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+    </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -275,15 +300,33 @@
         });
 
         // Revenue Chart
-        const ctx = document.getElementById('revenueChart').getContext('2d');
+        const ctx = document.getElementById('topBrands').getContext('2d');
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                labels: ['br1', 'br2', 'br3', 'br4'],
                 datasets: [{
                     label: 'Revenue',
-                    data: [65, 59, 80, 81, 56, 55],
-                    borderColor: 'rgb(75, 192, 192)',
+                    data: [65, 59, 80, 81, 56],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1,
                     tension: 0.1
                 }]
             },
@@ -296,6 +339,89 @@
                 }
             }
         });
+        // Revenue Chart
+        const ctxM = document.getElementById('topProducts').getContext('2d');
+        new Chart(ctxM, {
+            type: 'bar',
+            data: {
+                labels: ['pro1', 'pro2', 'pro3', 'pro4', 'pro5'],
+                datasets: [{
+                    label: 'Quantity',
+                    data: [65, 59, 80, 81, 54],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1,
+                    tension: 0.1
+                },
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            }
+        });
+        // Revenue Chart
+        const ctxC = document.getElementById('topCategories').getContext('2d');
+        new Chart(ctxC, {
+            type: 'bar',
+            data: {
+                labels: ['pro1', 'pro2', 'pro3', 'pro4', 'pro5'],
+                datasets: [{
+                    label: 'Quantity',
+                    data: [65, 59, 80, 81, 54],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1,
+                    tension: 0.1
+                },
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            }
+        });
     </script>
-</body>
-</html>
+    </body>
+
+    </html>

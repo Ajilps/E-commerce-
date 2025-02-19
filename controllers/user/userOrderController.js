@@ -4,6 +4,7 @@ import { Product } from "../../models/productModel.js";
 import { Cart } from "../../models/cartModel.js";
 import { User } from "../../models/userModel.js";
 import { Wallet } from "../../models/walletModel.js";
+import { Coupon } from "../../models/couponModel.js";
 import Razorpay from "razorpay";
 import crypto from "crypto";
 // display displayCheckout (get)
@@ -131,7 +132,7 @@ const placeOrder = async (req, res) => {
       tax: 0,
       discount: req.body.discount,
       shippingFee,
-      coupon: req.body.coupon,
+      coupon: req?.body?.coupon,
       shippingAddress: shippingAddress,
       billingAddress: shippingAddress,
       paymentMethod: req.body.paymentMethod,
@@ -165,6 +166,7 @@ const placeOrder = async (req, res) => {
       await Cart.findOneAndDelete({ user: userId });
       // if coupon is there then add the coupon id to user redeemedCoupon
       if (req.body?.coupon) {
+        let coupon = req?.body?.coupon;
         await Coupon.findOneAndUpdate(
           { code: coupon },
           { $inc: { usageCount: 1 } }
@@ -181,8 +183,88 @@ const placeOrder = async (req, res) => {
       return res
         .status(200)
         .json({ success: true, order, razorpayOrder: response });
+    } else if (req.body.paymentMethod === "wallet") {
+      // if the payment method is wallet then check the wallet balance and if the balance insufficient then
+      // send a order failed response else reduce the balance from the wallet and save the order
+      // send the success response
+      try {
+        const wallet = await Wallet.findOne({ user: req.user._id });
+        if (!wallet) {
+          return res
+            .status(400)
+            .json({ success: false, message: "Wallet dose not exist !!" });
+        }
+        if (orderData.totalPrice > wallet.balance) {
+          return res
+            .status(400)
+            .json({ success: false, message: "Insufficient Balance !!" });
+        }
+        // create order
+        orderData.paymentStatus = "Paid";
+        const order = new Order(orderData);
+        const orderStatus = order.save();
+        // if coupon is there then add the coupon id to user redeemedCoupon
+        if (req.body?.coupon) {
+          let coupon = req?.body?.coupon;
+          await Coupon.findOneAndUpdate(
+            { code: coupon },
+            { $inc: { usageCount: 1 } }
+          );
+
+          await User.findByIdAndUpdate(
+            userId,
+            { $push: { redeemedCoupon: req.body.coupon } },
+            { new: true }
+          );
+          console.log("Coupon added to user");
+        }
+
+        const payment = await Wallet.findOneAndUpdate(
+          { user: req.user._id },
+          {
+            $inc: { balance: -Number(orderData.totalPrice) },
+            $push: {
+              transactions: {
+                type: "Purchase",
+                order: orderStatus._id,
+                amount: orderData.totalPrice,
+                status: "completed",
+                description: "Product Purchase",
+              },
+            },
+          },
+          { new: true }
+        );
+        console.log(wallet, payment);
+        if (orderStatus && payment) {
+          await Cart.findOneAndDelete({ user: userId });
+          return res.status(200).json({
+            success: true,
+            message: "Order palaced and the payment done !",
+          });
+        }
+        if (orderStatus) {
+          await Cart.findOneAndDelete({ user: userId });
+          return res.status(200).json({
+            success: true,
+            message: "Order palaced and the payment failed !",
+          });
+        }
+
+        await Order.findByIdAndUpdate(orderStatus._id, {
+          $set: { paymentStatus: "Pending" },
+        });
+        console.log("Wallet payment:");
+        return res
+          .status(400)
+          .json({ success: false, message: "wallet payment failed !!!" });
+      } catch (error) {
+        return res
+          .status(400)
+          .json({ success: false, message: "wallet payment failed !!!" });
+      }
     } else {
-      console.log("inside else ");
+      console.log("inside else : COD ");
       const order = new Order(orderData);
       await order.save();
       // if coupon is there then add the coupon id to user redeemedCoupon
@@ -199,7 +281,7 @@ const placeOrder = async (req, res) => {
       return res.status(200).json({ success: true, order: orderData });
     }
   } catch (error) {
-    console.error(`User order placement failed: ${error.message}`);
+    console.error(`User order placement failed: ${error}`);
     return res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -211,7 +293,7 @@ const confirmPayment = async (req, res) => {
     const { razorpayOrderId, razorpaySignature, razorpayPaymentId } = req.body;
     const order = await Order.findOneAndUpdate(
       { razorpayOrderId },
-      { paymentStatus: "paid", razorpayPaymentId },
+      { paymentStatus: "paid", razorpayPaymentId, paymentMethod: "razorpay" },
       { new: true }
     );
     if (!order) {
@@ -338,7 +420,7 @@ const editOrder = async (req, res) => {
     if (!order) {
       return res.status(404).send("Order not found");
     }
-    res.render("admin/orders/editOrder.ejs", { order });
+    res.render("admin/orders/editOrder.ejs", { order, user: req.user });
   } catch (error) {
     console.error(error);
     res.status(500).send("Server Error");

@@ -159,6 +159,17 @@ productSchema.post('findOneAndUpdate', async function (doc) {
         }
     }
 });
+productSchema.post('findByIdAndUpdate', async function (doc) {
+    if (doc) {
+        if (doc.quantity <= 0 && doc.status !== 'Out Of Stock') {
+            doc.status = 'Out Of Stock';
+            await doc.save();
+        } else if (doc.quantity > 0 && doc.status === 'Out Of Stock') {
+            doc.status = 'Available';
+            await doc.save();
+        }
+    }
+});
 
 const Product = mongoose.model('Product', productSchema);
 

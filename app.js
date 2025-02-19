@@ -93,4 +93,7 @@ app.get("/admin/login", (req, res) => {
 // Admin routes (secured)
 app.use("/admin", verifyJWT, isAdmin, adminRoutes);
 
+import { generateChartData } from "./controllers/admin/adminController.js";
+app.post("/diagram", generateChartData);
+
 export { app };
