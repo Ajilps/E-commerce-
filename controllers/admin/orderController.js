@@ -1,6 +1,7 @@
 import { Order } from "../../models/orderModel.js";
 import { User } from "../../models/userModel.js";
 import { Product } from "../../models/productModel.js";
+import { get } from "mongoose";
 
 const displayOrders = async (req, res) => {
   try {
@@ -140,6 +141,73 @@ const changeOrderStatus = async (req, res) => {
   }
 };
 
+//display the return requests to the admin
+const displayReturnReq = async (req, res) => {
+  console.log("oreders");
+  try {
+    const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 orders per page if not provided
+    const skip = (page - 1) * limit; // Calculate the number of documents to skip
+
+    // Extract status filter from the query string
+    const status = req?.query?.status || "Return Pending";
+
+    // Create a filter object based on the status
+    const filter = {};
+    if (status) {
+      filter.status = status;
+    }
+
+    // Fetch orders with pagination and filtering
+    const orders = await Order.find(filter)
+      .populate("products")
+      .populate("userId", "-password")
+      .skip(skip) // Skip documents for pagination
+      .limit(limit)
+      .sort({ createdAt: -1 }); // Limit the number of documents per page
+
+    // Get the total number of orders for pagination calculation
+    const totalOrders = await Order.countDocuments(filter);
+
+    // Calculate total pages
+    const totalPages = Math.ceil(totalOrders / limit);
+    if (!orders) {
+      return res
+        .status(404)
+        .render("admin/returns/return.ejs", { user: req.user });
+    }
+    return res.status(200).render("admin/returns/return.ejs", {
+      user: req.user,
+      orders: orders,
+      pagination: {
+        page,
+        limit,
+        totalPages,
+        totalOrders,
+      },
+      statusFilter: status,
+    });
+    res.send("success");
+  } catch (error) {
+    console.log("error from return request :", error);
+  }
+};
+//accept return request
+const approveReturn = async (req, res) => {
+  try {
+    const order = await Order.findById(req?.params?.orderId)
+      .populate("products.productId")
+      .populate("userId");
+    res
+      .status(200)
+      .render("admin/returns/returnDetails.ejs", { order, user: req.user });
+  } catch (error) {
+    console.log(error);
+  }
+};
+//reject return request
+const rejectReturn = async (req, res) => {};
+
 // export functions
 
 export {
@@ -148,4 +216,6 @@ export {
   updateOrderStatus,
   changeOrderStatus,
   displayUpdateOrderStatusForm,
+  displayReturnReq,
+  approveReturn,
 };

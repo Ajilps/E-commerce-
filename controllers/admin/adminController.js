@@ -80,6 +80,66 @@ async function mostSellingPro(dateFilter) {
   }
 }
 
+async function filteredProducts(dateFilter) {
+  // return a array of top 5 Brands [{},{},]
+  dateFilter.paymentStatus = {
+    $in: ["Paid", "Pending"],
+    $nin: ["Cancelled", "Refunded"],
+  };
+  try {
+    const data = await Order.aggregate([
+      { $match: dateFilter },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products.productId",
+          foreignField: "_id",
+          as: "pro",
+        },
+      },
+      {
+        $unwind: "$pro",
+      },
+      {
+        $set: {
+          "pro.oldPrice": "$products.price",
+          "pro.Query": "$products.quantity",
+        },
+      },
+      {
+        $unwind: "$pro.oldPrice",
+      },
+      { $unwind: "$pro.Query" },
+      {
+        $group: {
+          _id: "$pro",
+          count: { $sum: 1 },
+          revenue: { $sum: { $multiply: ["$pro.oldPrice", "$pro.Query"] } },
+        },
+      },
+      {
+        $project: {
+          "_id.name": 1,
+          count: 1,
+          revenue: 1,
+        },
+      },
+      {
+        $unwind: "$_id.name",
+      },
+      {
+        $sort: { count: -1 },
+      },
+      {
+        $limit: 5,
+      },
+    ]);
+    return data;
+  } catch (error) {
+    console.log("error when finding top brands:", error);
+  }
+}
+
 // add filter in this function
 //list all the top selling products based on time period
 // for that first i need to find the orders in that time period and find the products in that orders
@@ -223,12 +283,23 @@ async function mostSellingCategory(dateFilter) {
   } catch (error) {}
 }
 
+// function to generate user data
+async function generateUserData(dateFilter) {
+  let userData = {
+    blockedUser: 0,
+    totalUser: 0,
+  };
+}
+
 // generate all the data for chart function and it will return the data in json formate to the client
 // const generateChartData = async (req, res) => {
 async function generateChartData(req, res) {
   try {
-    const { reportType, startDate, endDate, quickDate } = req.body;
-    console.log(req.body);
+    const { reportType, endDate, startDate } = req.body;
+    const quickDate =
+      req.body.quickDate === "" ? new Date() : req.body.quickDate;
+    console.log(quickDate);
+    console.log("request filter form :", req.body);
     const dateFilterCreated = getDateFilter(
       reportType,
       startDate,
@@ -245,7 +316,9 @@ async function generateChartData(req, res) {
     );
     console.log(dateFilterCreated, dateFilterUpdated);
 
-    const mostSellingProducts = await mostSellingPro(dateFilterUpdated);
+    // const mostSellingProducts = await mostSellingPro(dateFilterUpdated);
+    const mostSellingProducts = await filteredProducts(dateFilterCreated);
+    console.log(mostSellingProducts);
 
     const mostSellingBrandData = await mostSellingBrand(dateFilterCreated);
     const mostSellingCategoryData = await mostSellingCategory(
@@ -255,7 +328,7 @@ async function generateChartData(req, res) {
     res.status(200).json({
       success: true,
       message: "data for dashboard ",
-      mostSellingProductsTillNow: mostSellingProducts,
+      mostSellingProducts: mostSellingProducts,
       mostSellingBrandData,
       mostSellingCategoryData,
     });

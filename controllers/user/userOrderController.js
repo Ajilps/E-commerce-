@@ -17,11 +17,19 @@ const displayCheckout = async (req, res) => {
     if (!cart) {
       return res.status(404).redirect("/user/cart");
     }
+    const filter = {};
+    filter.isActive = true;
+    filter._id = { $nin: req.user.redeemedCoupon };
+    filter.expiryDate = { $gt: new Date(new Date().setHours(0, 0, 0, 0)) };
+
+    // get the coupons that the user can use
+    const coupons = await Coupon.find(filter);
 
     return res.status(200).render("user/cart/checkout.ejs", {
       success: true,
       user: req.user,
       cart,
+      coupons,
     });
   } catch (error) {
     console.error(`user checkout display failed - ${error.message}`);
@@ -141,7 +149,7 @@ const placeOrder = async (req, res) => {
       deliveryDate,
       couponDiscount: req.body?.couponDiscount,
     };
-
+    console.log("order data from place order : ", orderData);
     // if the payment is razor pay
     if (req.body.paymentMethod === "razorpay") {
       const razorpay = new Razorpay({

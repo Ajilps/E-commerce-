@@ -98,9 +98,17 @@ const orderSchema = mongoose.Schema(
         "Cancelled",
         "Rejected",
         "Placed",
-        "Return",
+        "Returned",
+        "Return Pending",
+        "Return Approved",
       ],
       default: "Placed",
+    },
+    returnImg: {
+      type: [String],
+    },
+    returnMsg: {
+      type: String,
     },
     trackingNumber: {
       type: String,

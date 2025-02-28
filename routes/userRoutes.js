@@ -33,9 +33,9 @@ import {
 } from "../controllers/user/cartController.js"; //cart controller
 
 import {
-   displayWallet,
-   getWalletBalance,
-   } from "../controllers/user/walletController.js";  //wallet
+  displayWallet,
+  getWalletBalance,
+} from "../controllers/user/walletController.js"; //wallet
 
 import {
   displayCheckout,
@@ -48,9 +48,14 @@ import {
 } from "../controllers/user/userOrderController.js"; //checkout controller
 
 // retry update
-import { retryPayment, verifyPayment } from "../controllers/user/paymentController.js";
+import {
+  retryPayment,
+  verifyPayment,
+} from "../controllers/user/paymentController.js";
 
 import { verifyJWT } from "../middlewares/authMiddleware.js";
+
+import { uploads } from "../utils/multer.js";
 
 import { validateCoupon } from "../controllers/user/userCoupon.js"; // importing validate coupon from user coupon validation
 //importing user side product controllers
@@ -164,10 +169,10 @@ router.get("/orders/orderDetails/:orderId", displayOrdersDetails);
 router.post("/order/placeOrder", placeOrder);
 router.patch("/orders/cancel/:orderId", cancelOrder);
 router.post("/orders/confirm-payment", confirmPayment);
-router.get("/orders/getart",getCart);
+router.get("/orders/getart", getCart);
 //retry payment
-router.post("/orders/retryPayment",retryPayment);
-router.post("/orders/verifyPayment",verifyPayment);
+router.post("/orders/retryPayment", retryPayment);
+router.post("/orders/verifyPayment", verifyPayment);
 
 //wishlist
 router.get("/wishlist", displayWishlist);
@@ -178,5 +183,10 @@ router.delete("/wishlist/remove/:productId", removeFromWishlist);
 router.get("/wallet", displayWallet);
 router.get("/wallet/balance", getWalletBalance);
 
+//order invoice
+import { generateOrderPDFHandler } from "../controllers/user/invoiceController.js";
+import {createReturnReq} from "../controllers/user/returnController.js";
+router.get("/order/downloadInvoice", generateOrderPDFHandler);
+router.post("/order/return", uploads.array("file", 3), createReturnReq);
 
 export default router;

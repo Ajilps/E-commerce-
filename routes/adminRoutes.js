@@ -54,6 +54,8 @@ import {
   displayOrders,
   displayOrderDetails,
   changeOrderStatus,
+  displayReturnReq,
+  approveReturn,
 } from "../controllers/admin/orderController.js";
 
 import {
@@ -157,6 +159,9 @@ router.post(
 router.get("/orders", displayOrders);
 router.get("/orders/:orderId", displayOrderDetails);
 router.put("/orders/changeStatus/:orderId", changeOrderStatus);
+//return order
+router.get("/return", displayReturnReq);
+router.get("/return/:orderId", approveReturn);
 
 // coupons
 router.get("/coupons", displayCoupons);
@@ -177,4 +182,6 @@ router.get("/sales-report/download-excel", orderController.downloadExcel);
 // import { getReport } from "../controllers/admin/reportCopy.js";
 // router.get("/report", getReport);
 
+import { generateChartData } from "../controllers/admin/adminController.js";
+router.post("/getDashData", generateChartData);
 export default router;

@@ -298,6 +298,7 @@ const logoutUser = async (req, res) => {
       .status(200)
       .clearCookie("accessToken", options)
       .clearCookie("refreshToken", options)
+      .clearCookie("token", options)
       .render("login.ejs", {
         success: true,
         message: "Logged out successfully",

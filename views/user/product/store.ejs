@@ -549,13 +549,13 @@
                                         <div class="card product-card">
                                             <a href="/user/product/<%= product._id %>" class="text-decoration-none">
                                                 <div class="position-relative">
-                                                    <img src="<%= product.productImageUrls[0] %>"
+                                                    <img src="<%= product?.productImageUrls[0] %>"
                                                         class="card-img-top product-img" alt="iPhone">
                                                     <!-- <span class="new-badge"></span> -->
 
                                                     <button onclick="addToWishlist(`<%= product._id %>`,this,event)"
-                                                        class="wishlist-btn  <%= (wishlist[0].products.some(wProduct=>
-                                                    wProduct.productId.equals(product._id))) ? 'activeBtn' :'' %>">♡</button>
+                                                        class="wishlist-btn  <%= (wishlist[0]?.products?.some(wProduct=>
+                                                    wProduct?.productId?.equals(product._id))) ? 'activeBtn' :'' %>">♡</button>
 
                                                 </div>
                                                 <div class="card-body">
@@ -607,7 +607,7 @@
             <!-- <nav class="d-flex pagination"> -->
             <div class="pagination-container d-flex justify-content-end mt-4">
                 <% if (currentPage> 1) { %>
-                    <a class="btn btn-outline-secondary me-2" href="?page=<%= currentPage - 1 %>">&laquo;
+                    <a class="btn btn-outline-secondary me-2" onclick='pageClick("<%= currentPage - 1 %> ")'>&laquo;
                         Previous</a>
                     <% } %>
 
@@ -617,7 +617,7 @@
                                     <%= i%>
                                 </span>
                                 <% } else { %>
-                                    <a class="btn btn-outline-secondary me-2" href="?page=<%= i %>">
+                                    <a class="btn btn-outline-secondary me-2" onclick='pageClick("<%= i %> ")'>
                                         <%= i %>
                                     </a>
                                     <% } %>
@@ -625,7 +625,8 @@
 
                                             <% if (currentPage < totalPages+1) { %>
                                                 <a class="btn btn-outline-secondary"
-                                                    href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+                                                    onclick='pageClick("<%= currentPage + 1 %> ")'>Next
+                                                    &raquo;</a>
                                                 <% } %>
             </div>
             <!-- </nav> -->
@@ -737,7 +738,7 @@
                 }
 
                 const filterForm = document.getElementById('filterForm');
-
+                let page = 1;
                 // handel every input change 
                 filterForm.querySelectorAll('input,select, textarea').forEach(input => {
                     input.addEventListener('input', function (e) {
@@ -764,10 +765,19 @@
                         searchProducts(e);
                     }
                 });
+                function pageClick(pg) {
+                    page = pg
+                    console.log(page)
+                    searchProducts()
+                }
 
 
                 function searchProducts(e) {
-                    e.preventDefault();
+                    if (e) {
+                        e.preventDefault();
+
+                    }
+
 
                     const sort = document.getElementById('sort')?.value
                     const category = document.getElementById('category')?.value
@@ -786,7 +796,7 @@
                     const timeout = setTimeout(() => {
                         //    
 
-                        window.location.href = `?search=${searchInput}&sort=${sort}&category=${category}&availability=${availability}&brand=${brand}&rating=${rating}&discount=${discount}`
+                        window.location.href = `?page=${page}&search=${searchInput}&sort=${sort}&category=${category}&availability=${availability}&brand=${brand}&rating=${rating}&discount=${discount}`
                     }, 500);
                     // clearTimeout(timeout);
                 };

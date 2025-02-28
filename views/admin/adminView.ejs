@@ -100,7 +100,7 @@
             </div>
         </nav> -->
 
-<%- include ('adminHead') %>
+<%- include ('adminHead.ejs') %>
     <style>
         .chart-container {
 
@@ -166,9 +166,66 @@ Main Content -->
                         </div>
                     </div>
                 </div> -->
+    <!-- filter form  -->
+    <!-- Filters Card -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Filters</h5>
+        </div>
+        <div class="card-body">
+            <form id="reportFilters">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Report Type</label>
+                        <select class="form-select" id="reportType" name="reportType">
+                            <option value="daily">Daily Report</option>
+                            <option value="weekly">Weekly Report</option>
+                            <option value="monthly">Monthly Report</option>
+                            <option value="yearly">Yearly Report</option>
+                            <option value="custom">Custom Date Range</option>
+                        </select>
+                    </div>
+
+                    <!-- Custom Date Range -->
+                    <div class="col-md-3 custom-date-range" style="display: none;">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" class="form-control" name="startDate" id="startDate">
+                    </div>
+                    <div class="col-md-3 custom-date-range" style="display: none;">
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-control" name="endDate" id="endDate">
+                    </div>
+
+                    <!-- Quick Date Selector -->
+                    <div class="col-md-3 quick-date">
+                        <label class="form-label">Select Date</label>
+                        <input type="date" class="form-control" name="quickDate" id="quickDate">
+                    </div>
+
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-filter me-2"></i>Apply Filters
+                        </button>
+                        <button type="reset" class="btn btn-outline-secondary ms-2">
+                            <i class="fas fa-undo me-2"></i>Reset
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <script>
+                document.getElementById("reportType").addEventListener("change", function () {
+                    const isCustom = this.value === "custom";
+                    document.querySelectorAll(".custom-date-range").forEach(el => el.style.display = isCustom ? "block" : "none");
+                    document.querySelector(".quick-date").style.display = isCustom ? "none" : "block";
+                });
+            </script>
+
+        </div>
+    </div>
 
     <!-- Stats Cards -->
-    <div class="row toprow">
+    <!-- <div class="row toprow">
         <div class="col-md-3">
             <div class="stats-card">
                 <h6 class="text-muted">Total Sales</h6>
@@ -197,7 +254,7 @@ Main Content -->
                 <small class="text-success">+5% increase</small>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Charts Row -->
     <div class="row mt-4">
@@ -219,7 +276,7 @@ Main Content -->
                 <canvas id="topCategories"></canvas>
             </div>
         </div>
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
             <div class="chart-container">
                 <h5>Most Sold Items All time</h5>
                 <div class="mt-4">
@@ -252,11 +309,11 @@ Main Content -->
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <!-- Latest Orders -->
-    <div class="chart-container mt-4">
+    <!-- <div class="chart-container mt-4">
         <h5>Latest Orders</h5>
         <div class="table-responsive">
             <table class="table">
@@ -283,7 +340,7 @@ Main Content -->
                 </tbody>
             </table>
         </div>
-    </div>
+    </div> -->
     </div>
     </div>
     </div>
@@ -299,128 +356,120 @@ Main Content -->
             });
         });
 
-        // Revenue Chart
-        const ctx = document.getElementById('topBrands').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['br1', 'br2', 'br3', 'br4'],
-                datasets: [{
-                    label: 'Revenue',
-                    data: [65, 59, 80, 81, 56],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1,
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    }
-                }
+        window.addEventListener('load', (event) => {
+            console.log(event, "onload event:")
+            fetchAndDisplayData();
+        })
+        document.getElementById("reportFilters").addEventListener("submit", e => {
+            e.preventDefault();
+            // reportType, startDate, endDate, quickDate
+            const filter = new FormData(document.getElementById("reportFilters"))
+            const jsonData = Object.fromEntries(filter.entries());
+
+            fetchAndDisplayData(jsonData);
+        })
+
+        let instanceBrand = null;
+        let instanceCat = null;
+        let instancePro = null;
+
+
+
+
+        // fetch the chart data from back end and render the data on screen 
+
+        async function fetchAndDisplayData(filter) {
+
+            console.log("fetching the data:")
+            try {
+                await fetch("/admin/getDashData", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(filter)
+                }).then(res => res.json()).then(res => {
+                    console.log(res);
+
+                    let label = [];
+                    let data = [];
+                    res.mostSellingBrandData.forEach(brand => {
+                        console.log(brand);
+                        console.log(brand.Brands)
+                        label.push(brand.Brands)
+                        data.push(brand.count)
+                    });
+                    instanceBrand = drawChart(label, data, "topBrands", "line", instanceBrand);
+                    label = [];
+                    data = [];
+                    res.mostSellingCategoryData.forEach(cat => {
+                        label.push(cat.categoryName)
+                        data.push(cat.count)
+                    })
+                    instanceCat = drawChart(label, data, "topCategories", "bar", instanceCat);
+                    label = [];
+                    data = [];
+                    res.mostSellingProducts.forEach(pro => {
+
+                        label.push(pro?._id?.name)
+                        data.push(pro?.count)
+                    })
+                    instancePro = drawChart(label, data, "topProducts", "bar", instancePro);
+
+                    return
+                })
+            } catch (error) {
+                console.log(error);
+
             }
-        });
-        // Revenue Chart
-        const ctxM = document.getElementById('topProducts').getContext('2d');
-        new Chart(ctxM, {
-            type: 'bar',
-            data: {
-                labels: ['pro1', 'pro2', 'pro3', 'pro4', 'pro5'],
-                datasets: [{
-                    label: 'Quantity',
-                    data: [65, 59, 80, 81, 54],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1,
-                    tension: 0.1
+        }
+
+
+        function drawChart(labels, data, elementId, chartType, instance) {
+            const topBrands = document.getElementById(elementId).getContext("2d");
+
+            if (instance) {
+                instance.destroy();
+            }
+            return new Chart(topBrands, {
+                type: chartType,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Quantity",
+                        data: data,
+                        backgroundColor: [
+                            "rgba(255, 99, 132, 0.2)",
+                            "rgba(54, 162, 235, 0.2)",
+                            "rgba(255, 206, 86, 0.2)",
+                            "rgba(75, 192, 192, 0.2)",
+                            "rgba(153, 102, 255, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                        ],
+                        borderColor: [
+                            "rgba(255, 99, 132, 1)",
+                            "rgba(54, 162, 235, 1)",
+                            "rgba(255, 206, 86, 1)",
+                            "rgba(75, 192, 192, 1)",
+                            "rgba(153, 102, 255, 1)",
+                            "rgba(255, 159, 64, 1)",
+                        ],
+                        borderWidth: 1,
+                        tension: 0.1
+                    }]
                 },
-                ]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: "top",
+                        }
                     }
                 }
-            }
-        });
-        // Revenue Chart
-        const ctxC = document.getElementById('topCategories').getContext('2d');
-        new Chart(ctxC, {
-            type: 'bar',
-            data: {
-                labels: ['pro1', 'pro2', 'pro3', 'pro4', 'pro5'],
-                datasets: [{
-                    label: 'Quantity',
-                    data: [65, 59, 80, 81, 54],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1,
-                    tension: 0.1
-                },
-                ]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    }
-                }
-            }
-        });
+            });
+            return true;
+        }
+
     </script>
     </body>
 

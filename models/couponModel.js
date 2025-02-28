@@ -75,6 +75,20 @@ couponSchema.methods.isValid = function () {
   );
 };
 
+couponSchema.pre(/^find/, async function (next) {
+  const currentDate = new Date();
+
+  // Update all expired coupons to set `isActive` to false
+  await Coupon.updateMany(
+      { expiryDate: { $lt: currentDate }, isActive: true },
+      { isActive: false }
+  );
+
+  next();
+});
+
+
+
 // Create the Coupon model
 const Coupon = mongoose.model("Coupon", couponSchema);
 

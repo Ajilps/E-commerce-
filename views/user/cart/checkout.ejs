@@ -142,6 +142,53 @@
       /* Optional: Makes it look visually disabled */
     }
   </style>
+  <style>
+    .couponContainer {
+      border-radius: 5px;
+      border: solid 3px rgba(75, 2, 2, 0.199);
+      padding: 10px;
+    }
+
+    #coponContainer {
+      border: solid 2px rgba(116, 220, 238, 0.534);
+      border-radius: 5px;
+      margin: 10px 5px;
+      padding: 10px;
+
+      /* Animation properties */
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+    }
+
+    /* When visible */
+    #coponContainer.active {
+      max-height: 500px;
+      /* Adjust based on content height */
+      opacity: 1;
+    }
+
+    .couponText {
+      color: rgb(1, 38, 87);
+      font-weight: bold;
+    }
+
+    .showCoupon {
+      background-color: #ccd7ec34;
+      border: solid rgba(73, 205, 228, 0.521);
+      border-radius: 5px;
+      padding: 5px 10px;
+      box-shadow: 5px 5px 10px rgba(12, 101, 235, 0.54);
+      cursor: pointer;
+    }
+
+    #couponShowBtn {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 
 <body class="bg-light">
@@ -384,12 +431,45 @@
                       <div class="input-group">
                         <input name="coupon" id="couponCode" type="text" class="form-control" placeholder="Coupon Code">
                         <button onclick="checkCoupon()" class="btn btn-outline-dark">Apply</button>
-                        <!-- <button onclick="clearCoupon(this)" class="btn btn-outline-dark">Clear</button> -->
+                        <button onclick="removeCoupon()" class="btn btn-outline-dark">Clear</button>
                       </div>
                     </div>
 
+
+                    <div id="couponShowBtn">
+                      <button id="showCouponBtn" class="showCoupon btn btn-outline-info">Show coupons</button>
+                    </div>
+
+                    <section class="container overflow-scroll" id="coponContainer">
+
+                      <%coupons.forEach(coupon=>{ %>
+                        <span class="text ">MinOrd:<%= coupon?.minPurchase %>
+                        </span>
+                        <span>% <%= coupon.discountValue %>
+                        </span>
+                        <div class="couponContainer d-flex align-items-center m-2">
+                          <span class="couponText ms-2">
+                            <%= coupon.code %>
+                          </span>
+                          <button class="ms-auto btn btn-outline-primary" onclick="copyCoupon(this)">Copy</button>
+                        </div>
+
+                        <%})%>
+                          <!-- <div class="couponContainer d-flex align-items-center m-2">
+                            <span class="couponText ms-2">DISCOUNT50</span>
+                            <button class="ms-auto btn btn-outline-primary" onclick="copyCoupon(this)">Copy</button>
+                          </div>
+                          <div class="couponContainer d-flex align-items-center m-2">
+                            <span class="couponText ms-2">SAVE20</span>
+                            <button class="ms-auto btn btn-outline-primary" onclick="copyCoupon(this)">Copy</button>
+                          </div> -->
+                    </section>
+
+
+
+
                     <!-- Place Order Button -->
-                    <button id="placeOrderBtn" class="btn btn-dark w-100">Place Order</button>
+                    <button id="placeOrderBtn" class="btn btn-info w-100">Place Order</button>
             </div>
           </div>
         </div>
@@ -430,52 +510,84 @@
           return Math.round(price * 100) / 100;
         }
 
-        getcart().then(res => {
-          cart = res.cart;
-          return cart;
-        }).then(async (cart) => {
+        async function calculateOrderSummary() {
+          try {
+            getcart().then(res => {
+              cart = res.cart;
+              return cart;
+            }).then(async (cart) => {
+              subTotal = 0;
+              shipping = 0, discount = 0, tax = 0, total = 0;
+              console.log(cart.products);
+              cart.products.forEach(product => {
+                subTotal += product.productId.regularPrice
+                discount += product.productId.regularPrice - product.productId.sellingPrice
+                total += (subTotal - discount);
+              })
+              subTotal = roundPrice(subTotal);
+              discount = roundPrice(discount);
+              total = roundPrice(total);
+              document.getElementById("subTotal").innerText = subTotal;
+              document.getElementById("discount").innerText = discount;
+              document.getElementById("totalCost").innerText = total;
 
-          console.log(cart.products);
-          cart.products.forEach(product => {
-            subTotal += product.productId.regularPrice
-            discount += product.productId.regularPrice - product.productId.sellingPrice
-            total += (subTotal - discount);
-          })
-          subTotal = roundPrice(subTotal);
-          discount = roundPrice(discount);
-          total = roundPrice(total);
-          document.getElementById("subTotal").innerText = subTotal;
-          document.getElementById("discount").innerText = discount;
-          document.getElementById("totalCost").innerText = total;
+              // after calculation if the total is grater than 1000 disable the COD button 
+              // also if the total value grater than wallet balance disable the wallet option too.
 
-          // after calculation if the total is grater than 1000 disable the COD button 
-          // also if the total value grater than wallet balance disable the wallet option too.
+              //     // Fetch wallet balance from the server
+              const response = await fetch("/user/wallet/balance");
+              if (!response.ok) {
+                throw new Error(`Failed to fetch wallet balance: ${response.statusText}`);
+              }
+              const res = await response.json();
 
-          //     // Fetch wallet balance from the server
-          const response = await fetch("/user/wallet/balance");
-          if (!response.ok) {
-            throw new Error(`Failed to fetch wallet balance: ${response.statusText}`);
+              // Validate the response
+              walletBalance = parseFloat(res.balance);
+              walletBalanceSpan.innerText = walletBalance;
+
+              if (walletBalance < total) {
+                walletBtn.classList.add("disabled")
+              }
+              if (total > 1000) {
+                codBtn.classList.add("disabled")
+              }
+
+            }).catch(err => {
+              console.log(err)
+            });
+            return true;
+          } catch (error) {
+
           }
-          const res = await response.json();
 
-          // Validate the response
-          walletBalance = parseFloat(res.balance);
-          walletBalanceSpan.innerText = walletBalance;
+        }
 
-          if (walletBalance < total) {
-            walletBtn.classList.add("disabled")
-          }
-          if (total > 1000) {
-            codBtn.classList.add("disabled")
-          }
-
-        }).catch(err => {
-          console.log(err)
+        window.addEventListener("load", (event) => {
+          calculateOrderSummary();
         });
 
 
 
 
+      </script>
+
+      <script>
+        // Toggle coupon container visibility with smooth animation
+        document.getElementById('showCouponBtn').addEventListener('click', function () {
+          const couponContainer = document.getElementById('coponContainer');
+          couponContainer.classList.toggle('active');
+          this.innerText = couponContainer.classList.contains('active') ? 'Close' : 'Show coupons';
+        });
+
+        // Copy coupon text
+        function copyCoupon(button) {
+          const couponText = button.previousElementSibling.innerText;
+          navigator.clipboard.writeText(couponText).then(() => {
+
+          }).catch(err => {
+
+          });
+        }
       </script>
 
       <script>
@@ -525,50 +637,72 @@
 
 
         async function validateCoupon(couponCode) {
-          console.log(couponDiscount.innerText)
-          await fetch('/user/coupon/validateCoupon', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ couponCode })
-          }).then(response => response.json()).then(data => {
-            if (data.success) {
-              console.log(data.data._id); //  testing 
-              let couponDiscountAmount = roundPrice((Number(totalCost.innerText) * Number(data.data.discountValue) / 100))
-              couponDiscountAmount = (couponDiscountAmount < data.data.maxDiscount) ? couponDiscountAmount : data.data.maxDiscount;
-              couponDiscount.innerText = couponDiscountAmount;
-              totalCost.innerText = roundPrice(Number(totalCost.innerText) - Number(couponDiscountAmount));
-              validatedCoupon = data.data._id;
-              couponRedeemed = data.data.code;
-              couponDiscountAmount = couponDiscountAmount;
 
-              // If the final amount after adding the coupon is less than 1000 then enable the COD button 
-              // if the total is less than the wallet balance then enable the wallet button 
-              if (total - Number(couponDiscountAmount) < 1000) {
-                codBtn.classList.remove("disabled")
-              }
-              if (total - Number(couponDiscountAmount) < walletBalance) {
-                walletBtn.classList.remove("disabled")
+          try {
+            console.log(couponDiscount.innerText)
+            await fetch('/user/coupon/validateCoupon', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ couponCode })
+            }).then(response => response.json()).then(data => {
+              if (data.success) {
+                console.log(data.data._id); //  testing 
+                 couponDiscountAmount = roundPrice((Number(totalCost.innerText) * Number(data.data.discountValue) / 100))
+                couponDiscountAmount = (couponDiscountAmount < data.data.maxDiscount) ? couponDiscountAmount : data.data.maxDiscount;
+                couponDiscount.innerText = couponDiscountAmount;
+                totalCost.innerText = roundPrice(Number(totalCost.innerText) - Number(couponDiscountAmount));
+                validatedCoupon = data.data._id;
+                couponRedeemed = data.data.code;
+                couponDiscountAmount = couponDiscountAmount;
+                console.log("coupon discount amount after: ", couponDiscountAmount);
+
+                // If the final amount after adding the coupon is less than 1000 then enable the COD button 
+                // if the total is less than the wallet balance then enable the wallet button 
+                if (total - Number(couponDiscountAmount) < 1000) {
+                  codBtn.classList.remove("disabled")
+                }
+                if (total - Number(couponDiscountAmount) < walletBalance) {
+                  walletBtn.classList.remove("disabled")
+                } else {
+                  walletBtn.classList.add("disabled")
+                  codBtn.classList.add("disabled")
+                }
+
               } else {
-                walletBtn.classList.add("disabled")
-                codBtn.classList.add("disabled")
+                Swal.fire({
+                  title: 'Coupon Validation Failed',
+                  text: data.message,
+                  icon: 'error',
+                  confirmButtonText: 'Try Again'
+                });
+                document.getElementById('couponCode').value = ""
               }
+            });
 
-            } else {
-              Swal.fire({
-                title: 'Coupon Validation Failed',
-                text: data.message,
-                icon: 'error',
-                confirmButtonText: 'Try Again'
-              });
-              document.getElementById('couponCode').value = ""
-            }
-          });
-
-          return null;
+            return null;
+          } catch (error) {
+            console.log(error);
+          }
 
         }
+        //remove the coupon and change the values to previous state 
+        async function removeCoupon() {
+          try {
+
+            if (couponRedeemed != "") {
+              couponDiscount.innerText = 0;
+              couponRedeemed = "";
+              calculateOrderSummary();
+            }
+
+          } catch (error) {
+            console.error(error);
+          }
+        }
+
+
         // save new address and rerender the address field  
         async function saveAddress() {
           const form = document.getElementById('newAddressForm');
@@ -608,7 +742,7 @@
             }
             // console.log(res);
             // console.log("User form address response :", res?.user);
-            
+
             let user = res?.user;
 
             // Update the current address display
@@ -637,7 +771,7 @@
             // Close the modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('addressModal'));
             modal.hide();
-            
+
           }).catch(err => {
             console.log(err);
           })

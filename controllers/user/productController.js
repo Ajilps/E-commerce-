@@ -244,7 +244,10 @@ const displayStore = async (req, res) => {
     // collect the categories, brands, wishlist
     const categories = await Category.find({});
     const brands = await Brand.find({});
-    const wishlist = await Wishlist.find({ user: req.user._id });
+    let wishlist = await Wishlist.find({ user: req.user._id });
+    if(!wishlist){
+      wishlist = await Wishlist.create({user: req.user._id});
+    }
 
     // console.log(wishlist[0].products[0].productId.equals(products[0]._id));
 
