@@ -4,42 +4,10 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h1>Order Details</h1>
       <div>
-        <%# if( order.status=="Processing" || order.status=="Pending" ) {%>
-          <% const isDelivered=order.status==="Delivered" ; const isRejected=order.status==="Rejected" ; const
-            isCancelled=order.status==="Cancelled" ; const isPlaced=order.status==="Placed" ; const
-            canManageOrder=!isDelivered; const canRejectOrHold=!isRejected && !isCancelled; const
-            canAcceptOrder=!isPlaced && !isRejected; const canDeliverOrShip=!isCancelled && !isRejected; %>
-
-            <% if (canManageOrder) { %>
-              <% if (canRejectOrHold) { %>
-                <button onclick="changeOrder('<%= order._id %>', 'Rejected')" class="btn btn-danger me-2">
-                  Reject Order
-                </button>
-                <button onclick="changeOrder('<%= order._id %>', 'Pending')" class="btn btn-warning me-2">
-                  Hold Order
-                </button>
-                <% if (canAcceptOrder) { %>
-                  <button onclick="changeOrder('<%= order._id %>', 'Placed')" class="btn btn-success me-2">
-                    Accept Order
-                  </button>
-                  <% } %>
-                    <% } %>
-
-                      <% if (canDeliverOrShip) { %>
-                        <button onclick="changeOrder('<%= order._id %>', 'Delivered')" class="btn btn-success me-2">
-                          Delivered
-                        </button>
-                        <button onclick="changeOrder('<%= order._id %>', 'Shipped')" class="btn btn-info me-2">
-                          Shipped
-                        </button>
-                        <% } %>
-                          <% } else { %>
-                            <!-- Optionally add alternative actions for orders that are Delivered -->
-                            <!-- For example, a Return button: -->
-                            <!-- <button onclick="changeOrder('<%#= order._id %>', 'Return')" class="btn btn-info me-2">Return</button> -->
-                            <% } %>
-                              <!-- <button onclick="exportOrder(`<%#= order._id%>`)" class="btn btn-outline-secondary">Export</button> -->
-                              <!-- <button class="btn btn-outline-secondary">Print</button> -->
+        <button class="btn btn-outline-danger me-3 " onclick="returnController('<%=order._id%>', 'approve')">approve
+          Return </button>
+        <button class="btn btn-outline-danger me-3 " onclick="returnController('<%=order._id%>', 'reject')">Rejected
+          Return </button>
       </div>
     </div>
 
@@ -90,9 +58,23 @@
         </div> -->
       </div>
     </div>
-    <p>
-      <%#= order %>
-    </p>
+
+
+    <section class="returnContainer card mb-4 container-sm d-flex justify-content-evenly mb-4 mt-5 ">
+      <!-- return reason and image  -->
+      <div class="messageBox card-body">
+        <!-- display the reason for return request  -->
+        <p class=" card-title ">Return Message: <br>
+          <%= order.returnMsg %>
+        </p>
+      </div>
+      <div class="imageBox card-body">
+        <!-- display the images  -->
+        <img width="300px" src="<%= order.returnImg[0]%>" alt="image is not available">
+        <img width="300px" src="<%= order.returnImg[0]%>" alt="image is not available">
+        <img width="300px" src="<%= order.returnImg[0]%>" alt="image is not available">
+      </div>
+    </section>
 
     <div class="card mb-4">
       <div class="card-body">
@@ -137,6 +119,9 @@
         </p>
         <p>Discount:₹ <%= order.discount %>
         </p>
+        <p>
+          Coupon Discount : <%= order?.couponDiscount %>
+        </p>
 
         <p>Shipping Rate: <%= order.shippingFee || 0 %>
         </p>
@@ -145,30 +130,33 @@
       </div>
     </div>
     <!-- <button class="btn btn-outline-secondary mb-3">Print Address</button> -->
-    <div class="card mb-4">
+    <!-- <div class="card mb-4">
       <div class="card-body">
         <h5 class="card-title">Billing Address</h5>
 
 
         <div class="mb-3">
 
-          <% for (const element in order.billingAddress) {%>
-            <%=element %> : <%= order.billingAddress[element] %>,<br>
-                <% } %>
+          <%# for (const element in order.billingAddress) {%>
+            <%#=element %> : <%#= order.billingAddress[element] %>,<br>
+                <%# } %>
 
         </div>
 
 
       </div>
-    </div>
+    </div> -->
 
     <div class="card mb-4">
       <div class="card-body">
         <h5 class="card-title">Shipping Address</h5>
 
         <% for (const element in order.shippingAddress) {%>
-          <%=element %> : <%= order.shippingAddress[element] %> ,<br>
-              <% } %>
+          <% if(element !=="_id" && element !=="isDefault" ){%>
+            <%=element %> : <%= order.shippingAddress[element] %> ,<br>
+                <% } %>
+
+                  <%} %>
 
       </div>
     </div>
@@ -224,6 +212,32 @@
         })
       }
 
+      async function returnController(orderId, action) {
+        try {
+          console.log(orderId, action);
+          let data = {
+            "orderId": orderId, "action": action
+          }
+          await fetch("/admin/return/updateStatus", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data),
+          }).then(res => res.json()).then(res => {
+            if (res.success) {
+              console.log("status updated : ", res.message);
+            }
+            else {
+              console.log(res.message);
+            }
+          })
+
+        } catch (error) {
+          console.log(error)
+        }
+      }
+
       // // hold order 
       // function holdOrder(orderId) {
       //   Swal.fire({
@@ -234,7 +248,7 @@
       //     confirmButtonColor: '#3085d6',
       //     cancelButtonColor: '#d33',
       //     confirmButtonText: 'Yes, reject it!'
-      //   }).then((data)=> {  
+      //   }).then((data)=> {
       //     if(data.isConfirmed){
       //     fetch('/admin/orders/accept/' + orderId, {
       //       method: 'PUT',
@@ -251,22 +265,6 @@
       //   }})
       // }
 
-      function exportOrder(orderId) {
-        fetch('/admin/orders/export/' + orderId, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-          .then((response) => response.blob())
-          .then((data) => {
-            const url = window.URL.createObjectURL(data);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'order-' + orderId + '.pdf';
-            link.click();
-          });
-      }
     </script>
     </body>
 

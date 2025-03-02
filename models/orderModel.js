@@ -101,8 +101,13 @@ const orderSchema = mongoose.Schema(
         "Returned",
         "Return Pending",
         "Return Approved",
+        "Return Rejected",
       ],
       default: "Placed",
+    },
+    retReject: {
+      type: Boolean,
+      default: false,
     },
     returnImg: {
       type: [String],

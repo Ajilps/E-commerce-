@@ -318,7 +318,7 @@ async function generateChartData(req, res) {
 
     // const mostSellingProducts = await mostSellingPro(dateFilterUpdated);
     const mostSellingProducts = await filteredProducts(dateFilterCreated);
-    console.log(mostSellingProducts);
+    // console.log(mostSellingProducts);
 
     const mostSellingBrandData = await mostSellingBrand(dateFilterCreated);
     const mostSellingCategoryData = await mostSellingCategory(

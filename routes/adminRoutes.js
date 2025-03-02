@@ -55,7 +55,8 @@ import {
   displayOrderDetails,
   changeOrderStatus,
   displayReturnReq,
-  approveReturn,
+  displayReturnDetails,
+  updateStatus,
 } from "../controllers/admin/orderController.js";
 
 import {
@@ -161,7 +162,8 @@ router.get("/orders/:orderId", displayOrderDetails);
 router.put("/orders/changeStatus/:orderId", changeOrderStatus);
 //return order
 router.get("/return", displayReturnReq);
-router.get("/return/:orderId", approveReturn);
+router.get("/return/:orderId", displayReturnDetails);
+router.post("/return/updateStatus", updateStatus);
 
 // coupons
 router.get("/coupons", displayCoupons);

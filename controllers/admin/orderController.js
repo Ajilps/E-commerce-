@@ -2,6 +2,7 @@ import { Order } from "../../models/orderModel.js";
 import { User } from "../../models/userModel.js";
 import { Product } from "../../models/productModel.js";
 import { get } from "mongoose";
+import { Wallet } from "../../models/walletModel.js";
 
 const displayOrders = async (req, res) => {
   try {
@@ -193,7 +194,7 @@ const displayReturnReq = async (req, res) => {
   }
 };
 //accept return request
-const approveReturn = async (req, res) => {
+const displayReturnDetails = async (req, res) => {
   try {
     const order = await Order.findById(req?.params?.orderId)
       .populate("products.productId")
@@ -205,8 +206,98 @@ const approveReturn = async (req, res) => {
     console.log(error);
   }
 };
-//reject return request
-const rejectReturn = async (req, res) => {};
+
+//reject or accept return request
+const updateStatus = async (req, res) => {
+  // get the data
+  const { action, orderId } = req?.body;
+  if (!action.trim() || !orderId.trim()) {
+    return res
+      .status(400)
+      .json({ success: false, message: "invalid request " });
+  }
+  console.log(action, orderId);
+  // check the action type
+  if (action === "approve") {
+    const status = "Return Approved";
+    try {
+      const order = await Order.findById(orderId);
+      if (!order) {
+        return res
+          .status(404)
+          .json({ status: false, message: "Order not found" });
+      }
+      order.products.forEach(async (product) => {
+        await Product.findByIdAndUpdate(
+          product.productId,
+          {
+            $inc: { quantity: product.quantity },
+            $inc: { sellingCount: -product.quantity },
+          },
+          { new: true }
+        );
+      });
+
+      const orderUser = order.userId;
+      let userWallet = await Wallet.findOne({ user: req.user._id });
+      console.log(userWallet);
+      // testing
+      if (!userWallet) {
+        userWallet = await new Wallet({ user: orderUser }).save();
+      }
+      console.log(orderUser, userWallet);
+
+      order.status = status;
+
+      if (order.paymentStatus === "Paid") {
+        order.paymentStatus = "Refunded";
+        userWallet.balance += order.totalPrice;
+        userWallet.transactions.push({
+          type: "Deposit",
+          order: order._id,
+          amount: order.totalPrice,
+          status: "completed",
+          description: "product cancellation refund ",
+        });
+      } else {
+        order.paymentStatus = status;
+      }
+      // save the order and wallet
+      await order.save();
+      await userWallet.save();
+
+      return res.status(204).json({
+        success: true,
+        message: "Order Return Approved successfully !!",
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Server Error");
+    }
+  } else {
+    try {
+      // update the order by rejecting the return request
+      const order = await Order.findByIdAndUpdate(orderId, {
+        $set: { status: "Delivered", retReject: true },
+      });
+
+      //  = await Order.findById(orderId);
+      if (!order) {
+        return res
+          .status(404)
+          .json({ status: false, message: "Order not found" });
+      }
+    } catch (error) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Order not found" });
+    }
+  }
+
+  // revert the product stock count and if coupon is applied then remove the coupon from user and reduce the coupon used count
+
+  // if the action is to approve then if the payment status is paid then refund it to wallet
+};
 
 // export functions
 
@@ -217,5 +308,6 @@ export {
   changeOrderStatus,
   displayUpdateOrderStatusForm,
   displayReturnReq,
-  approveReturn,
+  displayReturnDetails,
+  updateStatus,
 };

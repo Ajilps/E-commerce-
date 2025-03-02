@@ -52,13 +52,13 @@
             </h5>
             <p class="card-text">Status : <%= order.status %>
             </p>
-            <% let date=new Date(order.createdAt) %>
+            <% let date=new Date(order?.createdAt) %>
               <p class="card-text">Added: <%= `${date.getDate()}/ ${date.toLocaleString('default', { month: 'short' })}
                   / ${date.getFullYear() }` %>
               </p>
-              <p class="card-text">Payment Method: <%= order.paymentMethod %>
+              <p class="card-text">Payment Method: <%= order?.paymentMethod %>
               </p>
-              <p class="card-text">Payment Status: <%= order.paymentStatus %>
+              <p class="card-text">Payment Status: <%= order?.paymentStatus %>
               </p>
               <!-- <p class="card-text">Shipping Method: Flat Shipping</p> -->
           </div>
@@ -96,7 +96,7 @@
 
     <div class="card mb-4">
       <div class="card-body">
-        <h5 class="card-title">Order List (+<%= order.products.length %> Orders)</h5>
+        <h5 class="card-title">Order List (+<%= order?.products?.length %> Orders)</h5>
         <div class="table-responsive">
           <table class="table table-hover">
             <thead>
@@ -112,16 +112,16 @@
                 <% order.products.forEach(product=> { %>
                   <tr>
                     <td>
-                      <%= product.productId.name %>
+                      <%= product?.productId?.name %>
                     </td>
                     <td>
                       <%= product.quantity %>
                     </td>
                     <td>₹ <%= product.price %>
                     </td>
-                    <td>₹ <%= product.price * product.quantity %>
+                    <td>₹ <%= product.price * product?.quantity %>
                     </td>
-                    <% total +=product.price * product.quantity %>
+                    <% total +=product.price * product?.quantity %>
                   </tr>
                   <% }) %>
                     <!-- <tr>
