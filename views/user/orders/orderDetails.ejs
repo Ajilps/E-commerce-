@@ -28,7 +28,8 @@
         <h1>Order Details</h1>
         <div>
           <!-- <button class="btn btn-primary me-2">+ Add Order</button> -->
-          <% if(order.status !="Cancelled" && order.status !="Rejected" && order.status !="Delivered" ){ %>
+          <!-- <%# if(order.status !="Cancelled" || order.status !="Rejected" || order.status !="Delivered" || order.status !="Return Pending"  ){ %> -->
+          <% if(order.status=="Pending" || order.status=="Placed" ){ %>
             <button id="cancelOrder" onclick="cancelOrder( '<%= order._id %>')" orderId="<%= order._id %>"
               class="btn btn-outline-danger">Cancel</button>
             <% } %>
@@ -39,13 +40,15 @@
                     class="btn btn-outline-info">Download
                     Invoice</button></a>
                 <!-- return button display only if the status is Delivered and the it should not display after 10 days of delivery -->
-                <%# if() %>
 
-                  <% } %>
+
+                <% } %>
+                  <% if(order.status=="Delivered" && order?.retReject==false ) {%>
                     <button id="openModal" onclick="returnOrder('<%= order._id%>',event)"
                       class="btn btn-outline-warning text-danger ms-1">
                       Return
                     </button>
+                    <% } %>
         </div>
 
       </div>
@@ -159,99 +162,6 @@
         </form>
       </section>
 
-      <script>
-        const returnFormContainer = document.querySelector(".returnFormContainer");
-        const blurBackground = document.querySelector("#blurBackground");
-        const returnForm = document.getElementById("returnForm");
-
-        async function returnOrder(orderId, event) {
-          try {
-            returnFormContainer.classList.remove("hide");
-            blurBackground.classList.remove("hide");
-
-            // adding a event listener for form submission and call validation function 
-            returnForm.addEventListener("submit", async (event) => {
-              event.preventDefault();
-              event.stopPropagation();
-
-              let validate = validateForm(returnForm);
-
-              if (validate) {
-                // send the form data to server 
-                console.log("sending form data to server ");
-                //   const inputs = returnForm.querySelectorAll("input");
-
-                //   inputs.forEach(input => {
-                //     console.log(input.type);
-                //   })
-                const formData = new FormData(returnForm);
-                formData.append("orderId", orderId)
-                await fetch("/user/order/return", {
-                  method: "POST",
-                  body: formData
-                }).then(res => res.json()).then(res => {
-
-                  if (res.success) {
-                    console.log("request submitted ")
-                    window.location.reload();
-                  }
-                  else {
-
-                    console.log("request not submitted ")
-                  }
-                })
-              }
-
-            })
-
-            // adding a event listener for reset form and clear the files 
-            returnForm.addEventListener("reset", (e) => {
-              e.preventDefault();
-
-              returnFormContainer.classList.add("hide");
-              blurBackground.classList.add("hide");
-              document.getElementById("images").value = "";
-
-            })
-
-            console.log(orderId);
-          } catch (error) {
-
-          }
-        }
-        // adding event listener for checking the image file limit 
-        document.getElementById("images").addEventListener("change", function (e) {
-          e.preventDefault();
-          document.getElementById("imageError").classList.add("hide");
-
-          if (this.files.length > 3) {
-            console.log("display error message max limit is 3")
-            document.getElementById("imageError").classList.remove("hide");
-            this.value = "";
-          }
-
-        })
-
-
-        function validateForm() {
-          let valid = true;
-          const regex = /^[A-Za-z]{3,100}$/;
-          const reason = document.getElementById("reason").value.trim();
-          if (!regex.test(reason)) {
-            document.getElementById("reasonError").classList.remove("hide");
-            valid = false;
-          }
-
-          const files = document.getElementById("images");
-          if (files.files.length == 0 || files.files.length > 3) {
-            document.getElementById("imageError").classList.remove("hide");
-            console.log("image validation testing ")
-            valid = false
-          }
-          return valid;
-
-        }
-      </script>
 
 
       <div class="row">
@@ -299,16 +209,27 @@
                   </span></p>
                 <% if(order.deliveryDate && order.status !=='Rejected' && order.status!=='Cancelled' ){ %>
                   <% let date=new Date(order?.deliveryDate) %>
-
-                    <p class="card-text">
-                      Expected Arrival:
-                      <%= `${date.getDate()}/${date.toLocaleString('default', { month: 'short' })} /
-                        ${date.getFullYear() }` || 0 %>
-                    </p>
-                    <% } %>
-                      <span> Total: </span>
-                      <p class=" card-text text-black badge bg-info">Total: ₹<%= order.totalPrice %>
+                    <!-- if the status is shipped  -->
+                    <% if(order.status=="Shipped" ){ %>
+                      <p class="card-text">
+                        Expected Arrival:
+                        <%= `${date.getDate()}/${date.toLocaleString('default', { month: 'short' })} /
+                          ${date.getFullYear() }` || 0 %>
                       </p>
+                      <% } %>
+                        <!--if the status is return approved then show return date   -->
+                        <% if(order.status=="Return Approved" ) {%>
+                          <% let returnDate=new Date(order?.returnDate) %>
+                            <p class="card-text">
+                              Expected return date :
+                              <%= `${returnDate.getDate()}/${returnDate.toLocaleString('default', { month: 'short' })} /
+                                ${returnDate.getFullYear() }` || 0 %>
+                            </p>
+                            <% } %>
+                              <% } %>
+                                <span> Total: </span>
+                                <p class=" card-text text-black badge bg-info">Total: ₹<%= order.totalPrice %>
+                                </p>
             </div>
           </div>
         </div>
@@ -400,6 +321,101 @@
 
 
 
+      <script>
+        const returnFormContainer = document.querySelector(".returnFormContainer");
+        const blurBackground = document.querySelector("#blurBackground");
+        const returnForm = document.getElementById("returnForm");
+
+        async function returnOrder(orderId, event) {
+          try {
+            returnFormContainer.classList.remove("hide");
+            blurBackground.classList.remove("hide");
+
+            // adding a event listener for form submission and call validation function 
+            returnForm.addEventListener("submit", async (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+
+              let validate = validateForm(returnForm);
+
+              if (validate) {
+                // send the form data to server 
+                console.log("sending form data to server ");
+                //   const inputs = returnForm.querySelectorAll("input");
+
+                //   inputs.forEach(input => {
+                //     console.log(input.type);
+                //   })
+                const formData = new FormData(returnForm);
+                formData.append("orderId", orderId)
+                await fetch("/user/order/return", {
+                  method: "POST",
+                  body: formData
+                }).then(res => res.json()).then(res => {
+
+                  if (res.success) {
+                    console.log("request submitted ")
+                    window.location.reload();
+                  }
+                  else {
+
+                    console.log("request not submitted ")
+                  }
+                })
+              }
+
+            })
+
+            // adding a event listener for reset form and clear the files 
+            returnForm.addEventListener("reset", (e) => {
+              e.preventDefault();
+
+              returnFormContainer.classList.add("hide");
+              blurBackground.classList.add("hide");
+              document.getElementById("images").value = "";
+
+            })
+
+            console.log(orderId);
+          } catch (error) {
+
+          }
+        }
+        // adding event listener for checking the image file limit 
+        document.getElementById("images").addEventListener("change", function (e) {
+          e.preventDefault();
+          document.getElementById("imageError").classList.add("hide");
+
+          if (this.files.length > 3) {
+            console.log("display error message max limit is 3")
+            document.getElementById("imageError").classList.remove("hide");
+            this.value = "";
+          }
+
+        })
+
+
+        function validateForm() {
+          let valid = true;
+          document.getElementById("reasonError").classList.add("hide");
+          const regex = /^[A-Za-z.,\s]+$/;
+          const reason = document.getElementById("reason").value.trim();
+          if (!regex.test(reason)) {
+            document.getElementById("reasonError").classList.remove("hide");
+            valid = false;
+          }
+
+          const files = document.getElementById("images");
+          document.getElementById("imageError").classList.add("hide");
+          if (files.files.length == 0 || files.files.length > 3) {
+            document.getElementById("imageError").classList.remove("hide");
+            console.log("image validation testing ")
+            valid = false
+          }
+          return valid;
+
+        }
+      </script>
       <script>
         // cancel order function 
         function cancelOrder(orderId) {

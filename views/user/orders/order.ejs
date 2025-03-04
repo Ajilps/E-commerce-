@@ -82,7 +82,7 @@
                     </td>
                     <td>₹<%= order.totalPrice %>/-</td>
                     <td>
-                      <span class="badge 
+                      <span class="text-black badge 
                     <% if (order.status === 'Pending') { %>bg-warning<% } %>
                     <% if (order.status === 'Processing') { %>bg-info<% } %>
                     <% if (order.status === 'Shipped') { %>bg-primary<% } %>
@@ -150,7 +150,7 @@
     </div>
 
     <%- include('../userFooter.ejs') %>
-    <script src="/script/user/productSearch.js"></script>
+      <script src="/script/user/productSearch.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

@@ -56,7 +56,7 @@ app.use(express.static(path.resolve("public")));
 // Apply nocache middleware globally
 app.use(nocache());
 //landing page
-app.get("/", isLoggedInUser, displayAllProducts);
+app.get("/", displayAllProducts);
 
 // testing the put data middleware
 

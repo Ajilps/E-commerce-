@@ -123,6 +123,9 @@ const orderSchema = mongoose.Schema(
       type: Date,
       required: false,
     },
+    returnDate: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );

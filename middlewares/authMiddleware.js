@@ -44,7 +44,7 @@ export const verifyJWT = async (req, res, next) => {
   }
 };
 
-// check whether the user is a admin or not 
+// check whether the user is a admin or not
 export const isAdmin = (req, res, next) => {
   try {
     if (req.user?.role === "admin") {
@@ -57,7 +57,7 @@ export const isAdmin = (req, res, next) => {
   }
 };
 
-// if the user have the access token then redirect the user to /user/home 
+// if the user have the access token then redirect the user to /user/home
 export const isLoggedInUser = async (req, res, next) => {
   try {
     const token = req.cookies?.accessToken || req.cookies?.token;

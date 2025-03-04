@@ -240,7 +240,7 @@ const updateStatus = async (req, res) => {
 
       const orderUser = order.userId;
       let userWallet = await Wallet.findOne({ user: req.user._id });
-      console.log(userWallet);
+      // console.log(userWallet);
       // testing
       if (!userWallet) {
         userWallet = await new Wallet({ user: orderUser }).save();
@@ -262,6 +262,10 @@ const updateStatus = async (req, res) => {
       } else {
         order.paymentStatus = status;
       }
+      const returnDate = new Date();
+      returnDate.setDate(returnDate.getDate() + 5);
+      order.returnDate = returnDate;
+
       // save the order and wallet
       await order.save();
       await userWallet.save();
