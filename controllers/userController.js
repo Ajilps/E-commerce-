@@ -223,7 +223,7 @@ const isLoggedIn = (req, res, next) => {
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    // console.log(`login email : ${email}`);
+    console.log(`login email : ${email}`);
 
     if (!email || !password) {
       return res
@@ -232,7 +232,7 @@ const loginUser = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
-    // console.log(`user from log in ${user}`)// debug testing
+    console.log(`user from log in ${user}`)// debug testing
 
     //
     // checking the user is present or not
@@ -255,7 +255,7 @@ const loginUser = async (req, res) => {
       user._id
     );
 
-    // console.log(`user tokens  : ${JSON.stringify( accessToken)}, ${refreshToken}`); // testing print statement
+    console.log(`user tokens  : ${JSON.stringify( accessToken)}, ${refreshToken}`); // testing print statement
 
     const options = {
       maxAge: 24 * 60 * 60 * 1000, // 1 day
