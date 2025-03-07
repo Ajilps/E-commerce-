@@ -155,28 +155,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <%- include ('userFooter.ejs') %>
       <script>
-        // Search functionality
-        const searchInput = document.getElementById('searchInput');
-        const searchResults = document.getElementById('searchResults');
+        // // Search functionality
+        // const searchInput = document.getElementById('searchInput');
+        // const searchResults = document.getElementById('searchResults');
 
-        searchInput.addEventListener('focus', () => {
-          searchResults.classList.add('show');
-        });
+        // searchInput.addEventListener('focus', () => {
+        //   searchResults.classList.add('show');
+        // });
 
-        searchInput.addEventListener('input', () => {
-          if (searchInput.value.length > 0) {
-            searchResults.classList.add('show');
-          } else {
-            searchResults.classList.remove('show');
-          }
-        });
+        // searchInput.addEventListener('input', () => {
+        //   if (searchInput.value.length > 0) {
+        //     searchResults.classList.add('show');
+        //   } else {
+        //     searchResults.classList.remove('show');
+        //   }
+        // });
 
-        // Close search results when clicking outside
-        document.addEventListener('click', (e) => {
-          if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-            searchResults.classList.remove('show');
-          }
-        });
+        // // Close search results when clicking outside
+        // document.addEventListener('click', (e) => {
+        //   if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+        //     searchResults.classList.remove('show');
+        //   }
+        // });
       </script>
 
 
