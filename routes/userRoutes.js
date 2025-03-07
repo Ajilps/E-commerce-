@@ -185,7 +185,7 @@ router.get("/wallet/balance", getWalletBalance);
 
 //order invoice
 import { generateOrderPDFHandler } from "../controllers/user/invoiceController.js";
-import {createReturnReq} from "../controllers/user/returnController.js";
+import { createReturnReq } from "../controllers/user/returnController.js";
 router.get("/order/downloadInvoice", generateOrderPDFHandler);
 router.post("/order/return", uploads.array("file", 3), createReturnReq);
 

@@ -1,34 +1,34 @@
 <%- include('../adminHead.ejs') %>
-<div class="container mt-4">
+  <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h4 class="mb-0">Customers</h4>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Customers List</li>
-                </ol>
-            </nav>
-        </div>
-        <div>
-            <!-- <button class="btn btn-outline-secondary me-2">
+      <div>
+        <h4 class="mb-0">Customers</h4>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/admin/home">Dashboard</a></li>
+            <li class="breadcrumb-item active">Customers List</li>
+          </ol>
+        </nav>
+      </div>
+      <div>
+        <!-- <button class="btn btn-outline-secondary me-2">
                 <i class="fas fa-download"></i> Export
             </button> -->
-            <!-- <button class="btn btn-success">
+        <!-- <button class="btn btn-success">
                 <i class="fas fa-plus"></i> Add New Customer
             </button> -->
-        </div>
+      </div>
     </div>
 
     <div class="card">
-        <div class="card-body">
-            <div class="d-flex justify-content-between mb-3">
-                <div class="btn-group">
-                    <button class="btn btn-outline-primary active">All</button>
-                    <!-- <button class="btn btn-outline-primary">Active</button> -->
-                    <!-- <button class="btn btn-outline-primary">Blocked</button> -->
-                </div>
-                <!-- <div class="d-flex gap-2">
+      <div class="card-body">
+        <div class="d-flex justify-content-between mb-3">
+          <div class="btn-group">
+            <button class="btn btn-outline-primary active">All</button>
+            <!-- <button class="btn btn-outline-primary">Active</button> -->
+            <!-- <button class="btn btn-outline-primary">Blocked</button> -->
+          </div>
+          <!-- <div class="d-flex gap-2">
                     <button class="btn btn-outline-secondary">
                         <i class="fas fa-calendar"></i> Select Date
                     </button>
@@ -36,62 +36,66 @@
                         <i class="fas fa-filter"></i> Filters
                     </button>
                 </div> -->
-            </div>
+        </div>
 
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead>
-                        <tr>
-                            
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone No</th>
-                            
-                            <th>Created</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="customerTableBody">
-                        <!-- Table content will be dynamically populated -->
-                         <% for(let i = 0; i< data.length; i++){ %>
-                            <tr>
-                                <td><%= locals.data[i].username %></td>
-                                <td><%= locals.data[i].email %></td>
-                                <td><%= locals.data[i].phone %></td>
-                               
-                                <!-- dob -->
-                                <% const date= data[i].createdAt ;
-                                const year=date.getFullYear(); 
-                                const month=date.toLocaleString('default', { month: 'short' }); // "Dec" 
-                                const day=date.getDate();
-                                 %>
-                                    <td>
-                                        <%= `${day}/${month}/${year}` %>
-                                    </td>
-                               
-                                    <!-- status -->
-                                    <td>
-                                      
-                                        <span class="badge rounded-pill alert-<%= data[i].isBlocked? 'danger' :'success' %> text-black">
-                                            <%= data[i].isBlocked? 'Blocked' : 'Active' %>
-                                        </span>
-                                    </td>
-                                    
-                                   <!-- block and unblock button -->
-                                <td>
-                                    <% if(data[i].isBlocked === false){ %>
-                                        <button class="btn btn-danger" style="width: 80px;">
-                                            <a href="/admin/blockCustomer?id=<%= data[i]._id %>" class="">block</a>
-                                        </button>
-                                        <% } else { %>
-                                        <button class="btn btn-success" style="width: 80px;">
-                                            <a href="/admin/unblockCustomer?id=<%= data[i]._id %>" class="">unblock</a>
-                                        </button>
-                                        <% } %>
-                                </td>
-                                <!-- delete and edit button -->
-                                <!-- <td>
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone No</th>
+
+                <th>Created</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="customerTableBody">
+              <!-- Table content will be dynamically populated -->
+              <% for(let i=0; i< data.length; i++){ %>
+                <tr>
+                  <td>
+                    <%= locals.data[i].username %>
+                  </td>
+                  <td>
+                    <%= locals.data[i].email %>
+                  </td>
+                  <td>
+                    <%= locals.data[i].phone %>
+                  </td>
+
+                  <!-- dob -->
+                  <% const date=data[i].createdAt ; const year=date.getFullYear(); const
+                    month=date.toLocaleString('default', { month: 'short' }); // "Dec" const day=date.getDate(); %>
+                    <td>
+                      <%= `${day}/${month}/${year}` %>
+                    </td>
+
+                    <!-- status -->
+                    <td>
+
+                      <span class="badge rounded-pill alert-<%= data[i].isBlocked? 'danger' :'success' %> text-black">
+                        <%= data[i].isBlocked? 'Blocked' : 'Active' %>
+                      </span>
+                    </td>
+
+                    <!-- block and unblock button -->
+                    <td>
+                      <% if(data[i].isBlocked===false){ %>
+
+                        <a href="/admin/blockCustomer?id=<%= data[i]._id %>" class="btn btn-danger">block</a>
+
+                        <% } else { %>
+
+                          <a href="/admin/unblockCustomer?id=<%= data[i]._id %>"
+                            class=" btn btn-btn-outline-secondary btn-success">unblock</a>
+
+                          <% } %>
+                    </td>
+                    <!-- delete and edit button -->
+                    <!-- <td>
                                     <a href="/customers/edit?id=<%= //data[i]._id %>" class="btn btn-sm btn-link">
                                         <i class="fas fa-edit"></i>
                                     </a>
@@ -99,39 +103,44 @@
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </td> -->
-                            </tr>
-                            <% } %>
-                    </tbody>
-                </table>
-            </div>
-
-           <!-- Pagination -->
-    <div class="pagination-container d-flex justify-content-end mt-4">
-        <% if (currentPage > 1) { %>
-            <a class="btn btn-outline-secondary me-2" href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
-        <% } %>
-        
-        <% for (let i = 1; i <= totalPages; i++) { %>
-            <% if (i === currentPage) { %>
-                <span class="btn btn-outline-primary active me-2"><%= i %></span>
-            <% } else { %>
-                <a class="btn btn-outline-secondary me-2" href="?page=<%= i %>"><%= i %></a>
-            <% } %>
-        <% } %>
-
-        <% if (currentPage < totalPages) { %>
-            <a class="btn btn-outline-secondary" href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
-        <% } %>
-    </div>
-</div>
+                </tr>
+                <% } %>
+            </tbody>
+          </table>
         </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container d-flex justify-content-end mt-4">
+          <% if (currentPage> 1) { %>
+            <a class="btn btn-outline-secondary me-2" href="?page=<%= currentPage - 1 %>">&laquo;
+              Previous</a>
+            <% } %>
+
+              <% for (let i=1; i <=totalPages; i++) { %>
+                <% if (i===currentPage) { %>
+                  <span class="btn btn-outline-primary active me-2">
+                    <%= i %>
+                  </span>
+                  <% } else { %>
+                    <a class="btn btn-outline-secondary me-2" href="?page=<%= i %>">
+                      <%= i %>
+                    </a>
+                    <% } %>
+                      <% } %>
+
+                        <% if (currentPage < totalPages) { %>
+                          <a class="btn btn-outline-secondary" href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+                          <% } %>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
+  </div>
 
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script> -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script> -->
 
 
-<%- include('../adminFoot.ejs') %>
-</body>
-</html>
+  <%- include('../adminFoot.ejs') %>
+    </body>
 
+    </html>

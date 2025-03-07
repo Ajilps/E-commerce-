@@ -8,11 +8,11 @@ import paginateResults from "../../middlewares/paginationMiddleware.js";
 
 // no product editing functions
 
-//display all products for lon logged in user
+//display all products for non logged in user
 
 const displayAllProducts = async (req, res) => {
   try {
-    const products = await Product.aggregate([
+    const topProducts = await Product.aggregate([
       {
         $lookup: {
           from: "categories",
@@ -35,15 +35,52 @@ const displayAllProducts = async (req, res) => {
       {
         $unwind: "$brand",
       },
+      {
+        $sort: { sellingCount: -1 },
+      },
+      {
+        $limit: 6,
+      },
     ]);
-    res.render("index.ejs", { products });
+
+    const newArrivals = await Product.aggregate([
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      {
+        $lookup: {
+          from: "brands",
+          localField: "brand",
+          foreignField: "_id",
+          as: "brand",
+        },
+      },
+      {
+        $unwind: "$category",
+      },
+      {
+        $unwind: "$brand",
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $limit: 6,
+      },
+    ]);
+    res.render("index.ejs", { topProducts, newArrivals });
   } catch (error) {
     console.log("error form display all product:", error);
     return res.redirect("/");
   }
 };
 
-// display product for logged in user
+// display product Details page for logged in user
 const displayProductUser = async (req, res) => {
   const productId = req.params.productId;
   try {
@@ -81,17 +118,16 @@ const displayProductUser = async (req, res) => {
         },
         {
           $unwind: "$brand",
-        } /* {
-              $unwind:{ path: "$variants",
-                  preserveNullAndEmptyArrays: true,
-              },
-            }, */,
+        },
       ])
     )[0];
 
-    console.log(product.variants);
+    // console.log(product, "testing");
 
-    return res.render("user/product/product.ejs", { product, user: req.user });
+    return res.render("user/product/product.ejs", {
+      product,
+      user: req.user,
+    });
   } catch (error) {
     console.log(error);
     return res.redirect("/user/home");
@@ -101,7 +137,7 @@ const displayProductUser = async (req, res) => {
 
 const displayUserHome = async (req, res) => {
   try {
-    const products = await Product.aggregate([
+    const topProducts = await Product.aggregate([
       {
         $lookup: {
           from: "categories",
@@ -124,14 +160,89 @@ const displayUserHome = async (req, res) => {
       {
         $unwind: "$brand",
       },
+      {
+        $sort: { sellingCount: -1 },
+      },
+      {
+        $limit: 6,
+      },
     ]);
 
-    return res.render("user/userHome.ejs", { user: req.user, products });
+    const newArrivals = await Product.aggregate([
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      {
+        $lookup: {
+          from: "brands",
+          localField: "brand",
+          foreignField: "_id",
+          as: "brand",
+        },
+      },
+      {
+        $unwind: "$category",
+      },
+      {
+        $unwind: "$brand",
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $limit: 6,
+      },
+    ]);
+
+    // const topBrands = await Product.aggregate([
+    //   {
+    //     $lookup: {
+    //       from: "categories",
+    //       localField: "category",
+    //       foreignField: "_id",
+    //       as: "category",
+    //     },
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "brands",
+    //       localField: "brand",
+    //       foreignField: "_id",
+    //       as: "brand",
+    //     },
+    //   },
+    //   {
+    //     $unwind: "$category",
+    //   },
+    //   {
+    //     $unwind: "$brand",
+    //   },
+    //   {
+    //     $sort: { createdAt: -1 },
+    //   },
+    //   {
+    //     $limit: 6,
+    //   },
+    // ]);
+
+    // console.log("testing", topProducts);
+    return res.render("user/userHome.ejs", {
+      user: req.user,
+      topProducts,
+      newArrivals,
+    });
   } catch (error) {
     console.log(error);
     return res.redirect("/");
   }
 };
+
+
 
 //displayStore
 const displayStore = async (req, res) => {
@@ -223,13 +334,12 @@ const displayStore = async (req, res) => {
   if (req.query.sort === "discount-desc") sortStage.$sort.offer = -1;
   if (Object.keys(sortStage.$sort).length) pipeline.push(sortStage); // the use of this line is to check if the sortStage is empty
 
-  // Pagination stages
-  pipeline.push({ $skip: skip }, { $limit: limit });
-
   // Count total documents
   const countPipeline = [...pipeline];
   countPipeline.push({ $count: "totalCount" });
 
+  // Pagination stages
+  pipeline.push({ $skip: skip }, { $limit: limit });
   try {
     // Run the aggregation
     //   console.log(pipeline) // testing
@@ -240,7 +350,8 @@ const displayStore = async (req, res) => {
 
     const totalCount =
       totalCountResult.length > 0 ? totalCountResult[0].totalCount : 0;
-    const totalPages = Math.ceil(totalCount / limit);
+    const totalPages = Math.ceil(Number(totalCount) / Number(limit));
+ 
     // collect the categories, brands, wishlist
     const categories = await Category.find({});
     const brands = await Brand.find({});

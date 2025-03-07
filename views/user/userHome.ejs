@@ -7,19 +7,7 @@
   <title>ShopEase - Your Online Store</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <style>
-    /* product image  */
-    /* .productImage{
-            width: 200px;
-            height: 200px;
-            object-fit: cover;
-        } */
-    /* image card */
-    .card {
-      max-width: 200px;
-      margin: 10px;
-    }
-  </style>
+  <link rel="stylesheet" href="/style/user/homePage/homePage.css">
 </head>
 
 <body>
@@ -36,11 +24,13 @@
       </div>
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <img src="/assets/productImg/androidphones-2048px-04371-2x1-1.webp" class="d-block w-100" alt="New Arrivals">
-          <div class="carousel-caption">
+          <img src="/assets/productImg/androidphones-2048px-04371-2x1-1.webp" class="d-block w-100 img-fluid"
+            alt="New Arrivals">
+          <div class="carousel-caption ">
             <h2>New Season Arrivals</h2>
             <p>Discover the latest trends and exclusive deals</p>
-            <button class="btn btn-primary btn-lg mb-2">Shop Now</button>
+            <a class="text-dark " href="/user/store"><button class="btn btn-primary btn-lg mb-2"> Shop
+                Now</button></a>
           </div>
         </div>
         <div class="carousel-item">
@@ -49,7 +39,8 @@
           <div class="carousel-caption">
             <h2>Special Summer Offers</h2>
             <p>Up to 50% off on selected items</p>
-            <button class="btn btn-primary btn-lg mb-2">View Deals</button>
+            <a class="text-dark " href="/user/store"> <button class="btn btn-primary btn-lg mb-2">View Deals</button>
+            </a>
           </div>
         </div>
         <div class="carousel-item">
@@ -58,7 +49,8 @@
           <div class="carousel-caption">
             <h2>Electronics Sale</h2>
             <p>Latest gadgets at unbeatable prices</p>
-            <button class="btn btn-primary btn-lg mb-2">Explore Now</button>
+            <a class="text-dark " href="/user/store"> <button class="btn btn-primary btn-lg mb-2">Explore
+                Now</button></a>
           </div>
         </div>
       </div>
@@ -74,95 +66,120 @@
 
 
 
-    <!-- Products Section -->
-    <!-- <div class="container my-5 ">
-        <h2 class="mb-4">Featured Products</h2>
-        <div class="product-container">
-            <div class="row row-cols-1 row-cols-md-4 g-5">
-                <% //products.forEach(product => { %>
-                    
-                    <div class="col ">
-                        <a href="/user/product/<%= //product._id %>" class="text-decoration-none ">
-                        <div class="card h-100">
-                            <img src="<%=//product.productImageUrls[0]%>" class="card-img-top  productImage img-fluid" alt="Product 1" >
-                            <div class="card-body">
-                                <h5 class="card-title"><%=//product.name%></h5>
-                                <p class="card-text">₹<%=// product.sellingPrice%></p>
-                                <p><%=// product.category.name%> </p>
-                                <p>offer: <%= //product.category.categoryOffers || 0%>  %</p>
-                             
-                            </div>
-                        </div>
-                    </a>
-                    </div> 
-                <%// });  %>
-            </div>
-        </div>
-    </div> -->
 
     <!--  -->
-    <div class="container py-4">
-      <div class="row">
-        <div class="col-12 mb-3">
-          <h4 class="text-dark">Recommended for you</h4>
-          <p class="text-secondary small">Personalized picks!</p>
-        </div>
+    <!-- Product Slider Section -->
+    <section class="product-slider-section">
+      <div class="product-slider-header">
+        <h2 class="product-slider-title">New Arrivals Products
+        </h2>
+        <a href="/user/store" class="view-all-link">See all offers</a>
       </div>
-      <div class="row g-4">
-        <!-- Product Card 1 -->
-        <% products.forEach(product=> { %>
-          <div class="col-md-4">
-            <a href="/user/product/<%= product._id %>" class="text-decoration-none">
-              <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body text-center p-4">
-                  <div class="h-75">
-                    <img src="<%=product.productImageUrls[0]%>" alt="Product Image" class="img-fluid mb-3 " />
-                  </div>
-                  <h6 class="card-title text-dark">
+
+      <div class="product-slider-container">
+        <button class="nav-button prev-button">&#10094;</button>
+
+        <div class="product-slider-track">
+          <% newArrivals?.forEach(product=> { %>
+            <a href="/user/product/<%= product._id %>">
+              <!-- Product 1 -->
+              <div class="product-card">
+                <img src="<%=product.productImageUrls[0]%>" alt="Wireless Earbuds" class="product-image">
+                <div class="product-info">
+                  <h3 class="product-title">
                     <%=product.name%>
-                  </h6>
-                  <div class="d-flex justify-content-center align-items-center gap-2">
-                    <span class="text-dark fw-bold">₹<%= product.sellingPrice%></span>
-                    <span class="text-decoration-line-through text-secondary">₹<%= product.regularPrice%></span>
-                    <span class="text-success">
-                      <%= product.category.categoryOffers || 0%>% off
-                    </span>
-                  </div>
+                  </h3>
+                  <span class="text-dark fw-bold product-price">₹<%= product.sellingPrice%></span> <br>
+                  <span class="text-decoration-line-through text-secondary">₹<%= product.regularPrice%></span>
+                  <span class="text-success">
+                    <%= product.category.categoryOffers || 0%>% off
+                  </span>
                 </div>
-              </div>
             </a>
-          </div>
-          <% }); %>
+        </div>
+        <% }); %>
 
 
-            <!--  -->
-            <script src="/script/user/productSearch.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-            <%- include ('userFooter.ejs') %>
-              <script>
-                // Search functionality
-                const searchInput = document.getElementById('searchInput');
-                const searchResults = document.getElementById('searchResults');
+      </div>
 
-                searchInput.addEventListener('focus', () => {
-                  searchResults.classList.add('show');
-                });
+      <button class="nav-button next-button">&#10095;</button>
+      </div>
+    </section>
+    <!--  -->
+    <!--  -->
+    <!-- Product Slider Section -->
+    <section class="product-slider-section">
+      <div class="product-slider-header">
+        <h2 class="product-slider-title">Top selling Products
+        </h2>
+        <a href="/user/store" class="view-all-link">See all offers</a>
+      </div>
 
-                searchInput.addEventListener('input', () => {
-                  if (searchInput.value.length > 0) {
-                    searchResults.classList.add('show');
-                  } else {
-                    searchResults.classList.remove('show');
-                  }
-                });
+      <div class="product-slider-container">
+        <button class="nav-button prev-button">&#10094;</button>
 
-                // Close search results when clicking outside
-                document.addEventListener('click', (e) => {
-                  if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-                    searchResults.classList.remove('show');
-                  }
-                });
-              </script>
+        <div class="product-slider-track">
+          <% topProducts?.forEach(product=> { %>
+            <!-- Product 1 -->
+            <a href="/user/product/<%= product._id %>">
+              <div class="product-card">
+                <img src="<%=product.productImageUrls[0]%>" alt="Wireless Earbuds" class="product-image">
+
+                <div class="product-info">
+                  <h3 class="product-title">
+                    <%=product.name%>
+                  </h3>
+
+                  <span class="text-dark fw-bold product-price">₹<%= product.sellingPrice%></span> <br>
+                  <span class="text-decoration-line-through text-secondary">₹<%= product.regularPrice%></span>
+                  <span class="text-success">
+                    <%= product.category.categoryOffers || 0%>% off
+                  </span>
+                </div>
+
+              </div>
+              <% }); %>
+
+
+        </div>
+
+        <button class="nav-button next-button">&#10095;</button>
+      </div>
+    </section>
+    <!--  -->
+
+
+    <!--  -->
+    <script src="/script/user/homePage/homePage.js"></script>
+    <script src="/script/user/productSearch.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <%- include ('userFooter.ejs') %>
+      <script>
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+
+        searchInput.addEventListener('focus', () => {
+          searchResults.classList.add('show');
+        });
+
+        searchInput.addEventListener('input', () => {
+          if (searchInput.value.length > 0) {
+            searchResults.classList.add('show');
+          } else {
+            searchResults.classList.remove('show');
+          }
+        });
+
+        // Close search results when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.classList.remove('show');
+          }
+        });
+      </script>
+
+
 </body>
 
 </html>

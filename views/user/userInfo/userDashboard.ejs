@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,27 +12,27 @@
             background-color: white;
             border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        
+
         .stats-card {
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 15px;
         }
-        
+
         .bg-light-blue {
             background-color: #e6f3ff;
         }
-        
+
         .bg-light-pink {
             background-color: #ffe6e6;
         }
-        
+
         .bg-light-green {
             background-color: #e6ffe6;
         }
-        
+
         .sidebar-link {
             display: flex;
             align-items: center;
@@ -41,24 +42,24 @@
             margin-bottom: 10px;
             border-radius: 5px;
         }
-        
+
         .sidebar-link.active {
             background-color: #000;
             color: white;
         }
-        
+
         .sidebar-link i {
             margin-right: 10px;
         }
-        
+
         .profile-card {
             background-color: white;
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        
+
         .avatar {
             width: 50px;
             height: 50px;
@@ -69,121 +70,137 @@
             justify-content: center;
             margin-right: 15px;
         }
-        
+
         body {
             background-color: #f8f9fa;
         }
     </style>
 </head>
+
 <body>
     <%- include('../userHeader.ejs') %>
-    <div class="container py-4">
-        <nav class="mb-3">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">HOME</a></li>
-                <li class="breadcrumb-item"><a href="#">PROFILE</a></li>
-                <li class="breadcrumb-item active">DASHBOARD</li>
-            </ol>
-        </nav>
-        
-        <div class="row">
-            <%- include('./userSidePanel.ejs') %>
-            
-            <div class="col-lg-9">
-                <div class="row mb-4">
-                    <div class="col-md-4 mb-3">
-                        <div class="stats-card bg-light-blue">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-shopping-cart fa-2x text-primary me-3"></i>
-                                <div>
-                                    <h3 class="mb-0">0</h3>
-                                    <p class="mb-0 text-muted">Total Orders</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <div class="stats-card bg-light-pink">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-clock fa-2x text-danger me-3"></i>
-                                <div>
-                                    <h3 class="mb-0">0</h3>
-                                    <p class="mb-0 text-muted">Pending Orders</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <div class="stats-card bg-light-green">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-check-circle fa-2x text-success me-3"></i>
-                                <div>
-                                    <h3 class="mb-0">0</h3>
-                                    <p class="mb-0 text-muted">Completed Orders</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="container py-4">
+            <nav class="mb-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">HOME</a></li>
+                    <li class="breadcrumb-item"><a href="#">PROFILE</a></li>
+                    <li class="breadcrumb-item active">DASHBOARD</li>
+                </ol>
+            </nav>
 
-                <div class="welcome-message mb-4">
-                    <h4>Hello, Muhammed Nabeel</h4>
-                    <p class="text-muted">
-                        From your account dashboard, you can easily check & view your 
-                        <a href="#">Recent Orders</a>, manage your 
-                        <a href="#">Shipping and Billing Addresses</a> and edit your 
-                        <a href="#">Password</a> and 
-                        <a href="#">Account Details</a>.
-                    </p>
-                </div>
+            <div class="row">
+                <%- include('./userSidePanel.ejs') %>
 
-                <div class="row">
-                    <div class="col-md-6 mb-4">
-                        <div class="profile-card">
-                            <h5 class="mb-4">ACCOUNT INFO</h5>
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="avatar">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div>
-                                    <h6 class="mb-1"><%= user.username%></h6>
-                                    
+                    <div class="col-lg-9">
+                        <div class="row mb-4">
+                            <div class="col-md-4 mb-3">
+                                <div class="stats-card bg-light-blue">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-shopping-cart fa-2x text-primary me-3"></i>
+                                        <div>
+                                            <h3 class="mb-0">0</h3>
+                                            <p class="mb-0 text-muted">Total Orders</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <p class="mb-1"><strong>Email:</strong><%= user.email%></p>
-                                <p class="mb-3"><strong>Phone:</strong> <%= user.phone%></p>
-                            </div>
-                            <a class="btn btn-outline-dark" href="/user/accountDetails">Edit Account</a>
-                        </div>
-                    </div>
 
-                    <div class="col-md-6 mb-4">
-                        <div class="profile-card">
-                            <h5 class="mb-4">DEFAULT ADDRESS</h5>
-                            <div class="mb-3">
-                                <% user.addresses.forEach(function(address){ %>
-                                    <% if(address.isDefault) {%>
-                                    <h6><%= address.name%></h6>
-                                    <p class="mb-1"><%= address.address%></p>
-                                    <p class="mb-1">Pin: <%= address.zipCode%></p>
-                                    <p class="mb-1">Phone Number: <%= address.phone%></p>
-                                    <p class="mb-3">Email: <%= address.email%></p>
-                                    
-                             <%  } }); %>
-                                
+                            <div class="col-md-4 mb-3">
+                                <div class="stats-card bg-light-pink">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-clock fa-2x text-danger me-3"></i>
+                                        <div>
+                                            <h3 class="mb-0">0</h3>
+                                            <p class="mb-0 text-muted">Pending Orders</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <a href="/user/shippingAddress" class="btn btn-outline-dark">Change Address</a>
+
+                            <div class="col-md-4 mb-3">
+                                <div class="stats-card bg-light-green">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-check-circle fa-2x text-success me-3"></i>
+                                        <div>
+                                            <h3 class="mb-0">0</h3>
+                                            <p class="mb-0 text-muted">Completed Orders</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="welcome-message mb-4">
+                            <h4>Hello, <%= user?.username %>
+                            </h4>
+                            <p class="text-muted">
+                                From your account dashboard, you can easily check & view your
+                                <a href="#">Recent Orders</a>, manage your
+                                <a href="#">Shipping and Billing Addresses</a> and edit your
+                                <a href="#">Password</a> and
+                                <a href="#">Account Details</a>.
+                            </p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="profile-card">
+                                    <h5 class="mb-4">ACCOUNT INFO</h5>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">
+                                                <%= user.username%>
+                                            </h6>
+
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <p class="mb-1"><strong>Email:</strong>
+                                            <%= user.email%>
+                                        </p>
+                                        <p class="mb-3"><strong>Phone:</strong>
+                                            <%= user.phone%>
+                                        </p>
+                                    </div>
+                                    <a class="btn btn-outline-dark" href="/user/accountDetails">Edit Account</a>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <div class="profile-card">
+                                    <h5 class="mb-4">DEFAULT ADDRESS</h5>
+                                    <div class="mb-3">
+                                        <% user.addresses.forEach(function(address){ %>
+                                            <% if(address.isDefault) {%>
+                                                <h6>
+                                                    <%= address.name%>
+                                                </h6>
+                                                <p class="mb-1">
+                                                    <%= address.address%>
+                                                </p>
+                                                <p class="mb-1">Pin: <%= address.zipCode%>
+                                                </p>
+                                                <p class="mb-1">Phone Number: <%= address.phone%>
+                                                </p>
+                                                <p class="mb-3">Email: <%= address.email%>
+                                                </p>
+
+                                                <% } }); %>
+
+                                    </div>
+                                    <a href="/user/shippingAddress" class="btn btn-outline-dark">Change Address</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
             </div>
         </div>
-    </div>
-    <%- include('../userFooter.ejs') %>
-    <script src="/script/user/productSearch.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+        <%- include('../userFooter.ejs') %>
+            <script src="/script/user/productSearch.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
