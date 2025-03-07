@@ -1,3 +1,5 @@
+console.log("home page");
+
 document.addEventListener("DOMContentLoaded", function () {
   // Get all slider containers on the page
   const sliderContainers = document.querySelectorAll(
