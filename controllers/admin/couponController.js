@@ -58,7 +58,7 @@ const displayAddCouponForm = async (req, res) => {
       const start = startDate.toISOString().split("T")[0];
       const expiry = expiryDate.toISOString().split("T")[0];
       console.log(coupon);
-
+      // added the coupon edit page
       return res.status(200).render("admin/coupon/addCoupon.ejs", {
         success: true,
         user: req.user,
