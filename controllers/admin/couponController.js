@@ -59,7 +59,7 @@ const displayAddCouponForm = async (req, res) => {
       const expiry = expiryDate.toISOString().split("T")[0];
       console.log(coupon);
       // added the coupon edit page
-      return res.status(200).render("admin/coupon/addCoupon.ejs", {
+      return res.status(200).render("admin/coupon/add_coupon.ejs", {
         success: true,
         user: req.user,
         coupon,
@@ -68,7 +68,7 @@ const displayAddCouponForm = async (req, res) => {
         cNew: true,
       });
     } else {
-      return res.status(200).render("admin/coupon/addCoupon.ejs", {
+      return res.status(200).render("admin/coupon/add_coupon.ejs", {
         success: true,
         user: req.user,
         cNew: null,
