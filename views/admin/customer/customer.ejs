@@ -67,35 +67,37 @@
                   </td>
 
                   <!-- dob -->
-                  <% const date=data[i].createdAt ; const year=date.getFullYear(); const
-                    month=date.toLocaleString('default', { month: 'short' }); const day=date.getDate(); %>
-                    <td>
-                      <%= `${day}/${month}/${year}` %>
-                    </td>
+                  <% const date=data[i].createdAt ; const year=date.getFullYear();%>
+                    <%const month=date.toLocaleString('default', { month: 'short' });%>
+                      <% const day=date.getDate(); %>
+                        <td>
+                          <%= `${day}/${month}/${year}` %>
+                        </td>
 
-                    <!-- status -->
-                    <td>
+                        <!-- status -->
+                        <td>
 
-                      <span class="badge rounded-pill alert-<%= data[i].isBlocked? 'danger' :'success' %> text-black">
-                        <%= data[i].isBlocked? 'Blocked' : 'Active' %>
-                      </span>
-                    </td>
+                          <span
+                            class="badge rounded-pill alert-<%= data[i].isBlocked? 'danger' :'success' %> text-black">
+                            <%= data[i].isBlocked? 'Blocked' : 'Active' %>
+                          </span>
+                        </td>
 
-                    <!-- block and unblock button -->
-                    <td>
-                      <% if(data[i].isBlocked===false){ %>
+                        <!-- block and unblock button -->
+                        <td>
+                          <% if(data[i].isBlocked===false){ %>
 
-                        <a href="/admin/blockCustomer?id=<%= data[i]._id %>" class="btn btn-danger">block</a>
+                            <a href="/admin/blockCustomer?id=<%= data[i]._id %>" class="btn btn-danger">block</a>
 
-                        <% } else { %>
+                            <% } else { %>
 
-                          <a href="/admin/unblockCustomer?id=<%= data[i]._id %>"
-                            class=" btn btn-btn-outline-secondary btn-success">unblock</a>
+                              <a href="/admin/unblockCustomer?id=<%= data[i]._id %>"
+                                class=" btn btn-btn-outline-secondary btn-success">unblock</a>
 
-                          <% } %>
-                    </td>
-                    <!-- delete and edit button -->
-                    <!-- <td>
+                              <% } %>
+                        </td>
+                        <!-- delete and edit button -->
+                        <!-- <td>
                                     <a href="/customers/edit?id=<%= //data[i]._id %>" class="btn btn-sm btn-link">
                                         <i class="fas fa-edit"></i>
                                     </a>
