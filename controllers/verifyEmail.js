@@ -63,6 +63,7 @@ const passSendOtp = async (req, res) => {
   } catch (error) {
     // res.status(500).send({ message: 'Error sending OTP.', error });
     console.log(error);
+    res.redirect("/pageerror");
     return false;
   }
 };
@@ -89,9 +90,9 @@ const resentOpt = async (req, res) => {
     });
     // res.status(200).send({ message: 'OTP sent successfully!' });
     // return true;
-    return res.status(200).json({ success:true, message:"otp resent "});
+    return res.status(200).json({ success: true, message: "otp resent " });
   } catch (error) {
-    res.status(500).send({ message: "Error sending OTP.", error });
+    res.status(500).json({ message: "Error sending OTP.", error });
     console.log(error);
     return false;
   }
@@ -113,12 +114,12 @@ const validateOtpForPassword = async (req, res) => {
     // redirect to the reset password page
     return res
       .status(200)
-      .send({ success: true, message: "verification successful" });
+      .json({ success: true, message: "verification successful" });
     // return res.render('resetPass/resetPass.ejs');
   }
   return res
     .status(404)
-    .send({ success: false, message: "otp dose not match" });
+    .json({ success: false, message: "otp dose not match" });
 };
 
 //change password

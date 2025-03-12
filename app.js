@@ -6,6 +6,7 @@ import session from "express-session";
 // import {noCache} from './middlewares/authMiddleware.js'
 import cors from "cors";
 import nocache from "nocache";
+import helmet from "helmet";
 
 // importing admin routes
 import adminRoutes from "./routes/adminRoutes.js";
@@ -55,6 +56,7 @@ app.use(express.static(path.resolve("public")));
 
 // Apply nocache middleware globally
 app.use(nocache());
+// app.use(helmet())
 //landing page
 app.get("/", displayAllProducts);
 
@@ -95,5 +97,9 @@ app.use("/admin", verifyJWT, isAdmin, adminRoutes);
 
 // import { generateChartData } from "./controllers/admin/adminController.js";
 // app.post("/diagram", generateChartData);
+
+app.use("*", (req, res) => {
+  return res.status(404).render("error.ejs");
+});
 
 export { app };

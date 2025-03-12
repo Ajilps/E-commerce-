@@ -1,4 +1,5 @@
 import { Wallet } from "../../models/walletModel.js";
+import statusCodes from "../../utils/statusCodes.js";
 
 // display wallet  (get)
 const displayWallet = async (req, res) => {

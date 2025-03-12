@@ -426,7 +426,20 @@
                         </strong></span>
                     </div>
 
+                    <!-- referral code -->
+                    <h5>Referral Code</h5>
+                    <div class="d-flex justify-content-between mb-4">
+                      <div class="input-group">
+                        <input name="referral" id="referralCode" type="text" class="form-control"
+                          placeholder="referral Code (Optional)">
+                        <button onclick="referralCheck()" class="btn btn-outline-dark">Add</button>
+                        <button onclick="removeReferral()" class="btn btn-outline-dark">Clear</button>
+                      </div>
+                    </div>
+
+                    <!-- ref end -->
                     <!-- Coupon Section -->
+                    <h5>Coupon Code</h5>
                     <div class="d-flex justify-content-between mb-4">
                       <div class="input-group">
                         <input name="coupon" id="couponCode" type="text" class="form-control" placeholder="Coupon Code">
@@ -649,7 +662,7 @@
             }).then(response => response.json()).then(data => {
               if (data.success) {
                 console.log(data.data._id); //  testing 
-                 couponDiscountAmount = roundPrice((Number(totalCost.innerText) * Number(data.data.discountValue) / 100))
+                couponDiscountAmount = roundPrice((Number(totalCost.innerText) * Number(data.data.discountValue) / 100))
                 couponDiscountAmount = (couponDiscountAmount < data.data.maxDiscount) ? couponDiscountAmount : data.data.maxDiscount;
                 couponDiscount.innerText = couponDiscountAmount;
                 totalCost.innerText = roundPrice(Number(totalCost.innerText) - Number(couponDiscountAmount));

@@ -232,7 +232,7 @@ const loginUser = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
-    console.log(`user from log in ${user}`)// debug testing
+    console.log(`user from log in ${user}`); // debug testing
 
     //
     // checking the user is present or not
@@ -255,7 +255,9 @@ const loginUser = async (req, res) => {
       user._id
     );
 
-    console.log(`user tokens  : ${JSON.stringify( accessToken)}, ${refreshToken}`); // testing print statement
+    console.log(
+      `user tokens  : ${JSON.stringify(accessToken)}, ${refreshToken}`
+    ); // testing print statement
 
     const options = {
       maxAge: 24 * 60 * 60 * 1000, // 1 day
@@ -398,6 +400,7 @@ const getCurrentUser = async (req, res) => {
     });
   } catch (error) {
     console.error(`user retrieval failed - ${error.message}`);
+    return res.redirect("/pageerror");
   }
 };
 
@@ -413,6 +416,7 @@ const getCurrentUserDetails = async (req, res) => {
     });
   } catch (error) {
     console.error(`user details retrieval failed - ${error.message}`);
+    return res.redirect("/pageerror");
   }
 };
 
@@ -456,6 +460,7 @@ const getCurrentUserShippingDetails = async (req, res) => {
     });
   } catch (error) {
     console.error(`user shipping details retrieval failed - ${error.message}`);
+    return res.redirect("/pageerror");
   }
 };
 
@@ -468,6 +473,7 @@ const displayChangePassword = async (req, res) => {
     });
   } catch (error) {
     console.error(`password change view failed - ${error.message}`);
+    return res.redirect("/pageerror");
   }
 };
 // change password (post)
@@ -506,6 +512,7 @@ const showShippingAddressForm = async (req, res) => {
       .render("user/userInfo/addAddress.ejs", { user: req.user });
   } catch (error) {
     console.error(`user shipping address addition failed - ${error.message}`);
+    return res.redirect("/pageerror");
   }
 };
 // add new shipping address post
@@ -574,6 +581,9 @@ const addNewShippingAddress = async (req, res) => {
       .json({ success: true, message: "Address added successfully", user });
   } catch (error) {
     console.error(`user shipping address addition failed - ${error.message}`);
+    return res
+      .state(500)
+      .json({ success: false, message: "Address adding failed" });
   }
 };
 
@@ -588,6 +598,7 @@ const editShippingAddress = async (req, res) => {
     });
   } catch (error) {
     console.error(`user shipping address edit failed - ${error.message}`);
+    return res.redirect("/pageerror");
   }
 };
 // edit shipping address (post)
@@ -729,6 +740,9 @@ const deleteShippingAddress = async (req, res) => {
       .json({ success: true, message: "Address deleted successfully", user });
   } catch (error) {
     console.error(`user shipping address deletion failed - ${error.message}`);
+    return res
+      .state(400)
+      .json({ success: false, message: "failed to update address!" });
   }
 };
 
@@ -740,6 +754,8 @@ const displayCheckout = async (req, res) => {
       .render("user/cart/checkout.ejs", { success: true, user: req.user });
   } catch (error) {
     console.error(`user checkout display failed - ${error.message}`);
+    return res.status(500).redirect("/pageerror");
+    
   }
 };
 

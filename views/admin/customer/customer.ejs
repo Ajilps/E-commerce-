@@ -114,7 +114,7 @@
         <!-- Pagination -->
         <div class="pagination-container d-flex justify-content-end mt-4">
           <% if (currentPage> 1) { %>
-            <a class="btn btn-outline-secondary me-2" href="?page=<%= currentPage - 1 %>">&laquo;
+            <a class="btn btn-outline-secondary me-2" href="?page=<%= Number(currentPage) - 1 %>">&laquo;
               Previous</a>
             <% } %>
 
@@ -131,7 +131,8 @@
                       <% } %>
 
                         <% if (currentPage < totalPages) { %>
-                          <a class="btn btn-outline-secondary" href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+                          <a class="btn btn-outline-secondary" href="?page=<%= Number(currentPage) + 1 %>">Next
+                            &raquo;</a>
                           <% } %>
         </div>
       </div>

@@ -74,6 +74,9 @@ const router = Router();
 
 //admin routes secured
 
+router.get("/", verifyJWT, isAdmin, (req, res) => {
+  res.render("admin/adminView.ejs", { user: req.user });
+});
 router
   .get("/home", verifyJWT, isAdmin, (req, res) => {
     res.render("admin/adminView.ejs", { user: req.user });
