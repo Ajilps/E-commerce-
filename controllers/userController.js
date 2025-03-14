@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 // import mongoose, { trusted } from 'mongoose';
 import session from "express-session";
 import { generateRefCode } from "../utils/refCode.js";
+import { Wallet } from "../models/walletModel.js";
 
 //email otp
 import nodemailer from "nodemailer";
@@ -45,7 +46,7 @@ function generateOtp() {
 
 // check whether the user is already exists or not if not sent a success message
 const registerUser = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, referralCode } = req.body;
 
   try {
     // checking the values are present or not
@@ -58,9 +59,10 @@ const registerUser = async (req, res) => {
     // checking the user is already exist or not
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User already exists" });
+      return res.status(400).json({
+        success: false,
+        message: "User already exists with this email",
+      });
     }
 
     userData = req.body;
@@ -154,6 +156,7 @@ const verifyOpt = async (req, res) => {
       "-password -refreshToken"
     );
     // console.log(createdUser);// test
+
     // // checking the user is created or not
     if (!createdUser) {
       return res.status(400).json({
@@ -162,6 +165,59 @@ const verifyOpt = async (req, res) => {
       });
     }
 
+    // if there is referral code is their then give the referred user a 50₹ and the give the new user a 50₹ too.
+    if (userData.referralCode) {
+      // console.log(userData.referralCode);
+      try {
+        // find the referral user
+        const refUser = await User.findOne({
+          referralCode: userData.referralCode,
+        });
+
+        // console.log("referred user data :", refUser);
+        // update the refUser wallet with 50₹
+
+        const refWallet = await Wallet.findOneAndUpdate(
+          { user: refUser._id },
+          {
+            $inc: { balance: 50 },
+            $push: {
+              transactions: {
+                type: "Deposit",
+                order: null,
+                amount: 50,
+                status: "completed",
+                description: "Referral Reward ",
+                createdAt: new Date(),
+              },
+            },
+          },
+          { new: true }
+        );
+
+        // console.log("wallet from new user signup:", refWallet); // testing
+        // create a wallet for the new user and add 50₹ in the wallet as welcome bonos
+        const newUserWallet = await Wallet.create({
+          user: createdUser._id,
+          balance: 50,
+          transactions: [
+            {
+              type: "Deposit",
+              order: null,
+              amount: 50,
+              status: "completed",
+              description: "Welcome referral gift",
+              createdAt: new Date(),
+            },
+          ],
+        });
+        // console.log("new user wallet :", newUserWallet); //testing
+      } catch (error) {
+        console.log("wallet update failed ", error);
+      }
+    } else {
+      console.log(userData?.referralCode);
+    }
     return res.status(201).send({
       success: true,
       message: "OTP verified successfully! and user created",
@@ -755,7 +811,6 @@ const displayCheckout = async (req, res) => {
   } catch (error) {
     console.error(`user checkout display failed - ${error.message}`);
     return res.status(500).redirect("/pageerror");
-    
   }
 };
 

@@ -82,8 +82,8 @@
         <div class="container py-4">
             <nav class="mb-3">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">HOME</a></li>
-                    <li class="breadcrumb-item"><a href="#">PROFILE</a></li>
+                    <li class="breadcrumb-item"><a href="/user/home">HOME</a></li>
+                    <li class="breadcrumb-item"><a href="/user/me">PROFILE</a></li>
                     <li class="breadcrumb-item active">DASHBOARD</li>
                 </ol>
             </nav>
@@ -92,7 +92,7 @@
                 <%- include('./userSidePanel.ejs') %>
 
                     <div class="col-lg-9">
-                        <div class="row mb-4">
+                        <!-- <div class="row mb-4">
                             <div class="col-md-4 mb-3">
                                 <div class="stats-card bg-light-blue">
                                     <div class="d-flex align-items-center">
@@ -128,7 +128,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
                         <div class="welcome-message mb-4">
                             <h4>Hello, <%= user?.username %>
