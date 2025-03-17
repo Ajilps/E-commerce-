@@ -45,6 +45,7 @@
           <!-- <option value="" class="text-muted">All Statuses</option> -->
           <option value="Returned" class="status-pending">Returned</option>
           <option value="Return Approved" class="status-shipped">Return Approved</option>
+          <option value="Return Rejected" class="status-shipped">Return Rejected</option>
 
 
         </select>
@@ -129,18 +130,21 @@
     <!-- Pagination Controls -->
     <div class="pagination">
       <% if (pagination.page> 1) { %>
-        <a href="/admin/return?page=<%= pagination.page - 1 %>&limit=<%= pagination.limit %>">Previous</a>
+        <a
+          href="/admin/return?page=<%= pagination.page - 1 %>&limit=<%= pagination.limit %>&status=<%=statusFilter%>">Previous</a>
         <% } %>
 
           <% for (let i=1; i <=pagination.totalPages; i++) { %>
-            <a href="/admin/return?page=<%= i %>&limit=<%= pagination.limit %>"
+            <a href="/admin/return?page=<%= i %>&limit=<%= pagination.limit %>&status=<%=statusFilter%>"
               class="<%= i === pagination.page ? 'active' : '' %>">
               <%= i %>
             </a>
             <% } %>
 
               <% if (pagination.page < pagination.totalPages) { %>
-                <a href="/admin/return?page=<%= pagination.page + 1 %>&limit=<%= pagination.limit %>">Next</a>
+                <!-- <a href="/admin/return?page=<%#= pagination.page + 1 %>&limit=<%#= pagination.limit %>">Next</a> -->
+                <a
+                  href="/admin/return?page=<%= pagination.page + 1 %>&limit=<%= pagination.limit %>&status=<%=statusFilter%>">Next</a>
                 <% } %>
     </div>
   </div>
@@ -150,6 +154,7 @@
       document.getElementById('statusFilter').value = "<%= statusFilter || '' %>";
       document.getElementById('statusFilter').addEventListener('change', function () {
         const status = this.value;
+        console.log(status);
         window.location.href = `?status=${status}&page=1&limit=10`;
       });
     </script>

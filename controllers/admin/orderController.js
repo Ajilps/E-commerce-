@@ -3,6 +3,7 @@ import { User } from "../../models/userModel.js";
 import { Product } from "../../models/productModel.js";
 import { get } from "mongoose";
 import { Wallet } from "../../models/walletModel.js";
+import { formatCurrency } from "../../utils/currency.js";
 
 const displayOrders = async (req, res) => {
   try {
@@ -158,7 +159,11 @@ const displayReturnReq = async (req, res) => {
     if (status) {
       filter.status = status;
     }
-
+    if (req.query?.status == "Return Rejected") {
+      delete filter.status;
+      filter.retReject = true;
+    }
+    console.log(filter);
     // Fetch orders with pagination and filtering
     const orders = await Order.find(filter)
       .populate("products")
@@ -212,9 +217,10 @@ const updateStatus = async (req, res) => {
   // get the data
   const { action, orderId } = req?.body;
   if (!action.trim() || !orderId.trim()) {
-    return res
-      .status(400)
-      .json({ success: false, message: "invalid request " });
+    return res.status(400).json({
+      success: false,
+      message: "invalid request action and orderId is needed ",
+    });
   }
   console.log(action, orderId);
   // check the action type
@@ -225,7 +231,7 @@ const updateStatus = async (req, res) => {
       if (!order) {
         return res
           .status(404)
-          .json({ status: false, message: "Order not found" });
+          .json({ status: false, message: "Order not found " });
       }
       order.products.forEach(async (product) => {
         await Product.findByIdAndUpdate(
@@ -239,8 +245,9 @@ const updateStatus = async (req, res) => {
       });
 
       const orderUser = order.userId;
-      let userWallet = await Wallet.findOne({ user: req.user._id });
-      // console.log(userWallet);
+      console.log(`order user: ${orderUser}`);
+      let userWallet = await Wallet.findOne({ user: orderUser });
+      console.log(userWallet);
       // testing
       if (!userWallet) {
         userWallet = await new Wallet({ user: orderUser }).save();
@@ -251,7 +258,10 @@ const updateStatus = async (req, res) => {
 
       if (order.paymentStatus === "Paid") {
         order.paymentStatus = "Refunded";
-        userWallet.balance += order.totalPrice;
+
+        userWallet.balance = formatCurrency(
+          order.totalPrice + userWallet.balance
+        );
         userWallet.transactions.push({
           type: "Deposit",
           order: order._id,
@@ -260,7 +270,7 @@ const updateStatus = async (req, res) => {
           description: "product cancellation refund ",
         });
       } else {
-        order.paymentStatus = status;
+        order.paymentStatus = "Cancelled";
       }
       const returnDate = new Date();
       returnDate.setDate(returnDate.getDate() + 5);
@@ -270,7 +280,8 @@ const updateStatus = async (req, res) => {
       await order.save();
       await userWallet.save();
 
-      return res.status(204).json({
+      console.log("response was success from order return approved success : ");
+      return res.status(200).json({
         success: true,
         message: "Order Return Approved successfully !!",
       });
@@ -291,6 +302,9 @@ const updateStatus = async (req, res) => {
           .status(404)
           .json({ status: false, message: "Order not found" });
       }
+      return res
+        .status(200)
+        .json({ success: true, message: "Order Return rejected successfully" });
     } catch (error) {
       return res
         .status(404)

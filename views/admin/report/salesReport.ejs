@@ -53,9 +53,15 @@
                         <div class="col-md-3 quick-date"
                             style="display: <%= filters.reportType !== 'custom' ? 'block' : 'none' %>">
                             <label class="form-label">Select Date</label>
-                            <input type="date" class="form-control" name="quickDate" value="<%= filters.quickDate %>"
-                                id="quickDate">
+                            <input type="date" class="form-control" name="quickDate" id="quickDate">
                         </div>
+
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                                let today = new Date().toISOString().split('T')[0]; // Get YYYY-MM-DD format
+                                document.getElementById("quickDate").value = today;
+                            });
+                        </script>
 
                         <div class="col-12">
                             <button type="submit" class="btn btn-primary">
@@ -170,10 +176,10 @@
                             <% ordersData.forEach(order=> { %>
                                 <tr>
                                     <td>
-                                        <%= moment(order.createdAt).format('YYYY-MM-DD') %>
+                                        <%= moment(order?.createdAt)?.format('YYYY-MM-DD') %>
                                     </td>
                                     <td>
-                                        <%= order.orderId %>
+                                        <%= order?.orderId %>
                                     </td>
                                     <td>
                                         <%= order?.shippingAddress?.name || "user name" %>
@@ -181,21 +187,21 @@
                                     <td>
                                         <%= order.products.length %>
                                     </td>
-                                    <td>₹<%= order.subtotal.toLocaleString() %>
+                                    <td>₹<%= order?.subtotal?.toLocaleString() %>
                                     </td>
-                                    <td>₹<%= order.discount.toLocaleString() %>
+                                    <td>₹<%= order?.discount?.toLocaleString() %>
                                     </td>
-                                    <td>₹<%= order.couponDiscount.toLocaleString() || 0 %>
+                                    <td>₹<%= order?.couponDiscount?.toLocaleString() || 0 %>
                                     </td>
-                                    <td>₹<%= order.totalPrice.toLocaleString() %>
-                                    </td>
-                                    <td>
-                                        <%= order.paymentMethod %>
+                                    <td>₹<%= order?.totalPrice?.toLocaleString() %>
                                     </td>
                                     <td>
-                                        <span class="badge bg-<%= order.status === 'Completed' ? 'success' : 
-                                        order.status === 'Pending' ? 'warning' : 
-                                        order.status === 'Cancelled' ? 'danger' : 'info' %>">
+                                        <%= order?.paymentMethod %>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-<%= order?.status === 'Completed' ? 'success' : 
+                                        order?.status === 'Pending' ? 'warning' : 
+                                        order?.status === 'Cancelled' ? 'danger' : 'info' %>">
                                             <%= order.status %>
                                         </span>
                                     </td>

@@ -289,6 +289,7 @@ const placeOrder = async (req, res) => {
       return res.status(200).json({ success: true, order: orderData });
     }
   } catch (error) {
+    console.log(error);
     console.error(`User order placement failed: ${error}`);
     return res.status(500).json({ success: false, message: error.message });
   }
@@ -461,6 +462,7 @@ const updateOrderStatus = async (req, res) => {
 //delete the order
 // render the order delete page
 const cancelOrder = async (req, res) => {
+
   const orderId = req.params.orderId;
   // add the item to stock is pending
   try {
@@ -469,6 +471,9 @@ const cancelOrder = async (req, res) => {
       return res
         .status(404)
         .json({ status: false, message: "Order not found" });
+    }
+    if(order.status == "Shipped" || order.status ==  "Delivered" ||  order.status ==  "Delivered"){
+      return res.status(400).json({ status: false, message: "Order can't be cancelled" });
     }
     order.products.forEach(async (product) => {
       await Product.findByIdAndUpdate(
@@ -483,7 +488,7 @@ const cancelOrder = async (req, res) => {
 
     const orderUser = order.userId;
     let userWallet = await Wallet.findOne({ user: req.user._id });
-    console.log(userWallet);
+    // console.log(userWallet);
     // testing
     if (!userWallet) {
       userWallet = await new Wallet({ user: orderUser }).save();

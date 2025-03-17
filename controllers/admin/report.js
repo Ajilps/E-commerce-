@@ -45,10 +45,16 @@ const orderController = {
   // Render sales report page with filtered data
   getSalesReport: async (req, res) => {
     try {
-      const { reportType, startDate, endDate, quickDate } = req.query;
-      console.log(reportType, startDate, endDate, quickDate);
-
+      const { reportType, startDate, endDate } = req.query;
+      const quickDate = !req.body.quickDate ? new Date() : req?.body?.quickDate;
       const currentPage = req?.query?.page || 1;
+      console.log(
+        "report request from client: ",
+        reportType,
+        startDate,
+        endDate,
+        quickDate
+      );
       const limit = 10;
 
       // Get date filter using helper function
@@ -60,7 +66,7 @@ const orderController = {
       );
       console.log("data filtered : ", dateFilter);
       // Fetch orders with filter
-      const orders = await Order.find(dateFilter)
+      const orders = await Order.find(dateFilter);
       const ordersData = await Order.find(dateFilter)
         .sort({ createdAt: -1 })
         .skip(limit * (currentPage - 1))
@@ -160,8 +166,8 @@ const orderController = {
   // Generate and download PDF report
   downloadPDF: async (req, res) => {
     try {
-      const { reportType, startDate, endDate, quickDate } = req.query;
-
+      const { reportType, startDate, endDate } = req.query;
+      const quickDate = !req.body.quickDate ? new Date() : req?.body?.quickDate;
       // Get date filter using helper function
       const dateFilter = getDateFilter(
         reportType,
@@ -178,6 +184,10 @@ const orderController = {
         totalSales: orders.reduce((sum, order) => sum + order.totalPrice, 0),
         totalOrders: orders.length,
         totalDiscounts: orders.reduce((sum, order) => sum + order.discount, 0),
+        totalCoupon: orders.reduce(
+          (sum, order) => sum + order?.couponDiscount,
+          0
+        ),
         avgOrderValue: orders.length
           ? Math.round(
               orders.reduce((sum, order) => sum + order.totalPrice, 0) /
@@ -227,11 +237,14 @@ const orderController = {
       doc.fontSize(14).text("Summary", { underline: true });
       doc
         .fontSize(12)
-        .text(`Total Sales: ₹${summary.totalSales.toLocaleString()}`);
+        .text(`Total Sales: ${summary.totalSales.toLocaleString()}`);
       doc.text(`Total Orders: ${summary.totalOrders}`);
-      doc.text(`Total Discounts: ₹${summary.totalDiscounts.toLocaleString()}`);
+      doc.text(`Total Discounts: ${summary.totalDiscounts.toLocaleString()}`);
       doc.text(
-        `Average Order Value: ₹${summary.avgOrderValue.toLocaleString()}`
+        `Total Coupon Discounts: ${summary?.totalCoupon.toLocaleString()}`
+      );
+      doc.text(
+        `Average Order Value: ${summary.avgOrderValue.toLocaleString()}`
       );
       doc.moveDown();
 
@@ -268,7 +281,7 @@ const orderController = {
             doc.heightOfString(order.shippingAddress?.name || "", {
               width: columnWidth,
             }),
-            doc.heightOfString(`₹${order.totalPrice.toLocaleString()}`, {
+            doc.heightOfString(`${order.totalPrice.toLocaleString()}`, {
               width: columnWidth,
             }),
             doc.heightOfString(order.status, { width: columnWidth })
@@ -306,7 +319,7 @@ const orderController = {
             { width: columnWidth }
           )
           .text(
-            `₹${order.totalPrice.toLocaleString()}`,
+            `${order.totalPrice.toLocaleString()}`,
             startX + columnWidth * 3,
             currentY,
             { width: columnWidth }
@@ -328,8 +341,8 @@ const orderController = {
   // Generate and download Excel report
   downloadExcel: async (req, res) => {
     try {
-      const { reportType, startDate, endDate, quickDate } = req.query;
-
+      const { reportType, startDate, endDate } = req.query;
+      const quickDate = !req.body.quickDate ? new Date() : req?.body?.quickDate;
       // Get date filter using helper function
       const dateFilter = getDateFilter(
         reportType,
@@ -377,16 +390,16 @@ const orderController = {
       // Add summary data
       summarySheet.addRow([
         "Total Sales",
-        `₹${summary.totalSales.toLocaleString()}`,
+        `${summary.totalSales.toLocaleString()}`,
       ]);
       summarySheet.addRow(["Total Orders", summary.totalOrders]);
       summarySheet.addRow([
         "Total Discounts",
-        `₹${summary.totalDiscounts.toLocaleString()}`,
+        `${summary.totalDiscounts.toLocaleString()}`,
       ]);
       summarySheet.addRow([
         "Average Order Value",
-        `₹${summary.avgOrderValue.toLocaleString()}`,
+        `${summary.avgOrderValue.toLocaleString()}`,
       ]);
 
       // Add a worksheet for detailed orders
@@ -400,6 +413,7 @@ const orderController = {
         "Total",
         "Status",
         "Payment Method",
+        "Coupon Discount",
         "Items",
       ]);
 
@@ -412,7 +426,8 @@ const orderController = {
           `₹${order.totalPrice.toLocaleString()}`,
           order.status,
           order.paymentMethod,
-          order.items?.length || 0,
+          order?.couponDiscount,
+          order.products?.length || 0,
         ]);
       });
 

@@ -3,11 +3,11 @@
   <div class="container my-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h1>Order Details</h1>
-      <div>
-        <button class="btn btn-outline-danger me-3 " onclick="returnController('<%=order._id%>', 'approve')">approve
+      <div id="buttonContainer">
+        <!-- <button class="btn btn-outline-danger me-3 " onclick="returnController('<%#=order._id%>', 'approve')">approve
           Return </button>
-        <button class="btn btn-outline-danger me-3 " onclick="returnController('<%=order._id%>', 'reject')">Rejected
-          Return </button>
+        <button class="btn btn-outline-danger me-3 " onclick="returnController('<%#=order._id%>', 'reject')">Rejected
+          Return </button> -->
       </div>
     </div>
 
@@ -70,9 +70,13 @@
       </div>
       <div class="imageBox card-body">
         <!-- display the images  -->
-        <img width="300px" src="<%= order.returnImg[0]%>" alt="image is not available">
-        <img width="300px" src="<%= order.returnImg[0]%>" alt="image is not available">
-        <img width="300px" src="<%= order.returnImg[0]%>" alt="image is not available">
+        <% order.returnImg.forEach(img=>{ %>
+
+          <img class="m-3" height="300px" src="<%= img%>" alt="image is not available">
+          <% }) %>
+            <!-- <img width="300px" src="<%#= order.returnImg[0]%>" alt="image is not available">
+        <img width="300px" src="<%#= order?.returnImg[1]%>" alt="image is not available">
+        <img width="300px" src="<%#= order?.returnImg[2]%>" alt="image is not available"> -->
       </div>
     </section>
 
@@ -167,6 +171,44 @@
   <%- include('../adminFoot.ejs') %>
 
     <script>
+
+
+
+
+      // validation different status (Object)
+      const validTransitions = {
+        "Pending": ["Shipped", "Cancelled", "Rejected"],
+        "Shipped": ["Delivered", "Returned"],
+        "Delivered": [],
+        "Cancelled": [],
+        "Rejected": [],
+        "Placed": ["Shipped", "Rejected"],
+        "Returned": [],
+        "Return Pending": ["Return Approved", "Return Rejected"],
+        "Return Approved": ["Returned"],
+        "Return Rejected": []
+      };
+
+      function renderButtons() {
+        const currentStatus = '<%= order?.status%>'
+        console.log(currentStatus);
+        const buttonsContainer = document.getElementById("buttonContainer");
+        buttonsContainer.innerHTML = ""; // Clear previous buttons
+
+        const allowedStatuses = validTransitions[currentStatus] || [];
+
+        allowedStatuses.forEach(status => {
+          const button = document.createElement("button");
+          button.classList.add("btn", "btn-sm", "btn-outline-primary", "ms-3");
+          button.textContent = status;
+          button.onclick = () => returnController('<%= order._id %>', status);
+          buttonsContainer.appendChild(button);
+        });
+      }
+      renderButtons();
+
+    </script>
+    <script>
       // reject order 
       function changeOrder(orderId, status) {
 
@@ -211,31 +253,33 @@
           }
         })
       }
-
+// try{
       async function returnController(orderId, action) {
-        try {
-          console.log(orderId, action);
-          let data = {
-            "orderId": orderId, "action": action
-          }
-          await fetch("/admin/return/updateStatus", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data),
-          }).then(res => res.json()).then(res => {
-            if (res.success) {
-              console.log("status updated : ", res.message);
-            }
-            else {
-              console.log(res.message);
-            }
-          })
+        action = (action == "Return Approved") ? "approve" : "reject";
 
-        } catch (error) {
-          console.log(error)
+        console.log(orderId, action);
+        let data = {
+          "orderId": orderId, "action": action
         }
+        await fetch("/admin/return/updateStatus", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data),
+        }).then(res => res.json()).then(res => {
+          if (res.success) {
+            console.log("status updated : ", res);
+            window.location.href = "/admin/return/";
+          }
+          else {
+            console.log(res);
+          }
+        })
+
+        // } catch (error) {
+        //   console.log(" error when updating return status on order ", orderId);
+        // }
       }
 
       // // hold order 
