@@ -137,9 +137,11 @@ const updateCart = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Product not found in cart" });
     }
-    await cart.save();
+    const newCart = await cart.save();
 
-    return res.status(200).json({ success: true, message: "Cart updated" });
+    return res
+      .status(200)
+      .json({ success: true, message: "Cart updated", newCart });
   } catch (error) {
     console.error(error);
     res.status(500).send("Server Error");

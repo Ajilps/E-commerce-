@@ -2,324 +2,322 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
-    <style>
-        .product-img {
-            max-width: 120px;
-            height: auto;
-        }
+  <style>
+    .product-img {
+      max-width: 120px;
+      height: auto;
+    }
 
-        .quantity-input {
-            width: 60px;
-            text-align: center;
-        }
+    .quantity-input {
+      width: 60px;
+      text-align: center;
+    }
 
-        .cart-item {
-            border-bottom: 1px solid #eee;
-            padding: 1rem 0;
-        }
+    .cart-item {
+      border-bottom: 1px solid #eee;
+      padding: 1rem 0;
+    }
 
-        .summary-card {
-            position: sticky;
-            top: 1rem;
-        }
-    </style>
+    .summary-card {
+      position: sticky;
+      top: 1rem;
+    }
+  </style>
 </head>
 
 <body class="bg-light">
-    <%- include('../userHeader.ejs') %>
+  <%- include('../userHeader.ejs') %>
 
 
-        <div class="container py-4">
-            <div class="row g-4">
-                <!-- Cart Items -->
-                <div class="col-lg-8">
-                    <div class="bg-white rounded shadow-sm p-4">
-                        <h2 class="mb-4">Shopping Cart (<span id="productCount">
-                                <%= cart?.products?.length || 0 %>
-                            </span>)</h2>
-                        <% if(cart){ %>
-                            <% cart.products[1] %>
+    <div class="container py-4">
+      <div class="row g-4">
+        <!-- Cart Items -->
+        <div class="col-lg-8">
+          <div class="bg-white rounded shadow-sm p-4">
+            <h2 class="mb-4">Shopping Cart (<span id="productCount">
+                <%= cart?.products?.length || 0 %>
+              </span>)</h2>
+            <% if(cart){ %>
+              <% cart.products[1] %>
 
-                                <% cart.products.forEach(product=>{ %>
+                <% cart.products.forEach(product=>{ %>
 
-                                    <!-- Cart Item 1 -->
-                                    <div class="cart-item">
-                                        <div class="row align-items-center">
-                                            <div class="col-md-2">
-                                                <img src="<%=  product.productId.productImageUrls[0] %>" alt="Product"
-                                                    class="product-img">
-                                            </div>
-                                            <div class="col-md-5">
-                                                <h5>
-                                                    <%= product.productId.name %>
-                                                </h5>
-                                                <p class="text-muted mb-0"></p>
+                  <!-- Cart Item 1 -->
+                  <div class="cart-item">
+                    <div class="row align-items-center">
+                      <div class="col-md-2">
+                        <img src="<%=  product.productId.productImageUrls[0] %>" alt="Product" class="product-img">
+                      </div>
+                      <div class="col-md-5">
+                        <h5>
+                          <%= product.productId.name %>
+                        </h5>
+                        <p class="text-muted mb-0">testing</p>
 
-                                                <% if(product.productId.quantity==0){ %>
-                                                    <span class="badge bg-danger">Out of Stock </span> <span
-                                                        class="badge bg-danger stockQ">
-                                                        <%= product.productId.quantity %>
-                                                    </span>
-                                                    <% }else{ %>
-                                                        <% if(product.productId.quantity <=5){ %>
-                                                            <span class="badge bg-warning">Low Stock</span><span
-                                                                class="badge bg-warning stockQ">
-                                                                <%= product.productId.quantity %>
-                                                            </span>
-                                                            <% }else{ %>
-                                                                <span class="badge bg-success">In Stock</span><span
-                                                                    class="badge bg-success stockQ">
-                                                                    <%= product.productId.quantity %>
-                                                                </span>
-                                                                <% } %>
-                                                                    <% } %>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <div class="input-group">
+                        <% if(product.productId.quantity==0){ %>
+                          <span class="badge bg-danger mb-2 me-2">Out of Stock </span>
+                          <!-- <span class="badge bg-danger stockQ">
+                                                        <%#= product.productId.quantity %>
+                                                    </span> -->
+                          <% }else{ %>
+                            <% if(product.productId.quantity <=5){ %>
+                              <span class="badge bg-warning mb-2 me-2">Low Stock</span>
+                              <!-- <span class="badge bg-warning stockQ">
+                                                                <%#= product.productId.quantity %>
+                                                            </span> -->
+                              <% }else{ %>
+                                <span class="badge bg-success mb-2 me-2">In Stock</span>
+                                <!-- <span class="badge bg-success stockQ">
+                                                                    <%#= product.productId.quantity %>
+                                                                </span> -->
+                                <% } %>
+                                  <% } %>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group">
 
-                                                    <input type="number" name="itemQuantity"
-                                                        class="form-control quantity-input "
-                                                        stock="<%= product.productId.quantity %>"
-                                                        data-id="<%= product._id %>" min="1"
-                                                        value="<%= (product.productId.quantity < product.quantity)? product.productId.quantity :product.quantity %>"
-                                                        max="5" <% if(product.productId.quantity===0){ %>
-                                                    disabled
-                                                    <% } %>
-                                                        >
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2 text-end">
+                          <input type="number" name="itemQuantity" class="form-control quantity-input "
+                            stock="<%= product.productId.quantity %>" data-id="<%= product._id %>" min="1"
+                            value="<%= (product.productId.quantity < product.quantity)? product.productId.quantity :product.quantity %>"
+                            max="5" <% if(product.productId.quantity===0){ %>
+                          disabled
+                          <% } %>
+                            >
+                        </div>
+                      </div>
+                      <div class="col-md-2 text-end">
 
-                                                <p class="h5 mb-0 actualPrice"
-                                                    value="<%= product.productId.regularPrice %>"> <del>₹ <%=
-                                                            product.productId.regularPrice %></del> </p>
-                                                <p class="h5 mb-0 price" value="<%= product.productId.sellingPrice %>">₹
-                                                    <%= product.productId.sellingPrice %>
-                                                </p>
-                                                <button class="btn btn-link text-danger p-0 mt-2 remove-item"
-                                                    data-id="<%= product._id %>">
-                                                    <i class="bi bi-trash"></i> Remove
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <% })} %>
-
+                        <p class="h5 mb-0 actualPrice" value="<%= product.productId.regularPrice %>"> <del>₹ <%=
+                              product.productId.regularPrice %></del> </p>
+                        <p class="h5 mb-0 price" value="<%= product.productId.sellingPrice %>">₹
+                          <%= product.productId.sellingPrice %>
+                        </p>
+                        <button class="btn btn-link text-danger p-0 mt-2 remove-item" data-id="<%= product._id %>">
+                          <i class="bi bi-trash"></i> Remove
+                        </button>
+                      </div>
                     </div>
-                </div>
+                  </div>
+                  <% })} %>
 
-                <!-- Order Summary -->
-                <div class="col-lg-4">
-
-                    <div class="bg-white rounded shadow-sm p-4 summary-card">
-                        <h4 class="mb-4">Order Summary</h4>
-                        <div class="d-flex justify-content-between mb-3">
-                            <span>Price</span>
-                            <span id="price"></span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3">
-                            <span>Discount</span>
-                            <span id="discount">-</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3">
-                            <span>Shipping</span>
-                            <span id="shipping" class="text-success">Free</span>
-                        </div>
-
-                        <hr>
-                        <div class="d-flex justify-content-between mb-4">
-                            <strong>Total</strong>
-                            <strong id="total"></strong>
-                        </div>
-
-
-
-                        <button onclick="checkOut()" class="btn btn-dark w-100">Proceed to Checkout </button>
-
-                        <div class="text-muted text-center mt-3">
-
-                        </div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-        <%- include('../userFooter.ejs') %>
-            <script src="/script/user/productSearch.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-            <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-            <script>
-                // creating order summary
-                function createOrderSummary() {
-                    let Total = 0;
-                    let Discount = 0;
-                    let Shipping = 0;
-                    let actualTotalPrice = 0;
+        <!-- Order Summary -->
+        <div class="col-lg-4">
 
-                    let price = 0;
-                    let itemQuantity = 0;
-                    const Items = document.querySelectorAll('.cart-item');
-                    Items.forEach(item => {
-                        let itemPrice = parseInt(item.querySelector('.price').getAttribute('value'));
-                        itemQuantity = parseInt(item.querySelector('.quantity-input').value);
-                        const actualPrice = parseInt(item.querySelector('.actualPrice').getAttribute('value'));
-                        price = itemPrice * itemQuantity;
-                        Discount += (actualPrice - itemPrice) * itemQuantity;
-                        actualTotalPrice += actualPrice * itemQuantity;
-                        Total += price;
-                        console.log(Discount, Total);
-                    });
-                    console.log('updated');
-                    console.log(itemQuantity);
-                    document.getElementById('price').innerText = `₹ ${actualTotalPrice}`;
-                    document.getElementById('discount').innerText = `₹ ${Discount}`;
-                    document.getElementById('total').innerText = `₹ ${Total}`;
-                    // Shipping = Total > 500? 0 : 0;
-                    document.getElementById('shipping').innerText = `₹ ${Shipping}`;
-                    document.getElementById('total').innerText = `₹ ${Total + Shipping}`;
+          <div class="bg-white rounded shadow-sm p-4 summary-card">
+            <h4 class="mb-4">Order Summary</h4>
+            <div class="d-flex justify-content-between mb-3">
+              <span>Price</span>
+              <span id="price"></span>
+            </div>
+            <div class="d-flex justify-content-between mb-3">
+              <span>Discount</span>
+              <span id="discount">-</span>
+            </div>
+            <div class="d-flex justify-content-between mb-3">
+              <span>Shipping</span>
+              <span id="shipping" class="text-success">Free</span>
+            </div>
+
+            <hr>
+            <div class="d-flex justify-content-between mb-4">
+              <strong>Total</strong>
+              <strong id="total"></strong>
+            </div>
 
 
+
+            <button onclick="checkOut()" class="btn btn-dark w-100">Proceed to Checkout </button>
+
+            <div class="text-muted text-center mt-3">
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%- include('../userFooter.ejs') %>
+      <script src="/script/user/productSearch.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+      <script>
+        // creating order summary
+        function createOrderSummary() {
+          let Total = 0;
+          let Discount = 0;
+          let Shipping = 0;
+          let actualTotalPrice = 0;
+
+          let price = 0;
+          let itemQuantity = 0;
+          const Items = document.querySelectorAll('.cart-item');
+          Items.forEach(item => {
+            let itemPrice = parseInt(item.querySelector('.price').getAttribute('value'));
+            itemQuantity = parseInt(item.querySelector('.quantity-input').value);
+            const actualPrice = parseInt(item.querySelector('.actualPrice').getAttribute('value'));
+            price = itemPrice * itemQuantity;
+            Discount += (actualPrice - itemPrice) * itemQuantity;
+            actualTotalPrice += actualPrice * itemQuantity;
+            Total += price;
+            console.log(Discount, Total);
+          });
+          console.log('updated');
+          console.log(itemQuantity);
+          document.getElementById('price').innerText = `₹ ${actualTotalPrice}`;
+          document.getElementById('discount').innerText = `₹ ${Discount}`;
+          document.getElementById('total').innerText = `₹ ${Total}`;
+          // Shipping = Total > 500? 0 : 0;
+          document.getElementById('shipping').innerText = `₹ ${Shipping}`;
+          document.getElementById('total').innerText = `₹ ${Total + Shipping}`;
+
+
+        }
+        createOrderSummary();
+      </script>
+
+      <script>
+        // remove item from cart
+        document.querySelectorAll('.remove-item').forEach(item => {
+          item.addEventListener('click', async function () {
+
+            Swal.fire({
+              title: 'Are you sure?',
+              text: "Do you want to delete this from cart !",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#d33',
+              cancelButtonColor: '#3085d6',
+              confirmButtonText: 'Yes, delete it!'
+            }).then(async (result) => {
+              if (result.isConfirmed) {
+                const productId = this.getAttribute('data-id');
+                const response = await fetch(`/user/cart/remove/${productId}`, {
+                  method: 'DELETE'
+                });
+                if (response.ok) {
+
+                  window.location.reload();
                 }
+              }
+            });
+          })
+        });
+
+        // update item quantity
+        document.querySelectorAll('.quantity-input').forEach(input => {
+          input.addEventListener('change', async function (e) {
+            e.preventDefault();
+            createOrderSummary();
+
+            const productId = this.getAttribute('data-id');
+            const stock = this.getAttribute('stock');
+            const quantity = parseInt(this.value);
+
+            console.log(quantity, stock, productId);
+            if (quantity > stock) {
+              if (quantity > stock) {
+                this.value = stock;
+              }
+              // this.value = 1;
+              Toastify({
+                text: `Quantity should be between 1 and ${stock}`,
+                duration: 3000,
+                // destination: "
+                newWindow: true,
+                close: true,
+                gravity: "top", // `top` or `bottom`
+                position: "left", // `left`, `center` or `right`
+                stopOnFocus: true, // Prevents dismissing of toast on hover
+                style: {
+                  background: "linear-gradient(to right, #00b09b, #96c93d)",
+                },
+                onClick: function () { } // Callback after click
+              }).showToast();
+              return
+            }
+
+            await fetch(`/user/cart/update/${productId}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ quantity, productId })
+            }).then(response => response.json()).then(response => {
+              console.log(response);
+
+
+              if (response.success) {
+                // update the stock count in the header
+
+                Toastify({
+                  text: `${response.message}`,
+                  duration: 3000,
+                  // destination: "https://github.com/apvarun/toastify-js",
+                  newWindow: true,
+                  close: true,
+                  gravity: "top", // `top` or `bottom`
+                  position: "left", // `left`, `center` or `right`
+                  stopOnFocus: true, // Prevents dismissing of toast on hover
+                  style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                  },
+                  onClick: function () { } // Callback after click
+                }).showToast();
                 createOrderSummary();
-            </script>
+              } else {
+                Toastify({
+                  text: `${response.message}`,
+                  className: "info",
+                  style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                  }
+                }).showToast();
 
-            <script>
-                // remove item from cart
-                document.querySelectorAll('.remove-item').forEach(item => {
-                    item.addEventListener('click', async function () {
-
-                        Swal.fire({
-                            title: 'Are you sure?',
-                            text: "Do you want to delete this from cart !",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#d33',
-                            cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'Yes, delete it!'
-                        }).then(async (result) => {
-                            if (result.isConfirmed) {
-                                const productId = this.getAttribute('data-id');
-                                const response = await fetch(`/user/cart/remove/${productId}`, {
-                                    method: 'DELETE'
-                                });
-                                if (response.ok) {
-
-                                    window.location.reload();
-                                }
-                            }
-                        });
-                    })
-                });
-
-                // update item quantity
-                document.querySelectorAll('.quantity-input').forEach(input => {
-                    input.addEventListener('change', async function (e) {
-                        e.preventDefault();
-                        createOrderSummary();
-                        const productId = this.getAttribute('data-id');
-                        const stock = this.getAttribute('stock');
-                        const quantity = parseInt(this.value);
-
-                        if (quantity > stock) {
-                            console.log(quantity, stock);
-                            if (quantity > stock) {
-                                this.value = stock;
-                            }
-                            // this.value = 1;
-                            Toastify({
-                                text: `Quantity should be between 1 and ${stock}`,
-                                duration: 3000,
-                                // destination: "
-                                newWindow: true,
-                                close: true,
-                                gravity: "top", // `top` or `bottom`
-                                position: "left", // `left`, `center` or `right`
-                                stopOnFocus: true, // Prevents dismissing of toast on hover
-                                style: {
-                                    background: "linear-gradient(to right, #00b09b, #96c93d)",
-                                },
-                                onClick: function () { } // Callback after click
-                            }).showToast();
-                            return
-                        }
-
-                        await fetch(`/user/cart/update/${productId}`, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ quantity, productId })
-                        }).then(response => response.json()).then(response => {
-                            console.log(response);
+              };
+            });
 
 
-                            if (response.success) {
-                                Toastify({
-                                    text: `${response.message}`,
-                                    duration: 3000,
-                                    // destination: "https://github.com/apvarun/toastify-js",
-                                    newWindow: true,
-                                    close: true,
-                                    gravity: "top", // `top` or `bottom`
-                                    position: "left", // `left`, `center` or `right`
-                                    stopOnFocus: true, // Prevents dismissing of toast on hover
-                                    style: {
-                                        background: "linear-gradient(to right, #00b09b, #96c93d)",
-                                    },
-                                    onClick: function () { } // Callback after click
-                                }).showToast();
-                                createOrderSummary();
-                            } else {
-                                Toastify({
-                                    text: `${response.message}`,
-                                    className: "info",
-                                    style: {
-                                        background: "linear-gradient(to right, #00b09b, #96c93d)",
-                                    }
-                                }).showToast();
+          });
+        });
 
-                            };
-                        });
+        function checkOut() {
+          // if the cart is empty then show a message that the cart is empty 
+          const cart = document.getElementById('productCount').innerText
+
+          if (cart <= 0) {
+            console.log('cart is empty ')
+            Swal.fire('Cart is Empty', 'No items in your cart', 'info')
+            return;
+          }
 
 
-                    });
-                });
+          Swal.fire({
+            title: 'Are you sure?',
+            text: "You will be redirected to checkout page!",
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonColor: '#d3',
+            cancelButtonColor: '#3085d',
+            confirmButtonText: 'Yes, proceed to checkout!'
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              window.location.href = '/user/cart/checkout';
+            }
+          });
+        }
 
-                function checkOut() {
-                    // if the cart is empty then show a message that the cart is empty 
-                    const cart = document.getElementById('productCount').innerText
-
-                    if (cart <= 0) {
-                        console.log('cart is empty ')
-                        Swal.fire('Cart is Empty', 'No items in your cart', 'info')
-                        return;
-                    }
-
-
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        text: "You will be redirected to checkout page!",
-                        icon: 'success',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d3',
-                        cancelButtonColor: '#3085d',
-                        confirmButtonText: 'Yes, proceed to checkout!'
-                    }).then(async (result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = '/user/cart/checkout';
-                        }
-                    });
-                }
-
-            </script>
+      </script>
 
 
 </body>

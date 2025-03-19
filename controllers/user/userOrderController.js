@@ -63,9 +63,20 @@ const placeOrder = async (req, res) => {
     }
     // Check if there are any products in the cart with insufficient stock
     for (const product of cart.products) {
-      // console.log(product.productId.quantity);
+      console.log(product.productId.quantity);
       let pro = await Product.findById(product.productId._id);
-      if (pro.quantity <= 0) {
+      if (!pro) {
+        return res
+         .status(400)
+         .json({ success: false, message: "Product not found" });
+      }
+      if (pro.isBlocked) {
+        return res
+         .status(400)
+         .json({ success: false, message: "Product is blocked" });
+      }
+
+      if (pro.quantity <= 0 || pro.quantity < product.quantity ) {
         return res.status(400).json({
           success: false,
           message: `Product ${product.productId.name} has insufficient stock`,
@@ -243,7 +254,7 @@ const placeOrder = async (req, res) => {
           },
           { new: true }
         );
-        console.log(wallet, payment);
+        // console.log(wallet, payment);
         if (orderStatus && payment) {
           await Cart.findOneAndDelete({ user: userId });
           return res.status(200).json({

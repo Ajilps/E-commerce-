@@ -149,7 +149,7 @@
                       <th>DATE</th>
 
                       <th class="text text-success">DEPOSIT</th>
-                      <th>PURCHASE</th>
+                      <th class="link-danger">PURCHASE</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -158,7 +158,7 @@
                       <tr>
                         <!-- transaction id -->
                         <td>#
-                          <%= trans._id %>
+                          <%= trans._id.toString().split("").splice(10,25).join("") %>
                         </td>
                         <td>
                           <%= trans.description %>
@@ -173,7 +173,7 @@
                           <% if( trans.type==="deposit" || trans.type==="Deposit" ){ %>
 
 
-                            <td>₹ <span>
+                            <td>₹ <span class="text link-success">
                                 <%= trans.amount %>
                               </span></td>
                             <td>-</td>
@@ -181,7 +181,7 @@
                             <% }else{ %>
 
                               <td>-</td>
-                              <td>₹ <span>
+                              <td>₹ <span class="text link-danger">
                                   <%= trans.amount %>
                                 </span></td>
                               <%} %>
