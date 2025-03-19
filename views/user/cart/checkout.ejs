@@ -507,15 +507,16 @@
         const codBtn = document.getElementById("codBtn");
         const walletBalanceSpan = document.getElementById("walletBalance");
 
-        async function getcart() {
-          return fetch("/user/orders/getart")
+        async function getCart() {
+          return fetch("/user/orders/getCart")
             .then((res) => res.json())
             .then((res) => {
               if (res.success) {
                 return res;
               }
               else {
-                getcart();
+                console.log(res.message);
+                window.location.href = "/user/cart"
               }
             })
         }
@@ -525,7 +526,7 @@
 
         async function calculateOrderSummary() {
           try {
-            getcart().then(res => {
+            getCart().then(res => {
               cart = res.cart;
               return cart;
             }).then(async (cart) => {
@@ -533,10 +534,10 @@
               shipping = 0, discount = 0, tax = 0, total = 0;
               console.log(cart.products);
               cart.products.forEach(product => {
-                subTotal += product.productId.regularPrice
-                discount += product.productId.regularPrice - product.productId.sellingPrice
-                total += (subTotal - discount);
+                subTotal += product.productId.regularPrice * product?.quantity
+                discount += (product.productId.regularPrice * product?.quantity) - (product.productId.sellingPrice * product?.quantity)
               })
+              total += (subTotal - discount);
               subTotal = roundPrice(subTotal);
               discount = roundPrice(discount);
               total = roundPrice(total);

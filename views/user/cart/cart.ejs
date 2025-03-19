@@ -152,6 +152,11 @@
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
       <script>
+        //round the price to .00 limit
+        function roundPrice(price) {
+          return Math.round(price * 100) / 100;
+        }
+
         // creating order summary
         function createOrderSummary() {
           let Total = 0;
@@ -163,11 +168,13 @@
           let itemQuantity = 0;
           const Items = document.querySelectorAll('.cart-item');
           Items.forEach(item => {
-            let itemPrice = parseInt(item.querySelector('.price').getAttribute('value'));
-            itemQuantity = parseInt(item.querySelector('.quantity-input').value);
-            const actualPrice = parseInt(item.querySelector('.actualPrice').getAttribute('value'));
+            let itemPrice = Number(item.querySelector('.price').getAttribute('value'));
+            itemQuantity = Number(item.querySelector('.quantity-input').value);
+            const actualPrice = Number(item.querySelector('.actualPrice').getAttribute('value'));
+
+            console.log("actual price and the quantity:", actualPrice, itemPrice);
             price = itemPrice * itemQuantity;
-            Discount += (actualPrice - itemPrice) * itemQuantity;
+            Discount += (itemPrice * itemQuantity) - (actualPrice * itemQuantity);
             actualTotalPrice += actualPrice * itemQuantity;
             Total += price;
             console.log(Discount, Total);
@@ -176,10 +183,10 @@
           console.log(itemQuantity);
           document.getElementById('price').innerText = `₹ ${actualTotalPrice}`;
           document.getElementById('discount').innerText = `₹ ${Discount}`;
-          document.getElementById('total').innerText = `₹ ${Total}`;
+          document.getElementById('total').innerText = `₹ ${roundPrice(Total)}`;
           // Shipping = Total > 500? 0 : 0;
           document.getElementById('shipping').innerText = `₹ ${Shipping}`;
-          document.getElementById('total').innerText = `₹ ${Total + Shipping}`;
+          // document.getElementById('total').innerText = `₹ ${Total + Shipping}`;
 
 
         }

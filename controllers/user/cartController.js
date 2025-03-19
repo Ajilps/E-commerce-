@@ -91,14 +91,14 @@ const addToCart = async (req, res) => {
   }
 };
 
+
 // remove item from the cart
 const removeFromCart = async (req, res) => {
   const userId = req.user._id;
   const productId = req.params.productId;
-
   try {
     let cart = await Cart.findOne({ user: userId });
-    console.log(cart); // testing
+    // console.log(cart); // testing
     if (!cart) {
       return res.status(400).send("Cart not found");
     }
@@ -116,7 +116,7 @@ const updateCart = async (req, res) => {
   const userId = req.user._id;
   const { productId, quantity } = req.body;
 
-  console.log(req.body); // testing
+  // console.log(req.body); // testing
   try {
     let cart = await Cart.findOne({ user: userId });
     if (!cart) {

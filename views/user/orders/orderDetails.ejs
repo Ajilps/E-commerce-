@@ -294,21 +294,22 @@
                       <p>
                         <%#= order._id %>
                       </p>
-                      <% order.products.forEach(product=>{ %>
+                      <% function roundPrice(price) { return Math.round(price * 100) / 100; } %>
+                        <% order.products.forEach(product=>{ %>
 
-                        <tr>
-                          <td>
-                            <%= product.productId.name %>
-                          </td>
-                          <td>₹<%= product.price %>/-</td>
-                          <td>
-                            <%= product.quantity %>
-                          </td>
-                          <td>₹<%= ( product.price * product.quantity) %>/-</td>
-                        </tr>
+                          <tr>
+                            <td>
+                              <%= product.productId.name %>
+                            </td>
+                            <td>₹<%= product.price %>/-</td>
+                            <td>
+                              <%= product.quantity %>
+                            </td>
+                            <td>₹<%= roundPrice( product.price * product.quantity) %>/-</td>
+                          </tr>
 
-                        <% }) %>
-                          <%# }) %>
+                          <% }) %>
+                            <%# }) %>
                   </tbody>
                 </table>
               </div>

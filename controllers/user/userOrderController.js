@@ -67,16 +67,16 @@ const placeOrder = async (req, res) => {
       let pro = await Product.findById(product.productId._id);
       if (!pro) {
         return res
-         .status(400)
-         .json({ success: false, message: "Product not found" });
+          .status(400)
+          .json({ success: false, message: "Product not found" });
       }
       if (pro.isBlocked) {
         return res
-         .status(400)
-         .json({ success: false, message: "Product is blocked" });
+          .status(400)
+          .json({ success: false, message: "Product is blocked" });
       }
 
-      if (pro.quantity <= 0 || pro.quantity < product.quantity ) {
+      if (pro.quantity <= 0 || pro.quantity < product.quantity) {
         return res.status(400).json({
           success: false,
           message: `Product ${product.productId.name} has insufficient stock`,
@@ -473,7 +473,6 @@ const updateOrderStatus = async (req, res) => {
 //delete the order
 // render the order delete page
 const cancelOrder = async (req, res) => {
-
   const orderId = req.params.orderId;
   // add the item to stock is pending
   try {
@@ -483,8 +482,14 @@ const cancelOrder = async (req, res) => {
         .status(404)
         .json({ status: false, message: "Order not found" });
     }
-    if(order.status == "Shipped" || order.status ==  "Delivered" ||  order.status ==  "Delivered"){
-      return res.status(400).json({ status: false, message: "Order can't be cancelled" });
+    if (
+      order.status == "Shipped" ||
+      order.status == "Delivered" ||
+      order.status == "Delivered"
+    ) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Order can't be cancelled" });
     }
     order.products.forEach(async (product) => {
       await Product.findByIdAndUpdate(
@@ -540,12 +545,17 @@ const getCart = async (req, res) => {
   if (!userId) {
     return res.status(400).json({ success: false, message: "invalid user " });
   }
-  const cart = await Cart.findOne({ user: userId }).populate(
-    "products.productId"
-  );
+  try {
+    const cart = await Cart.findOne({ user: userId }).populate(
+      "products.productId"
+    );
 
-  console.log(cart);
-  return res.status(200).json({ success: true, cart });
+    console.log(cart);
+    return res.status(200).json({ success: true, cart });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "server error." });
+  }
 };
 
 export {

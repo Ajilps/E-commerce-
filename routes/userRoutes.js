@@ -169,7 +169,7 @@ router.get("/orders/orderDetails/:orderId", displayOrdersDetails);
 router.post("/order/placeOrder", placeOrder);
 router.patch("/orders/cancel/:orderId", cancelOrder);
 router.post("/orders/confirm-payment", confirmPayment);
-router.get("/orders/getart", getCart);
+router.get("/orders/getCart", getCart);
 //retry payment
 router.post("/orders/retryPayment", retryPayment);
 router.post("/orders/verifyPayment", verifyPayment);
