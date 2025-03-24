@@ -1,70 +1,7 @@
 <%- include('../adminHead.ejs') %>
 
-    <style>
-        .breadcrumb-item+.breadcrumb-item::before {
-            content: ">";
-        }
 
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 16px;
-            font-size: 12px;
-        }
-
-        .status-published {
-            background-color: rgba(0, 200, 150, 0.1);
-            color: rgb(0, 200, 150);
-        }
-
-        .status-draft {
-            background-color: rgba(100, 100, 100, 0.1);
-            color: rgb(100, 100, 100);
-        }
-
-        .status-outofstock {
-            background-color: rgba(255, 0, 0, 0.1);
-            color: rgb(255, 0, 0);
-        }
-
-        .status-lowstock {
-            background-color: rgba(255, 150, 0, 0.1);
-            color: rgb(255, 150, 0);
-        }
-
-        .action-icon {
-            color: #666;
-            margin: 0 4px;
-            cursor: pointer;
-        }
-
-        .table-container {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav-pills .nav-link {
-            color: #666;
-            padding: 8px 16px;
-        }
-
-        .nav-pills .nav-link.active {
-            background: none;
-            color: #000;
-            border-bottom: 2px solid #00C896;
-        }
-
-        /* pagination */
-        .pagination .page-link {
-            color: #00C896;
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: #00C896;
-            border-color: #00C896;
-        }
-    </style>
-
+    <link rel="stylesheet" href="/style/admin/products/products.css">
 
     <div class="container-fluid p-4">
         <!-- Header -->
@@ -73,7 +10,8 @@
                 <h4 class="mb-2">Product</h4>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-success">Dashboard</a>
+                        <li class="breadcrumb-item"><a href="/admin/home"
+                                class="text-decoration-none text-success">Dashboard</a>
                         </li>
                         <li class="breadcrumb-item active">Product List</li>
                     </ol>
@@ -127,9 +65,9 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>
+                        <!-- <th>
                             <input type="checkbox" class="form-check-input">
-                        </th>
+                        </th> -->
                         <th>Product</th>
 
                         <th>Category</th>
@@ -146,9 +84,9 @@
                 <tbody>
                     <% products.forEach(p=> { %>
                         <tr>
-                            <td>
+                            <!-- <td>
                                 <input type="checkbox" class="form-check-input">
-                            </td>
+                            </td> -->
                             <td>
                                 <div class="d-flex align-items-center">
                                     <img src="<%=p?.productImageUrls[0]%>" style="width: 40px; height: 40px;"
@@ -235,85 +173,7 @@
         </div>
     </div>
     <%- include('../adminFoot.ejs') %>
-
-        <script>
-            // for deleting a product
-            function deleteResource(url) {
-                if (confirm('Are you sure do you want to delete this product? !!!!!')) {
-
-
-                    if (confirm('Are you sure you want to delete this product?')) {
-                        fetch(url, { method: 'DELETE' })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    location.reload();
-                                } else {
-                                    alert('Failed to delete product' + data.message);
-                                }
-                            })
-                            .catch((err) => console.log(err));
-                    }
-                }
-            }
-            //end
-            // for changing the product status
-            function changeProductStatus(productId, status) {
-                fetch(`/admin/products/changeProductStatus/${productId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ status: status })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-
-                        } else {
-                            alert('Failed to change product status' + data.message);
-                        }
-                    })
-                    .catch((err) => console.log(err));
-            }
-            //end
-
-            // function for unblocking product
-            function unblockProduct(productId) {
-                fetch(`/admin/products/unblockProduct/${productId}`, {
-                    method: 'PATCH',
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            alert('Failed to unblock product' + data.message);
-                        }
-                    })
-                    .catch((err) => console.log(err));
-            }
-            // end
-            // function for blocking product
-            function blockProduct(productId) {
-                fetch(`/admin/products/blockProduct/${productId}`, {
-                    method: 'PATCH',
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            alert('Failed to block product' + data.message);
-                        }
-                    })
-                    .catch((err) => console.log(err));
-            }
-            // end
-        </script>
-
-
+        <script src="/script/admin/products/products.js"></script>
 
 
         </body>

@@ -1,0 +1,62 @@
+.breadcrumb-item+.breadcrumb-item::before {
+  content: ">";
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+}
+
+.status-published {
+  background-color: rgba(0, 200, 150, 0.1);
+  color: rgb(0, 200, 150);
+}
+
+.status-draft {
+  background-color: rgba(100, 100, 100, 0.1);
+  color: rgb(100, 100, 100);
+}
+
+.status-outofstock {
+  background-color: rgba(255, 0, 0, 0.1);
+  color: rgb(255, 0, 0);
+}
+
+.status-lowstock {
+  background-color: rgba(255, 150, 0, 0.1);
+  color: rgb(255, 150, 0);
+}
+
+.action-icon {
+  color: #666;
+  margin: 0 4px;
+  cursor: pointer;
+}
+
+.table-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.nav-pills .nav-link {
+  color: #666;
+  padding: 8px 16px;
+}
+
+.nav-pills .nav-link.active {
+  background: none;
+  color: #000;
+  border-bottom: 2px solid #00C896;
+}
+
+/* pagination */
+.pagination .page-link {
+  color: #00C896;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #00C896;
+  border-color: #00C896;
+}
