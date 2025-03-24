@@ -22,6 +22,42 @@ const orderSchema = mongoose.Schema(
           type: Number,
           required: true,
         },
+        // returnImg: {
+        //   type: String,
+        //   required: false,
+        // },
+        // status: {
+        //   type: String,
+        //   required: true,
+        //   enum: [
+        //     "Pending",
+        //     "Shipped",
+        //     "Delivered",
+        //     "Cancelled",
+        //     "Rejected",
+        //     "Placed",
+        //     "Returned",
+        //     "Return Pending",
+        //     "Return Approved",
+        //     "Return Rejected",
+        //   ],
+        // },
+
+        // returnMsg: {
+        //   type: String,
+        //   required: false,
+        //   default: "",
+        // },
+        // returnReject: {
+        //   type: Boolean,
+        //   default: false,
+        // },
+        // returnPaymentStatus: {
+        //   type: String,
+        //   required: false,
+        //   enum: ["Refunded", "Cancelled"],
+        //   default: "",
+        // },
       },
     ],
     subtotal: {

@@ -680,15 +680,17 @@
 
             let sellingPrice = regularPrice;
 
-            if (offer > 0) {
-                sellingPrice -= regularPrice * (offer / 100);
-            }
-            if (brandOfferValue > 0) {
-                sellingPrice -= sellingPrice * (brandOfferValue / 100);
-            }
-            if (categoryOfferValue > 0) {
-                sellingPrice -= sellingPrice * (categoryOfferValue / 100);
-            }
+            // if (offer > 0) {
+            //     sellingPrice -= regularPrice * (offer / 100);
+            // }
+            // if (brandOfferValue > 0) {
+            //     sellingPrice -= sellingPrice * (brandOfferValue / 100);
+            // }
+            // if (categoryOfferValue > 0) {
+            //     sellingPrice -= sellingPrice * (categoryOfferValue / 100);
+            // }
+            // Take the largest offer and calculate
+            sellingPrice -= sellingPrice*(Math.max(offer,brandOfferValue,categoryOfferValue) / 100);
 
             document.getElementById('sellingPrice').value = sellingPrice.toFixed(2); // Rounding to 2 decimal places
         }
