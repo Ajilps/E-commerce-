@@ -121,7 +121,7 @@ const changeOrderStatus = async (req, res) => {
       order.products.forEach(async (product) => {
         await Product.findByIdAndUpdate(
           product.productId,
-          { $inc: { quantity: product.quantity } },
+          { $inc: { quantity: product.quantity ,  sellingCount: -product.quantity } },
           { new: true }
         );
       });
@@ -237,8 +237,8 @@ const updateStatus = async (req, res) => {
         await Product.findByIdAndUpdate(
           product.productId,
           {
-            $inc: { quantity: product.quantity },
-            $inc: { sellingCount: -product.quantity },
+            $inc: { quantity: product.quantity, sellingCount: -product.quantity },
+            
           },
           { new: true }
         );

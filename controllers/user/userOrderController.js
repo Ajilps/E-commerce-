@@ -49,7 +49,7 @@ const placeOrder = async (req, res) => {
   try {
     const userId = req.user._id;
     // testing
-    console.log(req.body);
+    // console.log(req.body);
 
     // Fetch the user's cart and populate product details
     const cart = await Cart.findOne({ user: userId }).populate(
@@ -63,7 +63,7 @@ const placeOrder = async (req, res) => {
     }
     // Check if there are any products in the cart with insufficient stock
     for (const product of cart.products) {
-      console.log(product.productId.quantity);
+      // console.log(product.productId.quantity);
       let pro = await Product.findById(product.productId._id);
       if (!pro) {
         return res
@@ -94,13 +94,14 @@ const placeOrder = async (req, res) => {
       const updatedProduct = await Product.findByIdAndUpdate(
         product.productId._id,
         {
-          $inc: { quantity: -product.quantity },
-          $inc: { sellingCount: product.quantity },
+          $inc: { quantity: -product.quantity, sellingCount: product.quantity },
+          // $inc: { sellingCount: product.quantity },
         },
 
         { new: true } // Return the updated document
       );
-
+      console.log("updatedProduct : ", updatedProduct);
+      console.log("product.quantity : ", product.quantity);
       if (!updatedProduct) {
         throw new Error(`Product ${product.productId._id} not found`);
       }
@@ -113,25 +114,9 @@ const placeOrder = async (req, res) => {
         quantity: product.quantity,
         price: product.productId.sellingPrice,
       });
-
-      // // Calculate total price
-      // subtotal += roundPrice(product.productId.sellingPrice * product.quantity);
-      // // Calculate total totalSellingPrice
-      // totalRegularPrice += roundPrice(
-      //   product.productId.regularPrice * product.quantity
-      // );
-      // totalSellingPrice += totalRegularPrice - totalDiscount
     }
 
-    // Add 18% tax to the total price
-
     let shippingFee = 0;
-
-    // if(req.body.coupon){
-    //   discount = coupon.discount;
-    //   totalPrice = totalPrice - (totalPrice * (coupon.discount / 100));
-    //   shippingFee = 10;
-    // }
 
     //create a expected delivery date
     const deliveryDate = new Date();
@@ -141,7 +126,7 @@ const placeOrder = async (req, res) => {
     const shippingAddress = req.user.addresses.find(
       (addr) => addr._id == req.body.address.address
     );
-    console.log("shipping address from the user data : ", shippingAddress);
+    // console.log("shipping address from the user data : ", shippingAddress);
     // Create the order
     const orderData = {
       userId,
@@ -160,7 +145,7 @@ const placeOrder = async (req, res) => {
       deliveryDate,
       couponDiscount: req.body?.couponDiscount,
     };
-    console.log("order data from place order : ", orderData);
+    // console.log("order data from place order : ", orderData);
     // if the payment is razor pay
     if (req.body.paymentMethod === "razorpay") {
       const razorpay = new Razorpay({
@@ -178,7 +163,7 @@ const placeOrder = async (req, res) => {
       };
 
       const response = await razorpay.orders.create(orderDataRazorpay);
-      console.log(response);
+      // console.log(response);
       orderData.razorpayOrderId = response.id;
       const order = new Order(orderData);
       let createdOrder = await order.save();
@@ -495,8 +480,8 @@ const cancelOrder = async (req, res) => {
       await Product.findByIdAndUpdate(
         product.productId,
         {
-          $inc: { quantity: product.quantity },
-          $inc: { sellingCount: -product.quantity },
+          $inc: { quantity: product.quantity, sellingCount: -product.quantity },
+          // $inc: { sellingCount: -product.quantity },
         },
         { new: true }
       );
@@ -509,7 +494,7 @@ const cancelOrder = async (req, res) => {
     if (!userWallet) {
       userWallet = await new Wallet({ user: orderUser }).save();
     }
-    console.log(orderUser, userWallet);
+    // console.log(orderUser, userWallet);
 
     order.status = "Cancelled";
 
@@ -550,7 +535,7 @@ const getCart = async (req, res) => {
       "products.productId"
     );
 
-    console.log(cart);
+    // console.log(cart);
     return res.status(200).json({ success: true, cart });
   } catch (error) {
     console.error(error);

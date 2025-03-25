@@ -505,6 +505,11 @@
         const codBtn = document.getElementById("codBtn");
         const walletBalanceSpan = document.getElementById("walletBalance");
 
+        //round the price to .00 limit
+        function roundPrice(price) {
+          return Math.round(price * 100) / 100;
+        }
+
         async function getCart() {
           return fetch("/user/orders/getCart")
             .then((res) => res.json())
@@ -554,7 +559,7 @@
               const res = await response.json();
 
               // Validate the response
-              walletBalance = parseFloat(res.balance);
+              walletBalance = parseFloat(roundPrice(res.balance));
               walletBalanceSpan.innerText = walletBalance;
 
               if (walletBalance < total) {

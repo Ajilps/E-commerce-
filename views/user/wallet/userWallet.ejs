@@ -129,7 +129,8 @@
                   <% if(wallet){%>
                     <div>
                       <div class="balance-amount">₹ <span>
-                          <%= wallet.balance %>
+                          <% function roundPrice(price) { return Math.round(price * 100) / 100; } %>
+                            <%= roundPrice(wallet.balance) %>
                         </span></div>
                       <div class="balance-label">My Wallet Balance</div>
                     </div>

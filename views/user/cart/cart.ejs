@@ -52,8 +52,9 @@
                   <!-- Cart Item 1 -->
                   <div class="cart-item">
                     <div class="row align-items-center">
-                      <div class="col-md-2">
-                        <img src="<%=  product.productId.productImageUrls[0] %>" alt="Product" class="product-img">
+                      <div class="col-md-2 ">
+                        <img src="<%=  product.productId.productImageUrls[0] %>" alt="Product"
+                          class="product-img img-thumbnail img-fluid">
                       </div>
                       <div class="col-md-5">
                         <h5>
@@ -62,18 +63,18 @@
                         <p class="text-muted mb-0">testing</p>
 
                         <% if(product.productId.quantity==0){ %>
-                          <span class="badge bg-danger mb-2 me-2">Out of Stock </span>
+                          <span class="badge bg-danger  me-2">Out of Stock </span>
                           <!-- <span class="badge bg-danger stockQ">
                                                         <%#= product.productId.quantity %>
                                                     </span> -->
                           <% }else{ %>
                             <% if(product.productId.quantity <=5){ %>
-                              <span class="badge bg-warning mb-2 me-2">Low Stock</span>
+                              <span class="badge bg-warning mb-2">Low Stock</span>
                               <!-- <span class="badge bg-warning stockQ">
                                                                 <%#= product.productId.quantity %>
                                                             </span> -->
                               <% }else{ %>
-                                <span class="badge bg-success mb-2 me-2">In Stock</span>
+                                <span class="badge bg-success mb-2 ">In Stock</span>
                                 <!-- <span class="badge bg-success stockQ">
                                                                     <%#= product.productId.quantity %>
                                                                 </span> -->
@@ -83,13 +84,13 @@
                       <div class="col-md-3">
                         <div class="input-group">
 
-                          <input type="number" name="itemQuantity" class="form-control quantity-input "
+                          <input type="number" name="itemQuantity" class="form-control quantity-input me-2 "
                             stock="<%= product.productId.quantity %>" data-id="<%= product._id %>" min="1"
                             value="<%= (product.productId.quantity < product.quantity)? product.productId.quantity :product.quantity %>"
                             max="5" <% if(product.productId.quantity===0){ %>
                           disabled
                           <% } %>
-                            >
+                            > X
                         </div>
                       </div>
                       <div class="col-md-2 text-end">
@@ -182,7 +183,7 @@
           console.log('updated');
           console.log(itemQuantity);
           document.getElementById('price').innerText = `₹ ${actualTotalPrice}`;
-          document.getElementById('discount').innerText = `₹ ${Discount}`;
+          document.getElementById('discount').innerText = `₹ ${roundPrice(Discount)}`;
           document.getElementById('total').innerText = `₹ ${roundPrice(Total)}`;
           // Shipping = Total > 500? 0 : 0;
           document.getElementById('shipping').innerText = `₹ ${Shipping}`;
