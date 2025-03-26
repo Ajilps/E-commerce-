@@ -258,10 +258,9 @@ const displayEditProduct = async (req, res) => {
   )[0];
 
   console.log(product); // testing
-  if (!product)
-    return res
-      .status(404)
-      .json({ success: false, message: "product not found" });
+  if (!product) {
+    return res.status(404).redirect("/pageerror");
+  }
 
   const brand = await Brand.find({});
   const category = await Category.find({});
@@ -282,7 +281,12 @@ const getTags = async (req, res) => {
   console.log(productId);
   try {
     const tags = await Product.findById(productId, { tags: 1 });
-    res.status(200).json(tags);
+    if (!tags) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
+    }
+    return res.status(200).json(tags);
   } catch (error) {
     console.log(error);
     res.status(500).json({ success: false, message: "server error" });

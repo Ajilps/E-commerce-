@@ -63,6 +63,10 @@ const displayOrderDetails = async (req, res) => {
     const order = await Order.findById(req.params.orderId)
       .populate("products.productId")
       .populate("userId");
+
+    if (!order) {
+      return res.status(404).redirect("/pageerror");
+    }
     return res.status(200).render("admin/orders/orderDetails.ejs", {
       success: true,
       user: req.user,
@@ -121,7 +125,12 @@ const changeOrderStatus = async (req, res) => {
       order.products.forEach(async (product) => {
         await Product.findByIdAndUpdate(
           product.productId,
-          { $inc: { quantity: product.quantity ,  sellingCount: -product.quantity } },
+          {
+            $inc: {
+              quantity: product.quantity,
+              sellingCount: -product.quantity,
+            },
+          },
           { new: true }
         );
       });
@@ -204,11 +213,15 @@ const displayReturnDetails = async (req, res) => {
     const order = await Order.findById(req?.params?.orderId)
       .populate("products.productId")
       .populate("userId");
-    res
+    if (!order) {
+      return res.status(404).redirect("/pageerror");
+    }
+    return res
       .status(200)
       .render("admin/returns/returnDetails.ejs", { order, user: req.user });
   } catch (error) {
     console.log(error);
+    return res.status(404).redirect("/pageerror");
   }
 };
 
@@ -237,8 +250,10 @@ const updateStatus = async (req, res) => {
         await Product.findByIdAndUpdate(
           product.productId,
           {
-            $inc: { quantity: product.quantity, sellingCount: -product.quantity },
-            
+            $inc: {
+              quantity: product.quantity,
+              sellingCount: -product.quantity,
+            },
           },
           { new: true }
         );
