@@ -83,7 +83,7 @@ const sentOtp = async (req, res) => {
   if (req.session.otpValid === true) return res.redirect("/user/login");
   const email = req.params.email;
 
-  if (!email) return res.send({ message: "Email is required." });
+  if (!email) return res.status(404).redirect("/pageerror");
 
   const otp = generateOtp();
   otpStore[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000 }; // OTP valid for 5 minutes
@@ -523,6 +523,7 @@ const getCurrentUserShippingDetails = async (req, res) => {
 //displayChangePassword (get)
 const displayChangePassword = async (req, res) => {
   try {
+    if(!req.user){return res.status(404).redirect("/pageerror")}
     return res.status(200).render("user/userInfo/changePassword.ejs", {
       success: true,
       user: req.user,
@@ -647,6 +648,9 @@ const addNewShippingAddress = async (req, res) => {
 const editShippingAddress = async (req, res) => {
   try {
     const addressId = req.params.addressId;
+    if (!addressId) {
+      return res.status(404).redirect("/pageerror");
+    }
     return res.status(200).render("user/userInfo/editAddress.ejs", {
       success: true,
       user: req.user,
@@ -661,6 +665,9 @@ const editShippingAddress = async (req, res) => {
 const updateShippingAddress = async (req, res) => {
   try {
     const addressId = req.params.addressId;
+    if (!addressId) {
+      return res.status(404).redirect("/pageerror");
+    }
     const {
       firstName,
       lastName,
@@ -744,6 +751,9 @@ const setDefaultAddress = async (req, res) => {
   try {
     const addressId = req.params.addressId;
     // console.log(addressId);
+    if (!addressId) {
+      return res.status(404).redirect("/pageerror");
+    }
 
     // First, set all addresses isDefault to false
     await User.updateOne(
@@ -785,7 +795,10 @@ const setDefaultAddress = async (req, res) => {
 const deleteShippingAddress = async (req, res) => {
   try {
     const addressId = req.params.addressId;
-    console.log(addressId);
+    // console.log(addressId);
+    if (!addressId) {
+      return res.status(404).redirect("/pageerror");
+    }
     const user = await User.findByIdAndUpdate(
       req.user._id,
       { $pull: { addresses: { _id: addressId } } },

@@ -83,6 +83,9 @@ const displayAllProducts = async (req, res) => {
 // display product Details page for logged in user
 const displayProductUser = async (req, res) => {
   const productId = req.params.productId;
+  if (!productId) {
+    return res.status(404).redirect("/pageerror");
+  }
   try {
     const product = (
       await Product.aggregate([
@@ -123,6 +126,13 @@ const displayProductUser = async (req, res) => {
     )[0];
 
     // console.log(product, "testing");
+    if (!product) {
+      return res.status(404).render("error.ejs", {
+        success: false,
+        message: "product not found",
+        user: req.user,
+      });
+    }
 
     return res.render("user/product/product.ejs", {
       product,
@@ -242,8 +252,6 @@ const displayUserHome = async (req, res) => {
   }
 };
 
-
-
 //displayStore
 const displayStore = async (req, res) => {
   // Initializing the search elements
@@ -351,7 +359,7 @@ const displayStore = async (req, res) => {
     const totalCount =
       totalCountResult.length > 0 ? totalCountResult[0].totalCount : 0;
     const totalPages = Math.ceil(Number(totalCount) / Number(limit));
- 
+
     // collect the categories, brands, wishlist
     const categories = await Category.find({});
     const brands = await Brand.find({});

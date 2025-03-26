@@ -43,7 +43,9 @@ const passSendOtp = async (req, res) => {
 
   console.log(`email from sent otp ${email} `);
 
-  if (!email) return { message: "Email is required." };
+  if (!email) {
+    return res.status(404).redirect("/pageerror");
+  }
 
   const otp = generateOtp();
   console.log(`otp from password reset ${otp}`);
@@ -75,7 +77,9 @@ const resentOpt = async (req, res) => {
 
   console.log(`email from sent otp ${email} `);
 
-  if (!email) return { message: "Email is required." };
+  if (!email) {
+    return res.status(404).redirect("/pageerror");
+  }
 
   const otp = generateOtp();
   console.log(`resent Otp ${otp}`); // test
